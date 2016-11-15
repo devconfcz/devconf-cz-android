@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/presentation"
+        android:icon="@drawable/ic_event"
+        android:title="@string/presentation" />
+    <item
+        android:id="@+id/venue"
+        android:icon="@drawable/ic_place"
+        android:title="@string/venue" />
+    <item
+        android:id="@+id/floor_plan"
+        android:icon="@drawable/ic_map"
+        android:title="@string/floor_plan" />
+    <item
+        android:id="@+id/speakers"
+        android:icon="@drawable/ic_person"
+        android:title="@string/speakers" />
+    <item
+        android:id="@+id/social_event"
+        android:icon="@drawable/ic_confirmation_number"
+        android:title="@string/social_event" />
+    <item
+        android:id="@+id/bug"
+        android:icon="@drawable/ic_bug"
+        android:title="@string/bug" />
+    <item
+        android:id="@+id/signout"
+        android:icon="@drawable/ic_exit"
+        android:title="@string/signout" />
+</menu>

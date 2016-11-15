@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">DevConf CZ</string>
+    <string name="presentation">Presentation</string>
+    <string name="venue">Venue</string>
+    <string name="floor_plan">Floor Plan</string>
+    <string name="speakers">Speakers</string>
+    <string name="social_event">Social event</string>
+    <string name="bug">Bug</string>
+    <string name="signout">Sign out</string>
 </resources>
