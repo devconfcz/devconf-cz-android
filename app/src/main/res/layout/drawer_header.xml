@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="200dp"
     android:background="#FFFFFF"
-    android:gravity="center_horizontal"
+    android:gravity="center"
     android:orientation="vertical">
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/signIn"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ImageView
+        android:id="@+id/user_avatar"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="5dp"
         android:paddingTop="30dp"
         android:src="@drawable/default_avatar" />
 
     <TextView
+        android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="20dp"
-        android:paddingTop="10dp"
-        android:text="John Doe"
+        android:paddingTop="5dp"
         android:textColor="@color/primary_text"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="John Doe" />
 
 </LinearLayout>
