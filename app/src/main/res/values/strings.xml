@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">DevConf CZ</string>
+    <string name="home">Now</string>
     <string name="presentation">Presentation</string>
     <string name="venue">Venue</string>
     <string name="floor_plan">Floor Plan</string>
@@ -7,4 +8,10 @@
     <string name="social_event">Social event</string>
     <string name="bug">Bug</string>
     <string name="signout">Sign out</string>
+
+
+    <!-- Home screen resources -->
+    <string name="welcome">Some welcome string (with info about "don't forget to sign in to app").</string>
+    <string name="loadingData">Loading data ...</string>
+    <string name="notFound">No presentation is planned for today.</string>
 </resources>

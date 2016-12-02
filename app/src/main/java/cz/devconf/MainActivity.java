@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
@@ -143,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 drawerLayout.closeDrawer(GravityCompat.START);
                 switch (item.getItemId()) {
+                    case R.id.home:
+                        displayHome();
+                        break;
                     case R.id.presentation:
                         displayPresentation();
                         break;
@@ -183,21 +187,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayPresentation() {
+        Toast.makeText(this, "Presentations are under construction.", Toast.LENGTH_SHORT).show();
     }
 
     private void displayVenue() {
+        Toast.makeText(this, "Venue is under construction.", Toast.LENGTH_SHORT).show();
     }
 
     private void displayFloorPlan() {
+        Toast.makeText(this, "Floor plan is under construction.", Toast.LENGTH_SHORT).show();
     }
 
     private void displaySpeakers() {
+        Toast.makeText(this, "Speakerss are under construction.", Toast.LENGTH_SHORT).show();
     }
 
     private void displaySocialEvent() {
+        Toast.makeText(this, "Social events are under construction.", Toast.LENGTH_SHORT).show();
     }
 
     private void displayBug() {
+        Toast.makeText(this, "Bug reporting is under construction.", Toast.LENGTH_SHORT).show();
     }
 
     /**
