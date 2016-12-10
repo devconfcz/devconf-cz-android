@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
 
+    enum LastFragment {HOME,PRESENTATION,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,BUG};
+    static LastFragment lastFragment = LastFragment.HOME;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupNavigationMenu();
 
-        displayHome();
+        displayLastFragment();
     }
 
     @Override
@@ -145,24 +148,31 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(GravityCompat.START);
                 switch (item.getItemId()) {
                     case R.id.home:
+                        lastFragment = LastFragment.HOME;
                         displayHome();
                         break;
                     case R.id.presentation:
+                        lastFragment = LastFragment.PRESENTATION;
                         displayPresentation();
                         break;
                     case R.id.venue:
+                        lastFragment = LastFragment.VENUE;
                         displayVenue();
                         break;
                     case R.id.floor_plan:
+                        lastFragment = LastFragment.FLOORPLAN;
                         displayFloorPlan();
                         break;
                     case R.id.speakers:
+                        lastFragment = LastFragment.SPEAKERS;
                         displaySpeakers();
                         break;
                     case R.id.social_event:
+                        lastFragment = LastFragment.SOCIALEVENT;
                         displaySocialEvent();
                         break;
                     case R.id.bug:
+                        lastFragment = LastFragment.BUG;
                         displayBug();
                         break;
                     case R.id.signout:
@@ -199,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displaySpeakers() {
-        Toast.makeText(this, "Speakerss are under construction.", Toast.LENGTH_SHORT).show();
+        display(new SpeakersFragment());
     }
 
     private void displaySocialEvent() {
@@ -210,6 +220,31 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Bug reporting is under construction.", Toast.LENGTH_SHORT).show();
     }
 
+    private void displayLastFragment(){
+        switch(lastFragment){
+            case PRESENTATION:
+                displayPresentation();
+                break;
+            case VENUE:
+                displayVenue();
+                break;
+            case BUG:
+                displayBug();
+                break;
+            case FLOORPLAN:
+                displayFloorPlan();
+                break;
+            case SPEAKERS:
+                displaySpeakers();
+                break;
+            case SOCIALEVENT:
+                displaySocialEvent();
+                break;
+            default:
+                displayHome();
+                break;
+        }
+    }
     /**
      * Class to represent the Drawer Header
      */
