@@ -200,9 +200,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Presentations are under construction.", Toast.LENGTH_SHORT).show();
     }
 
-    private void displayVenue() {
-        Toast.makeText(this, "Venue is under construction.", Toast.LENGTH_SHORT).show();
-    }
+    private void displayVenue() { display(new VenueFragment()); }
 
     private void displayFloorPlan() {
         Toast.makeText(this, "Floor plan is under construction.", Toast.LENGTH_SHORT).show();

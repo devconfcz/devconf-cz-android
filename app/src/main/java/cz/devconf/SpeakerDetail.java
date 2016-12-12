@@ -50,7 +50,7 @@ public class SpeakerDetail extends AppCompatActivity {
         country = getIntent().getStringExtra("country");
         twitter = getIntent().getStringExtra("twitter");
 
-        Glide.with(this).load(avatar).placeholder(R.drawable.default_avatar).into(vAvatar);
+        Glide.with(this).load(avatar).fitCenter().placeholder(R.drawable.default_avatar).into(vAvatar);
 
         Log.d(TAG, "avatar: " + vAvatar.toString());
         vName.setText(name + " (" + country + ")");
