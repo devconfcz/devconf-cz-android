@@ -1,14 +1,23 @@
 package cz.devconf;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,6 +31,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +44,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import static io.fabric.sdk.android.Fabric.TAG;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -67,6 +83,57 @@ public class MainActivity extends AppCompatActivity {
         setupNavigationMenu();
 
         displayLastFragment();
+
+        DatabaseReference connectedRef = new FBDB().getDatabase().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                    Log.d(TAG,"connected");
+                } else {
+                    Log.d(TAG,"not connected");
+                    if(!isNetworkAvailable()) {
+                        PendingIntent notifIntent = PendingIntent.getActivity(getBaseContext(), 0, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
+                        NotificationCompat.Builder notification = new NotificationCompat.Builder(getBaseContext())
+                                .setSmallIcon(R.drawable.logonotify)
+                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+                                .setColor(getResources().getColor(R.color.primary))
+                                .setContentIntent(notifIntent)
+                                .setContentTitle(getResources().getString(R.string.syncTitle))
+                                .setContentText(getResources().getString(R.string.syncContext))
+                                .setSubText(getResources().getString(R.string.syncSubText))
+                                .setAutoCancel(true)
+                                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS)
+                                .setVibrate(new long[]{200, 100, 100, 100})
+                                .setPriority(Notification.PRIORITY_MAX);
+                        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        nm.notify(0, notification.build());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.err.println("Listener was cancelled");
+            }
+        });
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        if(info != null && info.isConnected()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+
     }
 
     @Override
@@ -78,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             hideUserInfo();
         }
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "Refreshed Token: " + token);
+
     }
 
     @Override
@@ -262,6 +332,23 @@ public class MainActivity extends AppCompatActivity {
             ButterKnife.bind(this, view);
         }
 
+    }
+
+    /**
+     * Class to represent Firebase Database
+     */
+
+    public static class FBDB {
+        private static FirebaseDatabase db;
+
+        public static FirebaseDatabase getDatabase(){
+            if(db == null){
+               db = FirebaseDatabase.getInstance();
+               db.setPersistenceEnabled(true);
+            }
+
+            return db;
+        }
     }
 
 }

@@ -74,7 +74,6 @@ public class VenueFragment extends Fragment {
             }
 
             d.setBounds(0, 0, (int) (d.getIntrinsicWidth() * mult), (int) (d.getIntrinsicHeight() * mult));
-            Log.d(TAG, "Width " + (d.getIntrinsicWidth() * mult) + " Height " + (d.getIntrinsicHeight() * mult) + " image " + source);
 
             return d;
 

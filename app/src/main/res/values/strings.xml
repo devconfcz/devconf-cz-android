@@ -9,6 +9,12 @@
     <string name="bug">Bug</string>
     <string name="signout">Sign out</string>
 
+    <!-- Notification resources -->
+    <string name="conference">DevConf</string>
+    <string name="syncTitle">DevConf synchronization</string>
+    <string name="syncContext">Internet connection lost!</string>
+    <string name="syncSubText">Connect to internet to have actual information.</string>
+
 
     <!-- Home screen resources -->
     <string name="welcome">Some welcome string (with info about "don't forget to sign in to app").</string>

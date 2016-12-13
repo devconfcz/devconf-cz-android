@@ -50,7 +50,7 @@ public class SpeakersFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_speakers, container, false);
 
         ButterKnife.bind(view);
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = new MainActivity.FBDB().getDatabase();
         DatabaseReference myRef = database.getReference("speakers");
         // Read from the database
 
