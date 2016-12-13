@@ -1,13 +1,9 @@
 package cz.devconf;
 
-import android.content.res.Configuration;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -15,22 +11,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import static io.fabric.sdk.android.Fabric.TAG;
 
@@ -39,17 +20,19 @@ import static io.fabric.sdk.android.Fabric.TAG;
  */
 
 public class VenueFragment extends Fragment {
-    TextView data;
+    TextView data, title;
 
     View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_venue, container, false);
+        view = inflater.inflate(R.layout.fragment_offline, container, false);
 
         data = (TextView) view.findViewById(R.id.data);
+        title = (TextView) view.findViewById(R.id.title);
 
+        title.setText(R.string.venue);
         data.setText(Html.fromHtml(getString(R.string.venueData), new Image(), null));
         data.setMovementMethod(LinkMovementMethod.getInstance());
         return view;

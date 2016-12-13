@@ -6,7 +6,7 @@
     <string name="floor_plan">Floor Plan</string>
     <string name="speakers">Speakers</string>
     <string name="social_event">Social event</string>
-    <string name="bug">Bug</string>
+    <string name="bug">Bug reporting</string>
     <string name="signout">Sign out</string>
 
     <!-- Notification resources -->
@@ -115,4 +115,7 @@
                 <li><strong>Hotel Avanti: </strong>The nearest tram stop is Hrnčířská. Take tram No. 1 (towards Řečkovice) or tram No. 6 (towards Královo Pole nádraží) and get off at the Semilasso stop (apx. 5 minutes).</li>
                 <li><strong>Hotel Continental: </strong>The nearest tram stop is Antonínská. Take tram No. 1 (towards Řečkovice) or tram No. 6 (towards Královo Pole nádraží) and get off at the Semilasso stop (apx. 10 minutes).</li>
             </ul>]]>"</string>
+
+    <!-- Bug data source -->
+    <string name="bugData" formatted="false">"<![CDATA[<p>In case of any troubles with this mobile application, please, contact author of this application via email (<a href="mailto:jridky@redhat.com">jridky@redhat.com</a>).</p>]]>"</string>
 </resources>

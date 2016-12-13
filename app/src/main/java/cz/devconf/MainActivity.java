@@ -284,9 +284,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Social events are under construction.", Toast.LENGTH_SHORT).show();
     }
 
-    private void displayBug() {
-        Toast.makeText(this, "Bug reporting is under construction.", Toast.LENGTH_SHORT).show();
-    }
+    private void displayBug() { display(new BugFragment()); }
 
     private void displayLastFragment(){
         switch(lastFragment){
