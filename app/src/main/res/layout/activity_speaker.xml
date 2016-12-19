@@ -62,7 +62,17 @@
             android:paddingRight="10dp"
             android:paddingTop="10dp"
             android:textColor="@color/primary_text"
-            android:textSize="12sp" />
+            android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/twitter"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:textSize="16sp"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

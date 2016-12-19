@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -31,6 +33,8 @@ public class SpeakerDetail extends AppCompatActivity {
     TextView vName;
     @BindView(R.id.bio)
     TextView vBio;
+    @BindView(R.id.twitter)
+    TextView vTwitter;
 
     String name, avatar, bio, country, twitter;
 
@@ -55,6 +59,10 @@ public class SpeakerDetail extends AppCompatActivity {
         Log.d(TAG, "avatar: " + vAvatar.toString());
         vName.setText(name + " (" + country + ")");
         vBio.setText(bio);
+        if(twitter != null){
+            vTwitter.setText(Html.fromHtml("Twitter: <a href='https://twitter.com/" + twitter + "'>@" + twitter + "</a>"));
+            vTwitter.setMovementMethod(LinkMovementMethod.getInstance());
+        }
     }
 
     @Override
