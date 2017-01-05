@@ -11,4 +11,10 @@
         <item name="android:divider">@color/divider</item>
     </style>
 
+    <style name="TabTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/primary_dark</item>
+        <item name="android:textColorSecondary">@color/primary</item>
+        <item name="colorAccent">@color/primary_dark</item>
+    </style>
+
 </resources>

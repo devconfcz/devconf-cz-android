@@ -19,6 +19,7 @@
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".SpeakerDetail"></activity>
+        <activity android:name=".TalkDetail"></activity>
         <service
             android:name=".LocalFirebaseNotificationService">
             <intent-filter>

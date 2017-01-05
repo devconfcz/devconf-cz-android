@@ -5,9 +5,18 @@
         android:icon="@drawable/ic_run"
         android:title="@string/home" />
     <item
-        android:id="@+id/presentation"
-        android:icon="@drawable/ic_event"
-        android:title="@string/presentation" />
+        android:id="@+id/day1"
+        android:icon="@drawable/one"
+        android:title="@string/dayOne" />
+    <item
+        android:id="@+id/day2"
+        android:icon="@drawable/two"
+        android:title="@string/dayTwo" />
+    <item
+        android:id="@+id/day3"
+        android:icon="@drawable/three"
+        android:title="@string/dayThree" />
+
     <item
         android:id="@+id/venue"
         android:icon="@drawable/ic_place"

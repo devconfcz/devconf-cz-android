@@ -3,7 +3,6 @@ package cz.devconf;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -26,6 +25,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,7 +38,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
 
-    enum LastFragment {HOME,PRESENTATION,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,BUG};
+    enum LastFragment {HOME,DAY1, DAY2, DAY3 ,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,BUG};
     static LastFragment lastFragment = LastFragment.HOME;
 
     @Override
@@ -90,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 boolean connected = snapshot.getValue(Boolean.class);
                 if (connected) {
-                    Log.d(TAG,"connected");
+                    Log.d("CONNECTION","connected");
                 } else {
-                    Log.d(TAG,"not connected");
+                    Log.d("CONNECTION","not connected");
                     if(!isNetworkAvailable()) {
                         PendingIntent notifIntent = PendingIntent.getActivity(getBaseContext(), 0, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
                         NotificationCompat.Builder notification = new NotificationCompat.Builder(getBaseContext())
@@ -146,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             hideUserInfo();
         }
         String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed Token: " + token);
+        Log.d("TOKEN", "Refreshed Token: " + token);
 
     }
 
@@ -221,9 +227,17 @@ public class MainActivity extends AppCompatActivity {
                         lastFragment = LastFragment.HOME;
                         displayHome();
                         break;
-                    case R.id.presentation:
-                        lastFragment = LastFragment.PRESENTATION;
-                        displayPresentation();
+                    case R.id.day1:
+                        lastFragment = LastFragment.DAY1;
+                        displayPresentation(LastFragment.DAY1);
+                        break;
+                    case R.id.day2:
+                        lastFragment = LastFragment.DAY2;
+                        displayPresentation(LastFragment.DAY2);
+                        break;
+                    case R.id.day3:
+                        lastFragment = LastFragment.DAY3;
+                        displayPresentation(LastFragment.DAY3);
                         break;
                     case R.id.venue:
                         lastFragment = LastFragment.VENUE;
@@ -266,8 +280,23 @@ public class MainActivity extends AppCompatActivity {
         display(new HomeFragment());
     }
 
-    private void displayPresentation() {
-        Toast.makeText(this, "Presentations are under construction.", Toast.LENGTH_SHORT).show();
+    private void displayPresentation(LastFragment day) {
+        int noDay;
+
+        switch(day){
+            case DAY2: noDay = 2;
+                       break;
+            case DAY3: noDay = 3;
+                       break;
+            default:   noDay = 1;
+                       break;
+        }
+
+        TalkFragment t = new TalkFragment();
+        Bundle b = new Bundle();
+        b.putInt("day", noDay);
+        t.setArguments(b);
+        display(t);
     }
 
     private void displayVenue() { display(new VenueFragment()); }
@@ -288,8 +317,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayLastFragment(){
         switch(lastFragment){
-            case PRESENTATION:
-                displayPresentation();
+            case DAY1:
+                displayPresentation(LastFragment.DAY1);
+                break;
+            case DAY2:
+                displayPresentation(LastFragment.DAY2);
+                break;
+            case DAY3:
+                displayPresentation(LastFragment.DAY3);
                 break;
             case VENUE:
                 displayVenue();
@@ -310,6 +345,21 @@ public class MainActivity extends AppCompatActivity {
                 displayHome();
                 break;
         }
+
+        SPEAKERS.checkLoad();
+        TRACKS.checkLoad();
+        ROOMDB.checkLoad();
+        TALKS.checkLoad();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+        try {
+            TALKS.dayOne = sdf.parse("27/1/2017");
+            TALKS.dayTwo = sdf.parse("28/1/2017");
+            TALKS.dayThree = sdf.parse("29/1/2017");
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
     /**
      * Class to represent the Drawer Header
@@ -344,9 +394,621 @@ public class MainActivity extends AppCompatActivity {
                db = FirebaseDatabase.getInstance();
                db.setPersistenceEnabled(true);
             }
-
             return db;
         }
     }
 
+    /**
+     * Class to represent Room identification
+     */
+    public static class ROOMDB {
+        private static List<Room> rooms = new ArrayList<Room>();
+
+        public static void load(){
+
+            rooms.clear();
+
+            FirebaseDatabase database = new FBDB().getDatabase();
+            DatabaseReference myRef = database.getReference("rooms");
+            // Read from the database
+
+            myRef.orderByKey().addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    if(rooms.size() > 0){
+                        rooms.clear();
+                    }
+                    for(DataSnapshot room: dataSnapshot.getChildren()) {
+                        Room name = room.getValue(Room.class);
+                        rooms.add(name);
+                    }
+                    ALLLOADED.rooms = true;
+                    ALLLOADED.loaded();
+                    Log.d("LOADING", "ROOMS are done " + rooms.size());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
+
+        public static void checkLoad() {
+            if(rooms == null || rooms.size() < 1){
+                load();
+            }
+        }
+
+        public static List<Room> getRooms() { return rooms; }
+
+        public static String getRoomName(int id){
+            checkLoad();
+            if(id < rooms.size()){
+                return rooms.get(id).getName();
+            }
+            return null;
+        }
+
+        public static boolean isLoad(String room){
+            for(Room r: rooms){
+                if(r.getName().equalsIgnoreCase(room)){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Class to represent Room identification
+     */
+    public static class TRACKS {
+        private static List<Track> tracks = new ArrayList<Track>();
+
+        public static void checkLoad() {
+            if(tracks == null || tracks.size() < 1){
+                load();
+            }
+        }
+
+        public static void load(){
+            tracks.clear();
+            FirebaseDatabase database = new FBDB().getDatabase();
+            DatabaseReference myRef = database.getReference("tracks");
+            // Read from the database
+
+            myRef.orderByChild("name").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    if(tracks.size() > 0){
+                        tracks.clear();
+                    }
+                    for(DataSnapshot track: dataSnapshot.getChildren()) {
+                        Track t = track.getValue(Track.class);
+                        tracks.add(t);
+                    }
+                    ALLLOADED.tracks = true;
+                    ALLLOADED.loaded();
+                    Log.d("LOADING", "TRACKS are done " + tracks.size());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
+
+        public static List<Track> getTracks() {
+            return tracks;
+        }
+
+        public static String findColor(String trackName){
+            String color = "#888888";
+
+            for (Track t: tracks) {
+                if(t.getName().equalsIgnoreCase(trackName)){
+                    return t.getColor();
+                }
+            }
+
+            return color;
+        }
+
+        public static boolean findTrack(String track){
+            for (Track t: tracks) {
+                if(t.getName().equalsIgnoreCase(track)){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * Class to represent Schedule information
+     */
+    public static class TALKS {
+        private static List<Talk> talksD1 = new ArrayList<Talk>();
+        private static List<Talk> talksD2 = new ArrayList<Talk>();
+        private static List<Talk> talksD3 = new ArrayList<Talk>();
+        public static DatabaseReference myRef;
+
+
+        private static Date dayOne;
+        private static Date dayTwo;
+        private static Date dayThree;
+
+        public static void load(){
+
+            talksD1.clear();
+            talksD2.clear();
+            talksD3.clear();
+
+            FirebaseDatabase database = new FBDB().getDatabase();
+            myRef = database.getReference("sessions");
+            // Read from the database
+
+            myRef.orderByChild("day").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    if(talksD1.size() > 0){
+                        talksD1.clear();
+                    }
+                    if(talksD2.size() > 0){
+                        talksD2.clear();
+                    }
+                    if(talksD3.size() > 0){
+                        talksD3.clear();
+                    }
+                    for(DataSnapshot t: dataSnapshot.getChildren()) {
+                        Talk talk = t.getValue(Talk.class);
+
+                        talk.setSufficientDataTypes();
+
+                        switch (talk.getDay()){
+                            case 1:  talksD1.add(talk);
+                                     break;
+                            case 2:  talksD2.add(talk);
+                                     break;
+                            default: talksD3.add(talk);
+                                     break;
+                        }
+
+                    }
+                    ALLLOADED.talks = true;
+                    ALLLOADED.loaded();
+                    Log.d("LOADING", "TALKS are done " + talksD1.size() + " " + talksD2.size() + " " + talksD3.size());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
+
+        public static void checkLoad(){
+            if(talksD1 == null || talksD2 == null || talksD3 == null || talksD1.size() < 1 || talksD2.size() < 1 || talksD3.size() < 1){
+                load();
+            }
+        }
+
+        public static List<Talk> getActualTalks(){
+            List<Talk> result = new ArrayList<Talk>();
+            Date now = new Date();
+
+            if(now.compareTo(dayOne) <= 0){
+                Collections.sort(talksD1, TALKS.orderByRoom);
+                String room = "";
+                for(Talk t: talksD1){
+                    t.unsetRunning();
+                    t.unsetLastOfDay();
+                    if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                        result.add(t);
+                    }
+
+                    room = t.getRoom();
+                }
+
+            }
+            if(now.compareTo(dayOne) > 0 && now.compareTo(dayTwo) <= 0){
+                String time = String.format("%02d:%02d", now.getHours(), now.getMinutes());
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+                Date numNow = now;
+
+                try {
+                    numNow = sdf.parse(time);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Collections.sort(talksD1, TALKS.orderByRoom);
+                Talk last = null;
+                String room = null;
+                for(Talk t: talksD1){
+                    t.unsetRunning();
+                    t.unsetLastOfDay();
+                    if(t.getStart().compareTo(numNow) <= 0){
+                        last = t;
+                    }else{
+                        if(last == null){
+                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                                result.add(t);
+                                room = t.getRoom();
+                            }
+                        }else{
+                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                                last.setRunning();
+                                result.add(last);
+                                result.add(t);
+                                room = t.getRoom();
+                                last = null;
+                            }
+                        }
+                    }
+                }
+
+                if(result.size() < 1){
+
+                    last = null;
+                    for(Talk t: talksD1){
+                        if(last != null){
+                            if(last.getStart().compareTo(t.getStart()) <= 0){
+                                last = t;
+                            }
+                        }else{
+                            last = t;
+                        }
+                    }
+
+                    if(last != null){
+                        last.setLastOfDay();
+                        result.add(last);
+                    }
+
+                    room = "";
+                    Collections.sort(talksD2, TALKS.orderByRoom);
+                    for(Talk t: talksD2){
+                        if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                            result.add(t);
+                        }
+
+                        room = t.getRoom();
+                    }
+
+                }
+
+
+
+            }
+
+            if(now.compareTo(dayTwo) > 0 && now.compareTo(dayThree) <= 0){
+                String time = String.format("%02d:%02d", now.getHours(), now.getMinutes());
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+                Date numNow = now;
+
+                try {
+                    numNow = sdf.parse(time);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Collections.sort(talksD2, TALKS.orderByRoom);
+                Talk last = null;
+                String room = null;
+                for(Talk t: talksD2){
+                    t.unsetRunning();
+                    t.unsetLastOfDay();
+                    if(t.getStart().compareTo(numNow) <= 0){
+                        last = t;
+                    }else{
+                        if(last == null){
+                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                                result.add(t);
+                                room = t.getRoom();
+                            }
+                        }else{
+                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                                last.setRunning();
+                                result.add(last);
+                                result.add(t);
+                                room = t.getRoom();
+                                last = null;
+                            }
+                        }
+                    }
+                }
+
+                if(result.size() < 1){
+
+                    last = null;
+                    for(Talk t: talksD2){
+                        if(last != null){
+                            if(last.getStart().compareTo(t.getStart()) <= 0){
+                                last = t;
+                            }
+                        }else{
+                            last = t;
+                        }
+                    }
+                    if(last != null){
+                        last.setLastOfDay();
+                        result.add(last);
+                    }
+
+                    room = "";
+                    Collections.sort(talksD2, TALKS.orderByRoom);
+                    for(Talk t: talksD3){
+                        if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                            result.add(t);
+                        }
+
+                        room = t.getRoom();
+                    }
+                }
+
+            }
+
+            if(now.compareTo(dayThree) > 0){
+                String time = String.format("%02d:%02d", now.getHours(), now.getMinutes());
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+                Date numNow = now;
+
+                try {
+                    numNow = sdf.parse(time);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Collections.sort(talksD3, TALKS.orderByRoom);
+                Talk last = null;
+                String room = null;
+                for(Talk t: talksD3){
+                    t.unsetRunning();
+                    t.unsetLastOfDay();
+                    if(t.getStart().compareTo(numNow) <= 0){
+                        last = t;
+                    }else{
+                        if(last == null){
+                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                                result.add(t);
+                                room = t.getRoom();
+                            }
+                        }else{
+                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                                last.setRunning();
+                                result.add(last);
+                                result.add(t);
+                                room = t.getRoom();
+                                last = null;
+                            }
+                        }
+                    }
+                }
+
+                if(result.size() < 1){
+
+                    last = null;
+                    for(Talk t: talksD3){
+                        if(last != null){
+                            if(last.getStart().compareTo(t.getStart()) <= 0){
+                                last = t;
+                            }
+                        }else{
+                            last = t;
+                        }
+                    }
+                    if(last != null){
+                        last.setLastOfDay();
+                        result.add(last);
+                    }
+                }
+            }
+
+            Collections.sort(result,TALKS.orderByStart);
+            return result;
+        }
+
+        public static List<Talk> getTalks(int day, int roomId) {
+
+            String room = ROOMDB.getRoomName(roomId);
+            List<Talk> result = new ArrayList<Talk>();
+
+            switch (day){
+                case 1: Collections.sort(talksD1, TALKS.orderByRoom);
+                        for (Talk t: talksD1) {
+                            if(t.getRoom().equalsIgnoreCase(room)){
+                                result.add(t);
+                            }
+                        }
+                        break;
+                case 2: Collections.sort(talksD2, TALKS.orderByRoom);
+                        for (Talk t: talksD2) {
+                            if(t.getRoom().equalsIgnoreCase(room)){
+                                result.add(t);
+                            }
+                        }
+                        break;
+                default:Collections.sort(talksD3, TALKS.orderByRoom);
+                        for (Talk t: talksD3) {
+                            if(t.getRoom().equalsIgnoreCase(room)){
+                                result.add(t);
+                            }
+                        }
+                        break;
+            }
+            return result;
+        }
+
+        public static Talk findTalk(int day, int id){
+            switch(day){
+                case 1:  for(Talk t: talksD1){
+                             if(t.getId() == id){
+                                 return t;
+                             }
+                         }
+                         break;
+                case 2:  for(Talk t: talksD2){
+                            if(t.getId() == id){
+                                return t;
+                            }
+                         }
+                         break;
+                default: for(Talk t: talksD3){
+                             if(t.getId() == id){
+                                 return t;
+                             }
+                         }
+                         break;
+            }
+
+            return null;
+
+        }
+
+        public static void add(Talk t, int day){
+            switch (day){
+                case 1:  talksD1.add(t);
+                         break;
+                case 2:  talksD2.add(t);
+                         break;
+                default: talksD3.add(t);
+                         break;
+            }
+        }
+
+        public static Comparator<Talk> orderByRoom = new Comparator<Talk>() {
+            @Override
+            public int compare(Talk talk, Talk t1) {
+                String room1 = talk.getRoom();
+                String room2 = t1.getRoom();
+                int dateComparision = room1.compareTo(room2);
+                return dateComparision == 0? talk.getStart().compareTo(t1.getStart()) : dateComparision;
+            }
+        };
+
+        public static Comparator<Talk> orderByStart = new Comparator<Talk>() {
+            @Override
+            public int compare(Talk talk, Talk t1) {
+                Date start1 = talk.getStart();
+                Date start2 = t1.getStart();
+                int dateComparision = start1.compareTo(start2);
+
+                if(talk.getDay() == t1.getDay()){
+                    if(dateComparision == 0){
+                        return talk.getRoom().compareTo(t1.getRoom());
+                    }else{
+                        return dateComparision;
+                    }
+                }else {
+                    return (talk.getDay() - t1.getDay());
+                }
+
+
+            }
+        };
+    }
+
+    /**
+     * Class to represent Speakers database
+     */
+    public static class SPEAKERS {
+        private static List<Speaker> speakers = new ArrayList<Speaker>();
+        public static DatabaseReference myRef;
+
+        public static void checkLoad() {
+            if(speakers == null || speakers.size() < 1){
+                load();
+            }
+        }
+
+        public static void load(){
+            speakers.clear();
+            FirebaseDatabase database = new FBDB().getDatabase();
+            myRef = database.getReference("speakers");
+            // Read from the database
+
+            myRef.orderByChild("name").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    if(speakers.size() > 0){
+                        speakers.clear();
+                    }
+                    for(DataSnapshot speaker: dataSnapshot.getChildren()) {
+                        Speaker s = speaker.getValue(Speaker.class);
+                        speakers.add(s);
+                    }
+
+                    ALLLOADED.speakers = true;
+                    ALLLOADED.loaded();
+
+                    Log.d("LOADING", "SPEAKERS are done " + speakers.size());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
+
+        public static List<Speaker> getSpeakers() {
+            return speakers;
+        }
+
+        public static Speaker findSpeaker(String id){
+            if(speakers == null){
+                return null;
+            }
+            for (Speaker s: speakers) {
+                if(id.equalsIgnoreCase(s.getId())){
+                    return s;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    /**
+     * Class to represent Speakers database
+     */
+    public static class ALLLOADED {
+        public static HomeFragment fragment;
+        public static boolean speakers = false, tracks = false, talks = false, rooms = false;
+
+        public static void loaded(){
+            if(speakers && tracks && talks && rooms){
+                for(Talk t: TALKS.talksD1){
+                    t.connectSpeaker();
+                }
+                for(Talk t: TALKS.talksD2){
+                    t.connectSpeaker();
+                }
+                for(Talk t: TALKS.talksD3){
+                    t.connectSpeaker();
+                }
+                fragment.mAdapter.updateData(TALKS.getActualTalks());
+                fragment.setLoadingBox();
+            }
+        }
+    }
 }

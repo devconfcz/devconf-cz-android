@@ -1,23 +1,19 @@
 package cz.devconf;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static io.fabric.sdk.android.Fabric.TAG;
 
 /**
  * Created by jridky on 10.12.16.
@@ -36,7 +32,7 @@ public class SpeakerDetail extends AppCompatActivity {
     @BindView(R.id.twitter)
     TextView vTwitter;
 
-    String name, avatar, bio, country, twitter;
+    String name, avatar, bio, country, twitter, org;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +49,14 @@ public class SpeakerDetail extends AppCompatActivity {
         bio = getIntent().getStringExtra("bio");
         country = getIntent().getStringExtra("country");
         twitter = getIntent().getStringExtra("twitter");
+        org = getIntent().getStringExtra("organization");
 
         Glide.with(this).load(avatar).fitCenter().placeholder(R.drawable.default_avatar).into(vAvatar);
 
-        Log.d(TAG, "avatar: " + vAvatar.toString());
-        vName.setText(name + " (" + country + ")");
+        vName.setText(name + " " + " (" + country + ", " + org + ")");
         vBio.setText(bio);
-        if(twitter != null){
+
+        if(!twitter.equalsIgnoreCase("")){
             vTwitter.setText(Html.fromHtml("Twitter: <a href='https://twitter.com/" + twitter + "'>@" + twitter + "</a>"));
             vTwitter.setMovementMethod(LinkMovementMethod.getInstance());
         }

@@ -2,18 +2,12 @@ package cz.devconf;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-
-import static io.fabric.sdk.android.Fabric.TAG;
-import static java.security.AccessController.getContext;
 
 /**
  * Created by jridky on 9.12.16.
@@ -61,6 +55,7 @@ public class SpeakerViewHolder extends RecyclerView.ViewHolder implements View.O
         sInfo.putExtra("avatar", speaker.getAvatar());
         sInfo.putExtra("country", speaker.getCountry());
         sInfo.putExtra("twitter", speaker.getTwitter());
+        sInfo.putExtra("organization", speaker.getOrganization());
         view.getContext().startActivity(sInfo);
     }
 }

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:elevation="2dp"
+        android:id="@+id/background">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/start"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:clickable="false"
+                android:textSize="30sp"
+                android:textColor="@color/primary_text_dark"
+                android:background="@color/transparent"/>
+
+            <TextView
+                android:id="@+id/start2"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:clickable="false"
+                android:textSize="30sp"
+                android:visibility="gone"
+                android:textColor="@color/primary_text_dark"
+                android:background="@color/transparent"/>
+
+            <TextView
+                android:id="@+id/running"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:clickable="false"
+                android:textSize="12sp"
+                android:text="@string/running"
+                android:textColor="@color/primary_text_dark"
+                android:background="@color/transparent"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/thumbnail_image"
+                android:layout_toEndOf="@+id/thumbnail_image"
+                android:layout_marginLeft="26dp"
+                android:layout_marginStart="26dp"
+                android:textSize="21sp"
+                android:id="@+id/title"
+                android:textColor="@color/primary_text_dark"
+                android:background="@color/transparent"
+                android:textAppearance="@style/TextAppearance.AppCompat" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="26dp"
+                android:layout_marginStart="26dp">
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_person"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/thumbnail_image"
+                    android:layout_toEndOf="@+id/thumbnail_image"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
+                    android:id="@+id/speaker"
+                    android:textColor="@color/primary_text_dark"
+                    android:background="@color/transparent"
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
+                </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="26dp"
+                android:layout_marginStart="26dp">
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/tracker"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/thumbnail_image"
+                    android:layout_toEndOf="@+id/thumbnail_image"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
+                    android:id="@+id/track"
+                    android:textColor="@color/primary_text_dark"
+                    android:background="@color/transparent"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/duration"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/thumbnail_image"
+                    android:layout_toEndOf="@+id/thumbnail_image"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
+                    android:id="@+id/duration"
+                    android:textColor="@color/primary_text_dark"
+                    android:background="@color/transparent"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--username-->
+
+</RelativeLayout>

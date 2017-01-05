@@ -15,7 +15,6 @@ public class Splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        final boolean error = getIntent().getBooleanExtra("null",false);
         Thread timerThread = new Thread(){
             public void run(){
                 try{

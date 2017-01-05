@@ -6,14 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import static io.fabric.sdk.android.Fabric.TAG;
 
 /**
  * Created by jridky on 11.12.16.
@@ -47,7 +45,6 @@ public class VenueFragment extends Fragment {
             idd = getResources().getIdentifier(source, "drawable", getActivity().getPackageName());
             Display display = getActivity().getWindowManager().getDefaultDisplay();
 
-            Log.d(TAG, source);
             Drawable d = getResources().getDrawable(idd);
 
             float mult = 0.8f * display.getWidth() / d.getIntrinsicWidth();

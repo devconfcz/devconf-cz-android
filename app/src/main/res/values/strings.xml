@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">DevConf CZ</string>
     <string name="home">Now</string>
-    <string name="presentation">Presentation</string>
+    <string name="dayOne">Schedule - 1st day</string>
+    <string name="dayTwo">Schedule - 2nd day</string>
+    <string name="dayThree">Schedule - 3rd day</string>
     <string name="venue">Venue</string>
     <string name="floor_plan">Floor Plan</string>
     <string name="speakers">Speakers</string>
@@ -19,10 +21,12 @@
     <!-- Home screen resources -->
     <string name="welcome">Some welcome string (with info about "don't forget to sign in to app").</string>
     <string name="loadingData">Loading data ...</string>
-    <string name="notFound">No presentation is planned for today.</string>
+    <string name="home_title">Running and upcoming talks</string>
+    <string name="running">RUNNING NOW</string>
+    <string name="lastofday">LAST TALK OF THIS DAY</string>
+    <string name="confend">DevConf is over. See you next year!</string>
 
     <!-- Speaker detail -->
-    <string name="twitterStrat"></string>
     <!-- Venue data source -->
     <string name="venueData" formatted="false">"<![CDATA[<h3>Local Transport</h3>
             <p>Public transportation in Brno is provided by <a href="http://www.dpmb.cz/default.aspx">DPMB</a> which maintains 12 tram lines, 13 trolley-bus lines and 37 bus lines. At night all public transportation is provided by 11 night bus lines. If you want to use public transportation, you must buy a ticket before you board the bus, tram or trolleybus. You need to purchase a two-zone ticket for zones 100+101 for any stop in the city of Brno. Single journey tickets can be bought from machines (coins only) at many stops, or in Tabak stores. You need to validate the single journey ticket in the Yellow validation machine when you enter the bus, tram or trolleybus. Instructions how to pay for transportation in Brno can be found <a href="http://www.dpmb.cz/Default.aspx">here</a>.</p>

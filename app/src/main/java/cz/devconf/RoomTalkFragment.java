@@ -8,16 +8,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SpeakersFragment extends Fragment {
+
+/**
+ * Created by jridky on 3.1.17.
+ */
+public class RoomTalkFragment extends Fragment {
     @BindView(R.id.enter_info)
     TextView signUpText;
     @BindView(R.id.loading_label)
@@ -26,40 +27,26 @@ public class SpeakersFragment extends Fragment {
     ProgressBar progressBar;
 
     View view;
-    static LinearLayout loading;
     static RecyclerView recycler;
-    FirebaseRecyclerAdapter mAdapter;
+    TalkRecycleViewAdapter mAdapter;
+    int page, day;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_speakers, container, false);
+        view = inflater.inflate(R.layout.fragment_talk, container, false);
 
         ButterKnife.bind(view);
-
-        loading = (LinearLayout) view.findViewById(R.id.loading_box);
+        page = getArguments().getInt("index",0);
+        day = getArguments().getInt("day",1);
         recycler = (RecyclerView) view.findViewById(R.id.recycler_view);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new FirebaseRecyclerAdapter<Speaker, SpeakerViewHolder>(Speaker.class, R.layout.row_speakers, SpeakerViewHolder.class, MainActivity.SPEAKERS.myRef) {
-            @Override
-            public void populateViewHolder(SpeakerViewHolder speakerHolder, Speaker item, int position) {
-                if(MainActivity.SPEAKERS.getSpeakers().size() > 0) {
-                    speakerHolder.setSpeaker(MainActivity.SPEAKERS.getSpeakers().get(position));
-                }
-            }
-        };
+        mAdapter = new TalkRecycleViewAdapter(day, page);
         mAdapter.notifyDataSetChanged();
         recycler.setAdapter(mAdapter);
-
-        if(MainActivity.SPEAKERS.getSpeakers().size() > 0){
-            setLoadingBox();
-        }
         return view;
     }
 
-    public void setLoadingBox(){
-        loading.setVisibility(View.GONE);
-        recycler.setVisibility(View.VISIBLE);
-    }
 }
