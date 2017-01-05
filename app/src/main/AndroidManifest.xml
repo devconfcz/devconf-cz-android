@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cz.devconf">
+    package="cz.devconf2017">
 
     <application
         android:allowBackup="true"
@@ -9,19 +9,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Splash">
+            android:name="cz.devconf2017.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="cz.devconf2017.MainActivity">
         </activity>
-        <activity android:name=".SpeakerDetail"></activity>
-        <activity android:name=".TalkDetail"></activity>
+        <activity android:name="cz.devconf2017.SpeakerDetail"></activity>
+        <activity android:name="cz.devconf2017.TalkDetail"></activity>
         <service
-            android:name=".LocalFirebaseNotificationService">
+            android:name="cz.devconf2017.LocalFirebaseNotificationService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

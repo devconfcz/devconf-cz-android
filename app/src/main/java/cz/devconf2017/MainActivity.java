@@ -1,4 +1,4 @@
-package cz.devconf;
+package cz.devconf2017;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

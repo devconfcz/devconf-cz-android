@@ -1,4 +1,4 @@
-package cz.devconf;
+package cz.devconf2017;
 
 /**
  * Created by jridky on 2.1.17.

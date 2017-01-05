@@ -1,4 +1,4 @@
-package cz.devconf;
+package cz.devconf2017;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
