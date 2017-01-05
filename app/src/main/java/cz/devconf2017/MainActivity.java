@@ -308,9 +308,7 @@ public class MainActivity extends AppCompatActivity {
         display(new SpeakersFragment());
     }
 
-    private void displaySocialEvent() {
-        Toast.makeText(this, "Social events are under construction.", Toast.LENGTH_SHORT).show();
-    }
+    private void displaySocialEvent() { display(new SocialFragment()); }
 
     private void displayBug() { display(new BugFragment()); }
 

@@ -73,4 +73,6 @@
 
     <!-- Bug data source -->
     <string name="bugData" formatted="false">"<![CDATA[<p>In case of any troubles with this mobile application, please, contact author of this application via email (<a href="mailto:jridky@redhat.com">jridky@redhat.com</a>).</p>]]>"</string>
+    <string name="socialData" formatted="false">"<![CDATA[<p>Where: club <strong>Fléda</strong> (<a href="http://www.fleda.cz">www.fleda.cz</a>)<br><br>When: <strong>Saturday January 28th</strong> starting at <strong>19:30 o'clock</strong><br><br>What: Food, drinks and socializing. Come on time or you might miss out!<br><br>Capacity: <strong>700 people</strong><br><br>Map: follow link on <a href="https://goo.gl/maps/VSUVwKgtPXL2"> Google Maps</a>
+                                                             <h3>How to get ticket</h3>Most tickets will be handed out 'first come first serve' starting Friday morning<br><br>Some tickets held in reserve and distributed Saturday morning for those who attend the event starting Saturday morning<br><br>Some tickets will also be held in reserve and distributed by Red Hat HR at the Red Hat HR stand / booth</p> ]]>"</string>
 </resources>
