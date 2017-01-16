@@ -10,4 +10,7 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
     <color name="transparent">#00ffffff</color>
+    <color name="whitesmoke">#80ffffff</color>
+    <color name="whitesmokelight">#40ffffff</color>
+    <color name="yellow">#fff700</color>
 </resources>

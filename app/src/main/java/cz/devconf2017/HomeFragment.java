@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeFragment extends Fragment {
-    @BindView(R.id.enter_info)
-    TextView signUpText;
     @BindView(R.id.loading_label)
     TextView loadingLabel;
     @BindView(R.id.loading_bar)
@@ -55,7 +54,6 @@ public class HomeFragment extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new HomeRecycleViewAdapter();
-
         if(new Date().compareTo(dayFour) >= 0){
             loading.setVisibility(View.GONE);
             recycler.setVisibility(View.GONE);

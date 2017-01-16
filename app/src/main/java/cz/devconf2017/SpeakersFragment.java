@@ -18,8 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SpeakersFragment extends Fragment {
-    @BindView(R.id.enter_info)
-    TextView signUpText;
     @BindView(R.id.loading_label)
     TextView loadingLabel;
     @BindView(R.id.loading_bar)

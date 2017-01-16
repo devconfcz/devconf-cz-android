@@ -25,7 +25,6 @@
             android:layout_height="60dp"
             android:gravity="center_vertical|center_horizontal"
             android:contentDescription="avatar"
-            android:background="@mipmap/ic_launcher"
             android:clickable="false" />
 
     </LinearLayout>

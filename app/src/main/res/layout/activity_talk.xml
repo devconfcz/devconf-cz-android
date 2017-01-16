@@ -7,7 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -37,7 +38,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -155,6 +158,30 @@
                     android:textColor="@color/primary_text_dark"
                     android:background="@color/transparent"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp">
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_warning"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/thumbnail_image"
+                    android:layout_toEndOf="@+id/thumbnail_image"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
+                    android:id="@+id/difficulty"
+                    android:textColor="@color/primary_text_dark"
+                    android:background="@color/transparent"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
             </LinearLayout>
                 <TextView
@@ -166,8 +193,71 @@
                     android:paddingLeft="20dp"
                     android:textColor="@color/icons"
                     android:id="@+id/description"/>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="vertical"
+                   android:id="@+id/feedbackGroup"
+                   android:visibility="visible">
+                <RatingBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:rating="0"
+                    android:stepSize="1"
+                    android:isIndicator="false"
+                    style="@style/Widget.AppCompat.RatingBar"
+                    android:clickable="true"
+                    android:layout_gravity="center_horizontal"
+                    android:progressTint="@color/yellow"
+                    android:progressBackgroundTint="@color/whitesmoke"
+                    android:theme="@style/Rating"
+                    android:id="@+id/feedback" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:id="@+id/feedbackText"
+                    android:hint="@string/leaveFeedback"
+                    android:hapticFeedbackEnabled="false"
+                    android:layout_gravity="center_horizontal"
+                    android:lines="5"
+                    android:textColor="@color/icons"
+                    android:editable="true"
+                    android:textColorLink="@color/icons"
+                    android:padding="10dp"
+                    android:background="@color/whitesmokelight"
+                    android:textColorHint="@color/icons"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:enabled="true"
+                    android:scrollbarAlwaysDrawVerticalTrack="false"
+                    android:scrollbars="vertical"
+                    android:scrollY="2dp" />
+
+                <Button
+                    android:text="@string/sendFeedback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sendFeedback"
+                    android:focusableInTouchMode="false"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:background="@color/whitesmoke"
+                    android:textColor="@color/icons"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:enabled="true" />
+                   </LinearLayout>
             </LinearLayout>
         </ScrollView>
+
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

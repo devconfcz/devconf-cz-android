@@ -17,4 +17,9 @@
         <item name="colorAccent">@color/primary_dark</item>
     </style>
 
+    <style name="Rating" parent="AppTheme">
+        <item name="colorAccent">@color/yellow</item>
+        <item name="android:textColorSecondary">@color/icons</item>
+    </style>
+
 </resources>

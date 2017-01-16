@@ -45,13 +45,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import static io.fabric.sdk.android.Fabric.TAG;
-
-import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
 
-    enum LastFragment {HOME,DAY1, DAY2, DAY3 ,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,BUG};
+    static int RC_SIGN_IN = 16;
+    enum LastFragment {HOME,DAY1, DAY2, DAY3 ,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,ABOUT,VOTING,FAVORITES};
     static LastFragment lastFragment = LastFragment.HOME;
 
     @Override
@@ -85,9 +85,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        setupNavigationMenu();
+        ADMINS.view = navigationView;
 
         displayLastFragment();
+
+        setupNavigationMenu();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd ", Locale.US);
+
+        navigationView.getMenu().findItem(R.id.day1).setTitle(navigationView.getMenu().findItem(R.id.day1).getTitle() + sdf.format(TALKS.dayOne));
+        navigationView.getMenu().findItem(R.id.day2).setTitle(navigationView.getMenu().findItem(R.id.day2).getTitle() + sdf.format(TALKS.dayTwo));
+        navigationView.getMenu().findItem(R.id.day3).setTitle(navigationView.getMenu().findItem(R.id.day3).getTitle() + sdf.format(TALKS.dayThree));
 
         DatabaseReference connectedRef = new FBDB().getDatabase().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
@@ -161,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             showUserInfo(currentUser);
+            FAVORITES.checkLoad();
         }
     }
 
@@ -172,10 +181,11 @@ public class MainActivity extends AppCompatActivity {
                 AuthUI
                         .getInstance()
                         .createSignInIntentBuilder()
-                        .setLogo(R.mipmap.ic_launcher)
+                        .setLogo(R.drawable.ic_launcher)
                         .setProviders(providers)
                         .build(),
                 RC_SIGN_IN);
+        displayLastFragment();
     }
 
     private void signOut() {
@@ -184,11 +194,13 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         hideUserInfo();
+                        FAVORITES.favorites.clear();
                     }
                 });
+
     }
 
-    private void showUserInfo(FirebaseUser currentUser) {
+    public void showUserInfo(FirebaseUser currentUser) {
         Glide.with(this).load(currentUser.getPhotoUrl())
                 .transform(new GlideCircleTransform(getApplicationContext()))
                 .into(drawerHeaderViewHolder.mUserAvatar);
@@ -199,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
 
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.GONE);
         navigationView.getMenu().findItem(R.id.signout).setVisible(true);
+        navigationView.getMenu().findItem(R.id.favorites).setVisible(true);
+        isAdmin(currentUser.getEmail());
     }
 
     private void hideUserInfo() {
@@ -207,8 +221,21 @@ public class MainActivity extends AppCompatActivity {
 
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.VISIBLE);
         navigationView.getMenu().findItem(R.id.signout).setVisible(false);
+        navigationView.getMenu().findItem(R.id.favorites).setVisible(false);
+        if(lastFragment == LastFragment.VOTING || lastFragment == LastFragment.FAVORITES){
+            lastFragment=LastFragment.HOME;
+            displayHome();
+        }
+        isAdmin("");
     }
 
+    public void isAdmin(String email){
+        if(ADMINS.find(email)){
+            navigationView.getMenu().findItem(R.id.voting).setVisible(true);
+        }else{
+            navigationView.getMenu().findItem(R.id.voting).setVisible(false);
+        }
+    }
     // -- Navigation ------------------------------------------------------------------------------
 
     @OnClick(R.id.drawer)
@@ -238,6 +265,14 @@ public class MainActivity extends AppCompatActivity {
                         lastFragment = LastFragment.DAY3;
                         displayPresentation(LastFragment.DAY3);
                         break;
+                    case R.id.favorites:
+                        lastFragment = LastFragment.FAVORITES;
+                        displayFavorites();
+                        break;
+                    case R.id.voting:
+                        lastFragment = LastFragment.VOTING;
+                        displayVoting();
+                        break;
                     case R.id.venue:
                         lastFragment = LastFragment.VENUE;
                         displayVenue();
@@ -254,9 +289,9 @@ public class MainActivity extends AppCompatActivity {
                         lastFragment = LastFragment.SOCIALEVENT;
                         displaySocialEvent();
                         break;
-                    case R.id.bug:
-                        lastFragment = LastFragment.BUG;
-                        displayBug();
+                    case R.id.about:
+                        lastFragment = LastFragment.ABOUT;
+                        displayAbout();
                         break;
                     case R.id.signout:
                         signOut();
@@ -300,9 +335,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayVenue() { display(new VenueFragment()); }
 
-    private void displayFloorPlan() {
-        Toast.makeText(this, "Floor plan is under construction.", Toast.LENGTH_SHORT).show();
-    }
+    private void displayFavorites() { display(new FavoritesFragment()); }
+
+    private void displayVoting() { display(new VotingFragment()); }
+
+    private void displayFloorPlan() { display(new FloorPlanFragment()); }
 
     private void displaySpeakers() {
         display(new SpeakersFragment());
@@ -310,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void displaySocialEvent() { display(new SocialFragment()); }
 
-    private void displayBug() { display(new BugFragment()); }
+    private void displayAbout() { display(new AboutFragment()); }
 
     private void displayLastFragment(){
         switch(lastFragment){
@@ -326,8 +363,8 @@ public class MainActivity extends AppCompatActivity {
             case VENUE:
                 displayVenue();
                 break;
-            case BUG:
-                displayBug();
+            case ABOUT:
+                displayAbout();
                 break;
             case FLOORPLAN:
                 displayFloorPlan();
@@ -338,15 +375,23 @@ public class MainActivity extends AppCompatActivity {
             case SOCIALEVENT:
                 displaySocialEvent();
                 break;
+            case VOTING:
+                displayVoting();
+                break;
+            case FAVORITES:
+                displayFavorites();
+                break;
             default:
                 displayHome();
                 break;
         }
 
         SPEAKERS.checkLoad();
+        ADMINS.checkLoad();
         TRACKS.checkLoad();
         ROOMDB.checkLoad();
         TALKS.checkLoad();
+        FAVORITES.checkLoad();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
         try {
             TALKS.dayOne = sdf.parse("27/1/2017");
@@ -461,7 +506,174 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Class to represent Room identification
+     * Class to represent Admins
+     */
+    public static class ADMINS {
+        private static List<String> admins = new ArrayList<String>();
+        public static NavigationView view;
+
+        public static void load(){
+
+            admins.clear();
+
+            FirebaseDatabase database = new FBDB().getDatabase();
+            DatabaseReference myRef = database.getReference("admins");
+            // Read from the database
+
+            myRef.orderByKey().addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    if(admins.size() > 0){
+                        admins.clear();
+                    }
+                    for(DataSnapshot a: dataSnapshot.getChildren()) {
+                        String name = a.getValue(String.class);
+                        admins.add(name);
+                    }
+                    Log.d("LOADING", "ADMINS are done " + admins.size());
+
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user != null && find(user.getEmail())) {
+                        view.getMenu().findItem(R.id.voting).setVisible(true);
+                    }else{
+                        view.getMenu().findItem(R.id.voting).setVisible(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
+
+        public static void checkLoad() {
+            if(admins == null || admins.size() < 1){
+                load();
+            }
+        }
+
+        public static boolean find(String email){
+            for(String a: admins){
+                if(a.equalsIgnoreCase(email)){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Class to represent favorites talks
+     */
+    public static class FAVORITES {
+        private static List<Talk> favorites = new ArrayList<Talk>();
+
+        public static void checkLoad() {
+            if (favorites == null || favorites.size() < 1) {
+                load();
+            }
+        }
+
+        public static void load() {
+            favorites.clear();
+            FirebaseDatabase database = new FBDB().getDatabase();
+            DatabaseReference myRef = database.getReference("favorites");
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            // Read from the database
+
+            if (user != null) {
+                myRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // This method is called once with the initial value and again
+                        // whenever data at this location is updated.
+                        if (favorites.size() > 0) {
+                            favorites.clear();
+                        }
+                        for (DataSnapshot f : dataSnapshot.getChildren()) {
+                            String id = f.getValue(String.class);
+                            Talk t = TALKS.findTalk(Integer.parseInt(id));
+                            if(t!=null){
+                                favorites.add(t);
+                            }
+                        }
+                        Log.d("LOADING", "FAVORITES are done " + favorites.size());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });
+            }
+        }
+
+        public static void add(int id){
+            Talk t = TALKS.findTalk(id);
+            if(t != null){
+                favorites.add(TALKS.findTalk(id));
+            }
+        }
+
+        public static void remove(int id){
+            for(Talk t: favorites){
+                if(t.getId() == id){
+                    favorites.remove(t);
+                    return;
+                }
+            }
+        }
+
+        public static List<Talk> getTalks(int roomId){
+            String room = ROOMDB.getRoomName(roomId);
+            List<Talk> result = new ArrayList<Talk>();
+
+            Collections.sort(favorites, TALKS.orderByStart);
+                    for (Talk t: favorites) {
+                        if(t.getRoom().equalsIgnoreCase(room)){
+                            result.add(t);
+                        }
+                    }
+            return result;
+        }
+
+        public static boolean isFavorite(int id){
+            for(Talk t: favorites){
+                if(t.getId() == id){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static void save(){
+            FirebaseDatabase database = new FBDB().getDatabase();
+            DatabaseReference myRef = database.getReference("favorites");
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            // Read from the database
+
+            if (user != null) {
+                myRef.child(user.getUid()).setValue(getTalkIds());
+            }
+        }
+
+        public static List<String> getTalkIds(){
+            ArrayList<String> result = new ArrayList<>();
+            for(Talk t: favorites){
+                result.add(t.id);
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Class to represent tracks
      */
     public static class TRACKS {
         private static List<Track> tracks = new ArrayList<Track>();
@@ -599,6 +811,14 @@ public class MainActivity extends AppCompatActivity {
         public static void checkLoad(){
             if(talksD1 == null || talksD2 == null || talksD3 == null || talksD1.size() < 1 || talksD2.size() < 1 || talksD3.size() < 1){
                 load();
+            }
+        }
+
+        public static Date getDay(int day){
+            switch (day){
+                case 1: return dayOne;
+                case 2: return dayTwo;
+                default: return dayThree;
             }
         }
 
@@ -872,6 +1092,30 @@ public class MainActivity extends AppCompatActivity {
                              }
                          }
                          break;
+            }
+
+            return null;
+
+        }
+
+        public static Talk findTalk(int id){
+
+            for(Talk t: talksD1){
+                if(t.getId() == id){
+                    return t;
+                }
+            }
+
+            for(Talk t: talksD2){
+                if(t.getId() == id){
+                    return t;
+                }
+            }
+
+            for(Talk t: talksD3){
+                if(t.getId() == id){
+                    return t;
+                }
             }
 
             return null;

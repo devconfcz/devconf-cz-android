@@ -7,16 +7,25 @@
     <item
         android:id="@+id/day1"
         android:icon="@drawable/one"
-        android:title="@string/dayOne" />
+        android:title="@string/day" />
     <item
         android:id="@+id/day2"
         android:icon="@drawable/two"
-        android:title="@string/dayTwo" />
+        android:title="@string/day" />
     <item
         android:id="@+id/day3"
         android:icon="@drawable/three"
-        android:title="@string/dayThree" />
+        android:title="@string/day" />
 
+    <item
+        android:id="@+id/favorites"
+        android:icon="@drawable/ic_favorite"
+        android:title="@string/favorites" />
+
+    <item
+        android:id="@+id/voting"
+        android:icon="@drawable/ic_voting"
+        android:title="@string/voting" />
     <item
         android:id="@+id/venue"
         android:icon="@drawable/ic_place"
@@ -34,9 +43,9 @@
         android:icon="@drawable/ic_confirmation_number"
         android:title="@string/social_event" />
     <item
-        android:id="@+id/bug"
-        android:icon="@drawable/ic_bug"
-        android:title="@string/bug" />
+        android:id="@+id/about"
+        android:icon="@drawable/ic_about"
+        android:title="@string/about" />
     <item
         android:id="@+id/signout"
         android:icon="@drawable/ic_exit"

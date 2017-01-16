@@ -15,7 +15,7 @@ import android.widget.TextView;
  * Created by jridky on 11.12.16.
  */
 
-public class BugFragment extends Fragment {
+public class AboutFragment extends Fragment {
     TextView data, title;
 
     View view;
@@ -28,8 +28,8 @@ public class BugFragment extends Fragment {
         title = (TextView) view.findViewById(R.id.title);
         data = (TextView) view.findViewById(R.id.data);
 
-        title.setText(R.string.bug);
-        data.setText(Html.fromHtml(getString(R.string.bugData)));
+        title.setText(R.string.about);
+        data.setText(Html.fromHtml(getString(R.string.aboutData)));
         data.setMovementMethod(LinkMovementMethod.getInstance());
         return view;
     }

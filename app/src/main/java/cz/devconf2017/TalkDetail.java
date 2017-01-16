@@ -2,16 +2,34 @@ package cz.devconf2017;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static io.fabric.sdk.android.Fabric.TAG;
 
 /**
  * Created by jridky on 10.12.16.
@@ -37,6 +55,17 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
     TextView speaker;
     @BindView(R.id.datetime)
     TextView datetime;
+    @BindView(R.id.difficulty)
+    TextView difficulty;
+    @BindView(R.id.feedback)
+    RatingBar rating;
+    @BindView(R.id.feedbackText)
+    EditText feedbackText;
+    @BindView(R.id.sendFeedback)
+    Button submit;
+
+
+
 
     int day, id;
     Talk t;
@@ -50,6 +79,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         day = getIntent().getIntExtra("day",1);
         id = getIntent().getIntExtra("id",0);
@@ -67,11 +97,78 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
         background.setBackgroundColor(Color.parseColor(MainActivity.TRACKS.findColor(t.getTrack())));
         speaker.setText(t.getSpeakerCompleteInfo());
         datetime.setText("Day " + t.getDay() + " at " + t.getFormatedStart());
+        difficulty.setText(t.getDifficulty());
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            hideFeedback(true);
+        }else{
+            hideFeedback(false);
+            DatabaseReference mref = MainActivity.FBDB.getDatabase().getReference("votes").child(String.valueOf(t.getId()));
+            mref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    for(DataSnapshot vote: dataSnapshot.getChildren()) {
+                        Feedback f = vote.getValue(Feedback.class);
+                        if(f.user.equalsIgnoreCase(user.getEmail())) {
+                            feedbackText.setText(f.feedback);
+                            rating.setRating(Float.valueOf(f.rating));
+                            submit.setText(R.string.updateFeedback);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+
+        }
 
         speaker.setOnClickListener(this);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Feedback feedback = new Feedback(rating.getRating(), feedbackText.getText().toString(), user.getEmail());
+                feedback.save(t.getId(), user.getUid());
+                Toast.makeText(getBaseContext(),R.string.feedbackSent,Toast.LENGTH_LONG).show();
+            }
+        });
 
 
 
+    }
+
+    public void hideFeedback(boolean hide){
+        if(hide){
+            rating.setVisibility(View.GONE);
+            feedbackText.setVisibility(View.GONE);
+            submit.setVisibility(View.GONE);
+        }else{
+            rating.setVisibility(View.VISIBLE);
+            feedbackText.setVisibility(View.VISIBLE);
+            submit.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null){
+                if(MainActivity.FAVORITES.isFavorite(this.id)) {
+                    getMenuInflater().inflate(R.menu.menu_favorites_on, menu);
+                }else{
+                    getMenuInflater().inflate(R.menu.menu_favorites_off, menu);
+                }
+            }
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -84,6 +181,18 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
         //noinspection SimplifiableIfStatement
         if (Id == android.R.id.home) {
             finish();
+        }
+
+        if (Id == R.id.action_favorite){
+            if(MainActivity.FAVORITES.isFavorite(id)){
+                item.setIcon(R.drawable.ic_favorite_border);
+                MainActivity.FAVORITES.remove(id);
+            }else{
+                item.setIcon(R.drawable.ic_favorite);
+                MainActivity.FAVORITES.add(id);
+            }
+            MainActivity.FAVORITES.save();
+
         }
 
         return super.onOptionsItemSelected(item);

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 public class TalkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    public TextView start, start2, title, speaker, track, duration, running;
+    public TextView start, start2, title, speaker, track, duration, running, day;
     public Context context;
     public Talk talk;
     public LinearLayout background;
@@ -28,6 +28,7 @@ public class TalkViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         setSpeaker();
         setInfo();
         setColor();
+        setDay();
     }
 
     private void setInfo() {
@@ -37,6 +38,10 @@ public class TalkViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     private void setSpeaker() {
         this.speaker.setText(talk.getSpeakerInfo());
+    }
+
+    private void setDay() {
+        this.day.setText("Day " + talk.day);
     }
 
     private void setTitle() {
@@ -90,6 +95,7 @@ public class TalkViewHolder extends RecyclerView.ViewHolder implements View.OnCl
             duration = (TextView) itemView.findViewById(R.id.duration);
             background = (LinearLayout) itemView.findViewById(R.id.background);
             running = (TextView) itemView.findViewById(R.id.running);
+            day = (TextView) itemView.findViewById(R.id.day);
         }else{
             title = (TextView) itemView.findViewById(R.id.title);
         }

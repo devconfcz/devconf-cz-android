@@ -43,6 +43,7 @@ public class SpeakerDetail extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         name = getIntent().getStringExtra("name");
         avatar = getIntent().getStringExtra("avatar");

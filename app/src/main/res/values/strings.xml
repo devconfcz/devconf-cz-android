@@ -1,78 +1,80 @@
 <resources>
     <string name="app_name">DevConf CZ</string>
     <string name="home">Now</string>
-    <string name="dayOne">Schedule - 1st day</string>
-    <string name="dayTwo">Schedule - 2nd day</string>
-    <string name="dayThree">Schedule - 3rd day</string>
+    <string name="day">"Schedule - "</string>
     <string name="venue">Venue</string>
     <string name="floor_plan">Floor Plan</string>
     <string name="speakers">Speakers</string>
     <string name="social_event">Social event</string>
-    <string name="bug">Bug reporting</string>
+    <string name="about">About</string>
     <string name="signout">Sign out</string>
+    <string name="voting">Voting result</string>
+    <string name="favorites">My favorites</string>
 
     <!-- Notification resources -->
     <string name="conference">DevConf</string>
     <string name="syncTitle">DevConf synchronization</string>
-    <string name="syncContext">Internet connection lost!</string>
-    <string name="syncSubText">Connect to internet to have actual information.</string>
+    <string name="syncContext">The internet connection lost!</string>
+    <string name="syncSubText">Connect to the internet to have actual information.</string>
 
 
     <!-- Home screen resources -->
-    <string name="welcome">Some welcome string (with info about "don't forget to sign in to app").</string>
     <string name="loadingData">Loading data ...</string>
     <string name="home_title">Running and upcoming talks</string>
     <string name="running">RUNNING NOW</string>
     <string name="lastofday">LAST TALK OF THIS DAY</string>
     <string name="confend">DevConf is over. See you next year!</string>
 
-    <!-- Speaker detail -->
-    <!-- Venue data source -->
-    <string name="venueData" formatted="false">"<![CDATA[<h3>Local Transport</h3>
-            <p>Public transportation in Brno is provided by <a href="http://www.dpmb.cz/default.aspx">DPMB</a> which maintains 12 tram lines, 13 trolley-bus lines and 37 bus lines. At night all public transportation is provided by 11 night bus lines. If you want to use public transportation, you must buy a ticket before you board the bus, tram or trolleybus. You need to purchase a two-zone ticket for zones 100+101 for any stop in the city of Brno. Single journey tickets can be bought from machines (coins only) at many stops, or in Tabak stores. You need to validate the single journey ticket in the Yellow validation machine when you enter the bus, tram or trolleybus. Instructions how to pay for transportation in Brno can be found <a href="http://www.dpmb.cz/Default.aspx">here</a>.</p>
-            <p><strong>SMS tickets:</strong> The DPMB also offers <a href="http://www.dpmb.cz/Default.aspx?seo=sms-jizdenky">sms tickets</a>. This service is only available for Czech SIM cards. To use the service, send a message with a code to 90206. The code for a 75-minute ticket (CZK 29) is BRNO. The code, BRNOD, is for an all-day ticket (CZK 99). After sending the message, you'll receive a ticket via sms within a few minutes. If you don't have a Czech SIM card, you can use the mobile app, <a href="http://www.sejf.cz">Sejf</a> which is available in the <a href="https://itunes.apple.com/sk/app/sejf/id301404273?mt=8">Apple App Store</a> and <a href="https://play.google.com/store/apps/details?id=cz.edhouse.mc.android&hl=cs">Google Play</a>.</p>
-            <p>If you're staying in Brno for several days, consider buying a 5-day ticket which costs 250 CZK. There are several places where you can buy this ticket, but the easiest one for you is probably the main railway station. You can buy it at any counter (look for the international counters because they are more likely to speak English). When you first use your ticket, be sure to validate it. You only have to validate your ticket one time.</p>
-            <ul>
-                <li><a href="http://jizdnirady.idnes.cz/brno/spojeni/?lng=E">Brno Local Transport Timetable</a></li>
-                <li>Download the app "Jízdní řády" with all local timetables from the <a href="https://itunes.apple.com/cz/app/jizdni-rady-idos/id473503749?mt=8">Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=cz.mafra.jizdnirady&hl=cs">Google Play</a>.</li>
-            </ul>
-            <h3>Travelling From the Main Railway Station to the Venue</h3>
-            <p>From the main train station take tram No.1 (towards Řečkovice). Get off at the stop Semilasso (after approximately 15 minutes). Take the street on the right, Metodějova. After approximately 200 meters take the first street on the right, Božetěchova. Continue straight approximately 100 m. The building on your left hand side is the university.</p>
-            <h3>Travelling From the Main Bus Station to the Venue</h3>
-            <p>From the main bus station (Zvonařka) take bus No. 44 or 67. Get off at the stop "Semilasso". Follow the street for 100 m and then take the street on the right, Božetěchova. After approximately 400 meters you will arrive to the building of the university.</p>
-            <p><img title="DevConf Venue" src="mapvenues">
-            <br>1) DevConf venue, FIT VUT
-            <br>2) Semilasso tram station, tram 1 towards Řečkovice
-            <br>3) Semilasso tram station, tram 1 towards Ečerova (trough Main train station)
-            <br>4) Semilasso bus stop - buses 30 and 84 from/to Red Hat office</p>
-            <h3>Travelling From the Main Railway Station to the Red Hat office</h3>
-            <p>From the main train station take tram No.12 (towards Technologický park). Get off at the stop Červinkova (buildings FBC I and II) or Technologický park (building TPB). This is approximately a 17 minute ride.</p>
-            <h3>Travelling From the Main Bus Station to the Red Hat office</h3>
-            <p>Take tram No. 12 towards Technologický park and get off at Červinkova (first stop, buildings FBC I and II) or Technologický park (third stop, TPB building). When you exit the bus, if you faced in the direction the bus was traveling, the tram stop is across the street to your right. Also, take bus No. 44 or 67. Get off at the stop Skácelova and then take the tram No. 12 and then follow the same instructions as above.</p>
-            <h3>Travelling From the Red Hat office to the Venue</h3>
-            <p>From Červinkova tram station (or Technologický park for TPB building) take tram No. 12 towards Komárov. Get off at the stop Skácelova (first stop from Červinkova, third from Technologický park). Take bus No. 30 or 84 or 53 from the bus stop at the corner diagonally opposite the tram stop you exited at. From both buses, get off at the Semilasso stop.</p>
-            <h3>Travelling From Venue to the Red Hat office</h3>
-            <p>From the Semilasso bus stop take bus No. 30 or 44. Get off at the stop Skácelova. Take tram No. 12 towards Technologický park and get off at Červinkova (first stop, buildings FBC I and II) or Technologický park (third stop, TPB building). When you exit the bus, if you faced in the direction the bus was traveling, the tram stop is across the street to your right.</p>
-            <p><img title="Red Hat Brno office" src="mapredhatoffices">
-            <br>1) Red Hat office, buildings FBC I and FBC II
-            <br>2) Červinkova tram station - tram 12 from Main train station
-            <br>3) Skácelova tram station
-            <br>4) Skácelova bus stop - buses 30 and 84 to the DevConf venue (Semilasso bus stop)</p>
-            <h3>Travelling From the Main Train Station to the Hotels</h3>
-            <ul>
-                <li><strong>Hotel Avanti:</strong> From the main train station take tram No.1 (towards Řečkovice). Get off at the stop Hrnčířská (after apx 10 minutes).</li>
-                <li><strong>Hotel Vista:</strong> From the main train station take tram No.1 (towards Řečkovice). Get off at the stop Hudcova (after apx 20 minutes).</li>
-                <li><strong>Hotel Continental:</strong> From the main train station take tram No.1 (towards Řečkovice). Get off at the stop Antonínská (after apx 5 minutes).</li>
-            </ul>
-            <h3>Travelling From the Hotels to the Venue</h3>
-            <ul>
-                <li><strong>Hotel Vista:</strong> The nearest tram stop is Hudcova. Take tram No. 1 towards Ečerova and get off at Semilasso stop (second stop).</li>
-                <li><strong>Hotel Avanti: </strong>The nearest tram stop is Hrnčířská. Take tram No. 1 (towards Řečkovice) or tram No. 6 (towards Královo Pole nádraží) and get off at the Semilasso stop (apx. 5 minutes).</li>
-                <li><strong>Hotel Continental: </strong>The nearest tram stop is Antonínská. Take tram No. 1 (towards Řečkovice) or tram No. 6 (towards Královo Pole nádraží) and get off at the Semilasso stop (apx. 10 minutes).</li>
-            </ul>]]>"</string>
+    <!-- Talk detail -->
+    <string name="sendFeedback">Submit feedback</string>
+    <string name="updateFeedback">Update feedback</string>
+    <string name="feedbackSent">Your feedback has been successfully posted.</string>
+    <string name="leaveFeedback">Leave your feedback ...</string>
 
-    <!-- Bug data source -->
-    <string name="bugData" formatted="false">"<![CDATA[<p>In case of any troubles with this mobile application, please, contact author of this application via email (<a href="mailto:jridky@redhat.com">jridky@redhat.com</a>).</p>]]>"</string>
-    <string name="socialData" formatted="false">"<![CDATA[<p>Where: club <strong>Fléda</strong> (<a href="http://www.fleda.cz">www.fleda.cz</a>)<br><br>When: <strong>Saturday January 28th</strong> starting at <strong>19:30 o'clock</strong><br><br>What: Food, drinks and socializing. Come on time or you might miss out!<br><br>Capacity: <strong>700 people</strong><br><br>Map: follow link on <a href="https://goo.gl/maps/VSUVwKgtPXL2"> Google Maps</a>
-                                                             <h3>How to get ticket</h3>Most tickets will be handed out 'first come first serve' starting Friday morning<br><br>Some tickets held in reserve and distributed Saturday morning for those who attend the event starting Saturday morning<br><br>Some tickets will also be held in reserve and distributed by Red Hat HR at the Red Hat HR stand / booth</p> ]]>"</string>
+    <!-- Venue data source -->
+<string name="venueData" formatted="false">"<![CDATA[
+        <p>The conference will be held at the Faculty of Information Technology, Brno University of Technology (FIT VUT), Božetěchova 2.</p>
+        <h3>Local Transport</h3>
+        <p>Public transportation in Brno is provided by <a href="http://www.dpmb.cz/default.aspx">DPMB</a> which maintains 12 tram lines, 13 trolley-bus lines,  and 37 bus lines. At night all public transportation is provided by 11  night bus lines. If you want to use public transportation, you must buy a  ticket before you board the vehicle.  You need to purchase a two-zone ticket for zones 100+101 for any stop  in the city of Brno. Single journey tickets can be bought from machines  (coins only) at many stops, or in "Tabak" stores. You need to validate the single journey ticket in the yellow validation machine when you enter the vehicle. Instructions how to pay for transportation in Brno can be found <a href="http://www.dpmb.cz/Default.aspx">here</a>.</p>
+        <p><strong>SMS tickets:</strong> The DPMB also offers <a href="http://www.dpmb.cz/Default.aspx?seo=sms-jizdenky">sms  tickets</a>. This service is only available for Czech SIM cards.  To use the service, send a message with a code to 90206. The code for a  75-minute ticket (CZK 29) is BRNO. The code, BRNOD, is for an all-day  ticket (CZK 99). After sending the message, you will receive a ticket via sms within a few minutes. If you do not have a Czech SIM card, you can use the mobile app, <a href="http://www.sejf.cz">Sejf</a> which is available in the <a href="https://itunes.apple.com/sk/app/sejf/id301404273?mt=8">Apple App Store</a> and <a href="https://play.google.com/store/apps/details?id=cz.edhouse.mc.android&hl=cs">Google Play</a>.</p>
+        <p>If you are staying in Brno for several days, consider buying a 5-day ticket, which costs CZK 250. There are several places where you can buy this ticket, but the most convenient  one for you is probably the main railway station. You can buy it at any  counter (look for the international counters because they are more  likely to speak English). When you first use your ticket, be sure to  validate it. You only have to validate your ticket once.</p>
+            <a href="http://jizdnirady.idnes.cz/brno/spojeni/?lng=E">Brno Local Transport Timetable</a><br><br>
+            <a href="http://dpmb.cz/?seo=download&id=3110">Network of daytime tram and bus lines</a><br><br>
+            <a href="http://dpmb.cz/?seo=download&id=3111">Network of nighttime bus lines</a><br><br>
+            Download the app "Jízdní řády" with all local timetables from the <a href="https://itunes.apple.com/cz/app/jizdni-rady-idos/id473503749?mt=8">Apple App Store</a> or <a href="https://play.google.com/store/apps/details?id=cz.mafra.jizdnirady&hl=cs">Google Play</a>.<br><br>
+        <h3>Travelling From the Main Railway Station to the Venue</h3>
+        <p>From the main train station, take a tram No.1 (towards Řečkovice). Get off at the Semilasso stop (after approx. 15 minutes). Take the street on the right, Metodějova. After 200 meters take the first street on the right, Božetěchova. Continue straight on for  approximately 100 m. The university building is on your left side.</p>
+        <h3>Travelling From the Main Bus Station to the Venue</h3>
+        <p>From the Zvonařka bus station, take a bus No. 44 or 67. Get off at the Semilasso stop. Follow the street for 100 m and then take the street on the right, Božetěchova. After approximately 400 meters you will arrive at the university building.</p>
+        <p><a href="https://www.google.com/maps/d/viewer?mid=1FopGeleD4zr-DEI36M5f81_HZ3s&hl=cs&usp=sharing"><img title="DevConf Venue" src="mapvenues"></a>
+        <br>1) DevConf venue, FIT VUT
+        <br>2) Semilasso tram station, tram 1 towards Řečkovice
+        <br>3) Semilasso tram station, tram 1 towards Ečerova (trough Main train station)
+        <br>4) Semilasso bus stop - buses 30 and 84 from/to the Red Hat office</p>
+        <h3>Travelling From the Main Railway Station to the Red Hat office</h3>
+        <p>From the main train station take a tram No.12 (towards Technologický park). Get off at the Červinkova stop (for the FBC I and FBC II buildings) or at the Technologický park stop (for the TPB building ). This is approximately a 17 minute ride.</p>
+        <h3>Travelling From the Main Bus Station to the Red Hat office</h3>
+        <p>Take a tram No. 12 towards Technologický park and get off at the Červinkova stop (for the FBC I and FBC II buildings) or at the Technologický park stop (for the TPB building). To find a tram stop, walk in the direction your bus was traveling, and the tram stop is just across the street to your right. Alternatively, you can take a bus No. 44 or 67. Get off at the Skácelova stop and then take a tram No. 12 and follow the same instructions as above.</p>
+        <h3>Travelling From the Red Hat office to the Venue</h3>
+        <p>From the Červinkova tram stop (or the Technologický park stop for the TPB building), take a tram No. 12 towards Komárov. Get off at the Skácelova stop  (the first stop from Červinkova, the third one from Technologický park). Take a bus No. 30, 84, or 53 from the bus stop at the corner diagonally opposite the tram stop you exited at. From the bus, get off at the Semilasso stop.</p>
+        <h3>Travelling From Venue to the Red Hat office</h3>
+        <p>From the Semilasso bus stop take a bus No. 30 or 44. Get off at the Skácelova stop. When you exit the bus, if you face in the direction the bus was traveling, the tram stop is across the street to your right.Take a tram No. 12 towards Technologický park and get off at Červinkova (the first stop, for FBC I and FBC  II buildings) or Technologický park (the third stop, for the TPB building).</p>
+        <p><a href="https://www.google.com/maps/d/viewer?mid=1QN629C4JEqr86OsxWTpeKqGwyfs&hl=cs&usp=sharing"><img title="Red Hat Brno office" src="mapredhatoffices"></a>
+        <br>1) Red Hat office, buildings FBC I and FBC II
+        <br>2) Červinkova tram stop - tram 12 from the main train station
+        <br>3) Skácelova tram stop
+        <br>4) Skácelova bus stop - buses 30 and 84 to the DevConf venue (Semilasso bus stop)</p>
+        <h3>Travelling From the Main Train Station to the Hotels</h3>
+            <strong>Hotel Avanti:</strong> From the main train station take a tram No.1 (towards Řečkovice). Get off at the Hrnčířská stop (after approx. 10 minutes). See <a href="https://www.google.com/maps/dir/Hrn%C4%8D%C3%AD%C5%99sk%C3%A1,+Brno-Brno-Kr%C3%A1lovo+Pole,+Czechia/AVANTI+Hotel,+St%C5%99edn%C3%AD,+Brno,+Czechia/@49.2114342,16.6032728,18z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x4712946bd3c6ce05:0x160f581cd99d0f9e!2m2!1d16.602868!2d49.210254!1m5!1m1!1s0x4712946c04add2a9:0x1a30609e66c46b15!2m2!1d16.6047246!2d49.2125214!3e2?hl=en">map to the hotel</a>.<br><br>
+            <strong>Hotel Vista:</strong> From the main train station take a tram No.1 (towards Řečkovice). Get off at the Hudcova stop (after approx. 20 minutes).  See <a href="https://www.google.com/maps/dir/Hudcova,+Brno-Brno-%C5%98e%C4%8Dkovice+a+Mokr%C3%A1+Hora,+Czechia/Hotel+Vista+****,+Hudcova,+Brno,+Czechia/@49.236006,16.5835971,18z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x471293fea45f933f:0x9772229d83a4b75a!2m2!1d16.587471!2d49.235202!1m5!1m1!1s0x471293fe03fefe3d:0x4cae4e8871f0d7d5!2m2!1d16.581854!2d49.2362072!3e2?hl=en">map to the hotel</a>.<br><br>
+            <strong>Hotel Continental:</strong> From the main train station take tram No.1 (towards Řečkovice). Get off at the stop Moravské náměstí (after apx 5 minutes).  See <a href="https://www.google.com/maps/dir/49.1999344,16.6080244/Hotel+Continental,+Kounicova,+Brno-st%C5%99ed,+%C4%8Cesko/@49.1998305,16.6050295,18z/data=!3m1!4b1!4m9!4m8!1m0!1m5!1m1!1s0x47129444ca775b5d:0x50b53f0646c60d75!2m2!1d16.6046683!2d49.2005632!3e2?hl=en">map to the hotel</a>.<br><br>
+        <h3>Travelling From the Hotels to the Venue</h3>
+            <strong>Hotel Avanti: </strong>The nearest tram stop is Hrnčířská. Take a tram No. 1 (towards Řečkovice) or a tram No. 6 (towards Královo Pole nádraží) and get off at the Semilasso stop (approx. 5 minutes).<br><br>
+            <strong>Hotel Vista:</strong> The nearest tram stop is Hudcova. Take a tram No. 1 towards Ečerova and get off at the Semilasso stop (the second stop).<br><br>
+            <strong>Hotel Continental: </strong>The nearest tram stop is Moravské náměstí. Take a tram No. 1 (towards Řečkovice) or a tram No. 6 (towards Královo Pole nádraží) and get off at the Semilasso stop (approx. 10 minutes).<br><br>]]>"</string>
+
+    <!-- About and Social Event data source -->
+    <string name="aboutData" formatted="false">"<![CDATA[<p>With this app you have an access to actual information about the conference <strong>schedule, venue, floor plan, social event and speakers</strong>.</p><p>You will even be able to receive <strong>notifications</strong> with actual information from DevConf!</p><p>Register here: <a href="http://bit.ly/devconf-cz-2017-registration">http://bit.ly/devconf-cz-2017-registration</a>.</p><p>Don\'t forget to <strong>sign in</strong> to be able to vote and leave feedback for each talk.</p><p><i>For the proper functionality <strong>the internet connection is required</strong></i>.</p><p>In case of any troubles with this mobile application, contact its author via email (<a href="mailto:jridky@redhat.com">jridky@redhat.com</a>).</p>]]>"</string>
+    <string name="socialData" formatted="false">"<![CDATA[<p>Where: club <strong>Fléda</strong> (<a href="http://www.fleda.cz">www.fleda.cz</a>)<br><br>When: <strong>Saturday, January 28</strong> starting at <strong>7:30 p.m.</strong><br><br>Capacity: <strong>700 people (TICKET REQUIRED - see below for more details)</strong><br><br>What: Food, drinks and socializing. Come on time, or you might miss it!<br><br>Map: follow <a href="https://goo.gl/maps/VSUVwKgtPXL2"> map link</a>.
+                                                         <h3>How to get tickets</h3>Most tickets will be handed out on a 'first-come, first-served' basis, starting on Friday morning<br><br>Some tickets will be held in reserve and distributed on Saturday morning for those who attend the event starting Saturday morning<br><br>Some tickets will also be held in reserve and distributed by Red Hat HR at the Red Hat HR stand / booth.</p> ]]>"</string>
 </resources>

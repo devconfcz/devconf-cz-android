@@ -19,8 +19,6 @@ import butterknife.ButterKnife;
  * Created by jridky on 3.1.17.
  */
 public class RoomTalkFragment extends Fragment {
-    @BindView(R.id.enter_info)
-    TextView signUpText;
     @BindView(R.id.loading_label)
     TextView loadingLabel;
     @BindView(R.id.loading_bar)
@@ -30,6 +28,7 @@ public class RoomTalkFragment extends Fragment {
     static RecyclerView recycler;
     TalkRecycleViewAdapter mAdapter;
     int page, day;
+    boolean favorites;
 
     @Nullable
     @Override
@@ -39,12 +38,12 @@ public class RoomTalkFragment extends Fragment {
         ButterKnife.bind(view);
         page = getArguments().getInt("index",0);
         day = getArguments().getInt("day",1);
+        favorites = getArguments().getBoolean("favorites",false);
         recycler = (RecyclerView) view.findViewById(R.id.recycler_view);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new TalkRecycleViewAdapter(day, page);
-        mAdapter.notifyDataSetChanged();
+        mAdapter = new TalkRecycleViewAdapter(day, page, favorites);
         recycler.setAdapter(mAdapter);
         return view;
     }

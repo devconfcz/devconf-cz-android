@@ -20,6 +20,7 @@
         </activity>
         <activity android:name="cz.devconf2017.SpeakerDetail"></activity>
         <activity android:name="cz.devconf2017.TalkDetail"></activity>
+        <activity android:name="cz.devconf2017.VotingDetail"></activity>
         <service
             android:name="cz.devconf2017.LocalFirebaseNotificationService">
             <intent-filter>

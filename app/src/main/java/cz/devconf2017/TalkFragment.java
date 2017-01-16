@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import butterknife.ButterKnife;
 
 public class TalkFragment extends Fragment {
@@ -27,10 +30,11 @@ public class TalkFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_talks, container, false);
 
         ButterKnife.bind(view);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM d", Locale.US);
 
         int day = getArguments().getInt("day",1);
         title = (TextView) view.findViewById(R.id.title);
-        title.setText("Day " + day);
+        title.setText("Day " + day + ", " + sdf.format(MainActivity.TALKS.getDay(day)));
         viewPager = (ViewPager) view.findViewById(R.id.view_pager);
         pAdapter = new TalkPagerAdapter(getFragmentManager(), day);
         tabs = (TabLayout) view.findViewById(R.id.tabs);
