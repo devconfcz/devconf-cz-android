@@ -10,6 +10,7 @@
                 android:background="@color/primary_light"
                 android:textColor="@color/primary_text"
                 android:textSize="25sp"
+                android:id="@+id/title"
                 android:padding="5dp"
                 android:text="@string/home_title"
                 android:textAlignment="center" />

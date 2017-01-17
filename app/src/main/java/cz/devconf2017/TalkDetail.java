@@ -115,7 +115,6 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                         if(f.user.equalsIgnoreCase(user.getEmail())) {
                             feedbackText.setText(f.feedback);
                             rating.setRating(Float.valueOf(f.rating));
-                            submit.setText(R.string.updateFeedback);
                         }
                     }
                 }
@@ -191,8 +190,6 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                 item.setIcon(R.drawable.ic_favorite);
                 MainActivity.FAVORITES.add(id);
             }
-            MainActivity.FAVORITES.save();
-
         }
 
         return super.onOptionsItemSelected(item);

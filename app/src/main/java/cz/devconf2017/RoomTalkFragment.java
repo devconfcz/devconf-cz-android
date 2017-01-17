@@ -28,7 +28,6 @@ public class RoomTalkFragment extends Fragment {
     static RecyclerView recycler;
     TalkRecycleViewAdapter mAdapter;
     int page, day;
-    boolean favorites;
 
     @Nullable
     @Override
@@ -38,12 +37,11 @@ public class RoomTalkFragment extends Fragment {
         ButterKnife.bind(view);
         page = getArguments().getInt("index",0);
         day = getArguments().getInt("day",1);
-        favorites = getArguments().getBoolean("favorites",false);
         recycler = (RecyclerView) view.findViewById(R.id.recycler_view);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new TalkRecycleViewAdapter(day, page, favorites);
+        mAdapter = new TalkRecycleViewAdapter(day, page);
         recycler.setAdapter(mAdapter);
         return view;
     }

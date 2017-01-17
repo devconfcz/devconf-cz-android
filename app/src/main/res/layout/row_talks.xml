@@ -18,22 +18,24 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/start"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|center_horizontal"
                 android:clickable="false"
                 android:textSize="30sp"
                 android:textColor="@color/primary_text_dark"
                 android:background="@color/transparent"
-                android:fontFamily="sans-serif" />
+                android:fontFamily="sans-serif"
+                android:paddingLeft="5dp" />
 
             <TextView
                 android:id="@+id/start2"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
                 android:clickable="false"
@@ -41,19 +43,21 @@
                 android:visibility="gone"
                 android:textColor="@color/primary_text_dark"
                 android:background="@color/transparent"
-                android:fontFamily="sans-serif" />
+                android:fontFamily="sans-serif"
+                android:paddingLeft="5dp" />
 
             <TextView
                 android:id="@+id/running"
                 android:layout_width="80dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
                 android:clickable="false"
                 android:textSize="12sp"
                 android:text="@string/running"
                 android:textColor="@color/primary_text_dark"
                 android:background="@color/transparent"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:paddingLeft="5dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -110,6 +114,8 @@
                 android:layout_marginStart="26dp">
                 <ImageView
                     android:layout_width="10dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="3dp"
                     android:layout_height="match_parent"
                     android:src="@drawable/tracker"/>
                 <TextView
@@ -144,11 +150,35 @@
                     android:textColor="@color/primary_text_dark"
                     android:background="@color/transparent"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="26dp"
+                android:layout_marginStart="26dp">
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_event"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/thumbnail_image"
+                    android:layout_toEndOf="@+id/thumbnail_image"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
+                    android:id="@+id/day"
+                    android:textColor="@color/primary_text_dark"
+                    android:background="@color/transparent"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
                 <ImageView
                     android:layout_width="13dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_event"
+                    android:src="@drawable/ic_place"
                     android:layout_marginLeft="5dp"
                     android:layout_marginStart="5dp"/>
 
@@ -160,7 +190,7 @@
                     android:layout_toEndOf="@+id/thumbnail_image"
                     android:layout_marginLeft="2dp"
                     android:layout_marginStart="2dp"
-                    android:id="@+id/day"
+                    android:id="@+id/room"
                     android:textColor="@color/primary_text_dark"
                     android:background="@color/transparent"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption" />

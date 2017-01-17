@@ -571,6 +571,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public static class FAVORITES {
         private static List<Talk> favorites = new ArrayList<Talk>();
+        public static HomeRecycleViewAdapter adapter;
 
         public static void checkLoad() {
             if (favorites == null || favorites.size() < 1) {
@@ -594,12 +595,16 @@ public class MainActivity extends AppCompatActivity {
                         if (favorites.size() > 0) {
                             favorites.clear();
                         }
+
                         for (DataSnapshot f : dataSnapshot.getChildren()) {
                             String id = f.getValue(String.class);
                             Talk t = TALKS.findTalk(Integer.parseInt(id));
                             if(t!=null){
                                 favorites.add(t);
                             }
+                        }
+                        if(adapter != null){
+                            adapter.updateData(getTalks());
                         }
                         Log.d("LOADING", "FAVORITES are done " + favorites.size());
                     }
@@ -617,29 +622,57 @@ public class MainActivity extends AppCompatActivity {
             Talk t = TALKS.findTalk(id);
             if(t != null){
                 favorites.add(TALKS.findTalk(id));
+                Collections.sort(favorites,TALKS.orderByStart);
+                FirebaseDatabase database = new FBDB().getDatabase();
+                DatabaseReference myRef = database.getReference("favorites");
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                // Read from the database
+
+                if (user != null) {
+                    for(int i = 0; i< favorites.size(); i++) {
+                        myRef.child(user.getUid()).child(String.valueOf(i)).setValue(favorites.get(i).id);
+                    }
+                }
             }
         }
 
         public static void remove(int id){
-            for(Talk t: favorites){
-                if(t.getId() == id){
-                    favorites.remove(t);
+            Collections.sort(favorites,TALKS.orderByStart);
+            FirebaseDatabase database = new FBDB().getDatabase();
+            DatabaseReference myRef = database.getReference("favorites");
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            for(int i = 0; i < favorites.size(); i++){
+                if(favorites.get(i).getId() == id) {
+                    favorites.remove(i);
+                    /* need to refresh all favorites keys, because I cannot have sparse array of favorites talk in array list
+                       e.g after removing second element from array with size 5 will caused, that I won't be able to remove
+                       element with key 5 from firebase, untill my favorite list become larger than 5 elements
+
+                       [ 0: talk1, 1: talk2, 2: talk3, 3:talk4, 4: talk5 ]
+
+                       now i would like to remove talk2 from firebase. My local representation of favorites list become to this state
+
+                       [ 0: talk1, 1: talk3, 2:talk4, 2: talk5 ]
+
+                       but firebase will be in this state
+
+                       [ 0: talk1, 2: talk3, 3:talk4, 4: talk5 ]
+
+                       so now, I am not able to remove talk5 from firebase, because i do not know its id. my local favorites representation has maximal id = 3
+                       That's reason, why I have here following row.
+
+                       Other option could be to use SparseArray, but that it will probably brings another problem with indexes.
+                       Let me know, if you have some idea, how to solve it.*/
+
+                    myRef.child(user.getUid()).setValue(getTalkIds());
                     return;
                 }
             }
         }
 
-        public static List<Talk> getTalks(int roomId){
-            String room = ROOMDB.getRoomName(roomId);
-            List<Talk> result = new ArrayList<Talk>();
-
+        public static List<Talk> getTalks(){
             Collections.sort(favorites, TALKS.orderByStart);
-                    for (Talk t: favorites) {
-                        if(t.getRoom().equalsIgnoreCase(room)){
-                            result.add(t);
-                        }
-                    }
-            return result;
+            return favorites;
         }
 
         public static boolean isFavorite(int id){
@@ -650,17 +683,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return false;
-        }
-
-        public static void save(){
-            FirebaseDatabase database = new FBDB().getDatabase();
-            DatabaseReference myRef = database.getReference("favorites");
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            // Read from the database
-
-            if (user != null) {
-                myRef.child(user.getUid()).setValue(getTalkIds());
-            }
         }
 
         public static List<String> getTalkIds(){

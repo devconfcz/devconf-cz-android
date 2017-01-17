@@ -93,7 +93,6 @@ public class VotingDetail extends AppCompatActivity{
 
             @Override
             public int getItemCount() {
-                Log.d("ITEMCOUNT", ""+list.size());
                 return list.size();
             }
 
@@ -118,7 +117,6 @@ public class VotingDetail extends AppCompatActivity{
                     Feedback f = vote.getValue(Feedback.class);
                     list.add(f);
                 }
-                Log.d("FEEDBACK", "" + list.size());
                 setLoadingBox();
                 mAdapter.notifyDataSetChanged();
 

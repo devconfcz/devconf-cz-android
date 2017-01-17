@@ -1,5 +1,6 @@
 package cz.devconf2017;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import java.util.List;
 public class HomeRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder> {
 
     private List<Talk> itemList;
+    public FavoritesFragment fragment;
 
 
     public HomeRecycleViewAdapter() {
@@ -32,6 +34,13 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder>
     public void updateData(List<Talk> newlist) {
         itemList.clear();
         itemList.addAll(newlist);
+        if(fragment != null){
+            if(itemList.size() < 1) {
+                fragment.noFavorites();
+            }else{
+                fragment.setLoadingBox();
+            }
+        }
         this.notifyDataSetChanged();
     }
 

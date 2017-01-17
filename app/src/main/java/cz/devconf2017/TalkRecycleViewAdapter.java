@@ -11,17 +11,11 @@ public class TalkRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder>
 
     private int day, room;
     private List<Talk> itemList;
-    private boolean favorites;
 
-    public TalkRecycleViewAdapter(int day, int room, boolean favorites) {
+    public TalkRecycleViewAdapter(int day, int room) {
         this.day = day;
         this.room = room;
-        this.favorites = favorites;
-        if(favorites) {
-            this.itemList = MainActivity.FAVORITES.getTalks(room);
-        }else{
-            this.itemList = MainActivity.TALKS.getTalks(day, room);
-        }
+        this.itemList = MainActivity.TALKS.getTalks(day, room);
     }
 
     @Override
@@ -40,7 +34,7 @@ public class TalkRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder>
     @Override
     public void onBindViewHolder(TalkViewHolder holder, int position) {
         if(itemList.size() < 1){
-            holder.setTitle("No sessions are planned here on this day.");
+            holder.setTitle("No sessions are planned here today.");
         }else{
             holder.setTalk(itemList.get(position));
         }
@@ -49,11 +43,7 @@ public class TalkRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder>
     @Override
     public int getItemCount() {
         if(this.itemList.size() < 1){
-            if(favorites){
-                this.itemList = MainActivity.FAVORITES.getTalks(room);
-            }else {
-                this.itemList = MainActivity.TALKS.getTalks(day, room);
-            }
+            this.itemList = MainActivity.TALKS.getTalks(day, room);
         }
         return (this.itemList.size() == 0? 1 : this.itemList.size());
     }

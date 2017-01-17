@@ -19,7 +19,6 @@ public class Favorites {
 
         DatabaseReference dr = MainActivity.FBDB.getDatabase().getReference();
         dr.child("favorites").child(user).setValue(this);
-        //dr.child("votes").child(String.valueOf(talk)).child(user).removeValue();
     }
 
 
