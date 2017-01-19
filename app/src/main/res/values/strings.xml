@@ -29,7 +29,9 @@
     <!-- Talk detail -->
     <string name="sendFeedback">Save feedback</string>
     <string name="feedbackSent">Your feedback has been successfully posted.</string>
+    <string name="feedbackReset">Your feedback has been successfully removed.</string>
     <string name="leaveFeedback">Leave your feedback ...</string>
+    <string name="resetFeedback">Remove feedback</string>
 
     <!-- Venue data source -->
 <string name="venueData" formatted="false">"<![CDATA[

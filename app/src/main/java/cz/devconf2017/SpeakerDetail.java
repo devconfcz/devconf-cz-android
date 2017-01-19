@@ -10,6 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,8 +35,10 @@ public class SpeakerDetail extends AppCompatActivity {
     TextView vBio;
     @BindView(R.id.twitter)
     TextView vTwitter;
+    @BindView(R.id.talks)
+    TextView vTalks;
 
-    String name, avatar, bio, country, twitter, org;
+    String name, avatar, bio, country, twitter, org, id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +57,13 @@ public class SpeakerDetail extends AppCompatActivity {
         country = getIntent().getStringExtra("country");
         twitter = getIntent().getStringExtra("twitter");
         org = getIntent().getStringExtra("organization");
+        id = getIntent().getStringExtra("id");
 
-        Glide.with(this).load(avatar).fitCenter().placeholder(R.drawable.default_avatar).into(vAvatar);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference sr = storage.getReferenceFromUrl("gs://" + FirebaseApp.getInstance().getOptions().getStorageBucket());
+        Glide.with(this).using(new FirebaseImageLoader()).load(sr.child("speakers/" + avatar.toLowerCase() + ".jpg"))
+                .fitCenter().placeholder(R.drawable.default_avatar)
+                .into(vAvatar);
 
         vName.setText(name + " " + " (" + country + ", " + org + ")");
         vBio.setText(bio);
@@ -61,6 +72,8 @@ public class SpeakerDetail extends AppCompatActivity {
             vTwitter.setText(Html.fromHtml("Twitter: <a href='https://twitter.com/" + twitter + "'>@" + twitter + "</a>"));
             vTwitter.setMovementMethod(LinkMovementMethod.getInstance());
         }
+
+        vTalks.setText("Talks: " + MainActivity.TALKS.getSpeakerTalks(id));
     }
 
     @Override

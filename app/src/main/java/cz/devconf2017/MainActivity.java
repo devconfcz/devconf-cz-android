@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
@@ -50,6 +49,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static io.fabric.sdk.android.Fabric.TAG;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     static int RC_SIGN_IN = 16;
     enum LastFragment {HOME,DAY1, DAY2, DAY3 ,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,ABOUT,VOTING,FAVORITES};
     static LastFragment lastFragment = LastFragment.HOME;
+    static boolean notificationPosted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +105,11 @@ public class MainActivity extends AppCompatActivity {
                 boolean connected = snapshot.getValue(Boolean.class);
                 if (connected) {
                     Log.d("CONNECTION","connected");
+                    notificationPosted = false;
                 } else {
                     Log.d("CONNECTION","not connected");
-                    if(!isNetworkAvailable()) {
+                    if(!isNetworkAvailable() && !notificationPosted) {
+                        notificationPosted = true;
                         PendingIntent notifIntent = PendingIntent.getActivity(getBaseContext(), 0, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
                         NotificationCompat.Builder notification = new NotificationCompat.Builder(getBaseContext())
                                 .setSmallIcon(R.drawable.logonotify)
@@ -621,17 +624,13 @@ public class MainActivity extends AppCompatActivity {
         public static void add(int id){
             Talk t = TALKS.findTalk(id);
             if(t != null){
-                favorites.add(TALKS.findTalk(id));
-                Collections.sort(favorites,TALKS.orderByStart);
                 FirebaseDatabase database = new FBDB().getDatabase();
                 DatabaseReference myRef = database.getReference("favorites");
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 // Read from the database
-
                 if (user != null) {
-                    for(int i = 0; i< favorites.size(); i++) {
-                        myRef.child(user.getUid()).child(String.valueOf(i)).setValue(favorites.get(i).id);
-                    }
+                    myRef.child(user.getUid()).child(String.valueOf(id)).setValue(String.valueOf(id));
+
                 }
             }
         }
@@ -641,32 +640,8 @@ public class MainActivity extends AppCompatActivity {
             FirebaseDatabase database = new FBDB().getDatabase();
             DatabaseReference myRef = database.getReference("favorites");
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            for(int i = 0; i < favorites.size(); i++){
-                if(favorites.get(i).getId() == id) {
-                    favorites.remove(i);
-                    /* need to refresh all favorites keys, because I cannot have sparse array of favorites talk in array list
-                       e.g after removing second element from array with size 5 will caused, that I won't be able to remove
-                       element with key 5 from firebase, untill my favorite list become larger than 5 elements
-
-                       [ 0: talk1, 1: talk2, 2: talk3, 3:talk4, 4: talk5 ]
-
-                       now i would like to remove talk2 from firebase. My local representation of favorites list become to this state
-
-                       [ 0: talk1, 1: talk3, 2:talk4, 2: talk5 ]
-
-                       but firebase will be in this state
-
-                       [ 0: talk1, 2: talk3, 3:talk4, 4: talk5 ]
-
-                       so now, I am not able to remove talk5 from firebase, because i do not know its id. my local favorites representation has maximal id = 3
-                       That's reason, why I have here following row.
-
-                       Other option could be to use SparseArray, but that it will probably brings another problem with indexes.
-                       Let me know, if you have some idea, how to solve it.*/
-
-                    myRef.child(user.getUid()).setValue(getTalkIds());
-                    return;
-                }
+            if(user != null) {
+                myRef.child(user.getUid()).child(String.valueOf(id)).removeValue();
             }
         }
 
@@ -804,8 +779,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                     for(DataSnapshot t: dataSnapshot.getChildren()) {
                         Talk talk = t.getValue(Talk.class);
-
-                        talk.setSufficientDataTypes();
+                        if(talk.id == null || talk.day.equalsIgnoreCase("")){
+                            Log.d("SKIPPED", talk.getTitle());
+                            continue;
+                        }else {
+                            talk.setSufficientDataTypes();
+                        }
 
                         switch (talk.getDay()){
                             case 1:  talksD1.add(talk);
@@ -1153,6 +1132,42 @@ public class MainActivity extends AppCompatActivity {
                 default: talksD3.add(t);
                          break;
             }
+        }
+
+        public static String getSpeakerTalks(String speaker){
+
+            List<Talk> result = new ArrayList<Talk>();
+
+            for(Talk t: talksD1){
+                if(t.isMySpeaker(speaker)){
+                    result.add(t);
+                }
+            }
+
+            for(Talk t: talksD2){
+                if(t.isMySpeaker(speaker)){
+                    result.add(t);
+                }
+            }
+
+            for(Talk t: talksD3){
+                if(t.isMySpeaker(speaker)){
+                    result.add(t);
+                }
+            }
+
+            Collections.sort(result,TALKS.orderByStart);
+
+            String ret = "";
+            for(Talk t: result){
+                if(ret.equals("")){
+                  ret = ret.concat("Day " + t.getDay() + " at " + t.getFormatedStart() + " in " + t.getRoom().toUpperCase());
+                }else {
+                  ret = ret.concat(", Day " + t.getDay() + " at " + t.getFormatedStart() + " in " + t.getRoom().toUpperCase());
+                }
+            }
+
+            return ret;
         }
 
         public static Comparator<Talk> orderByRoom = new Comparator<Talk>() {

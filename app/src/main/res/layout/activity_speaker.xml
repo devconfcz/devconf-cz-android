@@ -53,6 +53,20 @@
             android:paddingRight="10dp"
             android:paddingLeft="20dp"
             android:paddingTop="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:id="@+id/talks"
+            android:textColor="@color/primary_text"
+            android:background="@color/transparent"
+            android:textAppearance="@style/TextAppearance.AppCompat" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

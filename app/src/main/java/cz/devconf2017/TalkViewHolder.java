@@ -106,22 +106,6 @@ public class TalkViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     }
 
-    public TalkViewHolder(View itemView) {
-        super(itemView);
-
-        //implementing onClickListener
-        itemView.setOnClickListener(this);
-        context = itemView.getContext();
-        start = (TextView) itemView.findViewById(R.id.start);
-        title = (TextView) itemView.findViewById(R.id.title);
-        speaker = (TextView) itemView.findViewById(R.id.speaker);
-        track = (TextView) itemView.findViewById(R.id.track);
-        duration = (TextView) itemView.findViewById(R.id.duration);
-        background = (LinearLayout) itemView.findViewById(R.id.background);
-
-
-    }
-
     @Override
     public void onClick(View view) {
         Intent sInfo = new Intent(view.getContext(), TalkDetail.class);

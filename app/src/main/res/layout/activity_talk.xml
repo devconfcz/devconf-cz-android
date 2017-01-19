@@ -237,24 +237,48 @@
                     android:scrollbarAlwaysDrawVerticalTrack="false"
                     android:scrollbars="vertical"
                     android:scrollY="2dp" />
-
-                <Button
-                    android:text="@string/sendFeedback"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/sendFeedback"
-                    android:focusableInTouchMode="false"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
-                    android:background="@color/whitesmoke"
-                    android:textColor="@color/icons"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:enabled="true" />
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal"
+                       android:visibility="visible"
+                       android:gravity="center_vertical|center_horizontal"
+                       android:layout_marginBottom="10dp"
+                       android:layout_marginTop="10dp">
+                        <Button
+                            android:text="@string/sendFeedback"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/sendFeedback"
+                            android:focusableInTouchMode="false"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="10dp"
+                            android:paddingTop="20dp"
+                            android:paddingBottom="20dp"
+                            android:background="@color/whitesmoke"
+                            android:textColor="@color/icons"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:enabled="true" />
+                       <Button
+                           android:text="@string/resetFeedback"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:id="@+id/resetFeedback"
+                           android:focusableInTouchMode="false"
+                           android:layout_gravity="center_horizontal"
+                           android:paddingTop="20dp"
+                           android:paddingBottom="20dp"
+                           android:background="@color/whitesmoke"
+                           android:textColor="@color/icons"
+                           android:paddingLeft="10dp"
+                           android:paddingRight="10dp"
+                           android:visibility="gone"
+                           android:enabled="true"
+                           android:layout_marginLeft="10dp" />
                    </LinearLayout>
+               </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

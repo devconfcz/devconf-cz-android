@@ -1,14 +1,9 @@
 package cz.devconf2017;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 /**
  * Created by jridky on 9.12.16.
@@ -16,7 +11,7 @@ import com.bumptech.glide.Glide;
 
 public class VotingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    public TextView number, title, speaker;
+    public TextView number, title, speaker, statistic;
     private int talk;
 
     public VotingViewHolder(View itemView) {
@@ -25,13 +20,15 @@ public class VotingViewHolder extends RecyclerView.ViewHolder implements View.On
         number = (TextView) itemView.findViewById(R.id.number);
         title = (TextView) itemView.findViewById(R.id.title);
         speaker = (TextView) itemView.findViewById(R.id.speaker);
+        statistic = (TextView) itemView.findViewById(R.id.statistic);
     }
 
     public void setVote(Voting v){
-        number.setText(v.getVotes());
+        number.setText(v.getScore());
         title.setText(v.getTitle());
         speaker.setText(v.getSpeaker());
         talk = v.talk.getId();
+        statistic.setText(v.getStatistic());
     }
 
     @Override

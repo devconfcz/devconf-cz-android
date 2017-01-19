@@ -125,7 +125,7 @@ public class Talk {
 
         String result = "";
 
-        if(speaker.size() > 0) {
+        if(speaker != null && speaker.size() > 0) {
             result = speaker.get(0).getName();
 
             for (int i = 1; i < speaker.size(); i++) {
@@ -155,6 +155,15 @@ public class Talk {
         }
 
         return result;
+    }
+
+    public boolean isMySpeaker(String s){
+        for(Speaker sp: speaker){
+            if(sp.getId().equalsIgnoreCase(s)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getDescription() {

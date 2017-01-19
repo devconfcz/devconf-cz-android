@@ -8,6 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * Created by jridky on 9.12.16.
@@ -25,7 +29,9 @@ public class SpeakerViewHolder extends RecyclerView.ViewHolder implements View.O
     }
 
     public void setAvatar() {
-        Glide.with(this.context).load(this.speaker.getAvatar())
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference sr = storage.getReferenceFromUrl("gs://" + FirebaseApp.getInstance().getOptions().getStorageBucket());
+        Glide.with(this.context).using(new FirebaseImageLoader()).load(sr.child("speakers/" + speaker.getEmail().toLowerCase() + ".jpg"))
                 .transform(new GlideCircleTransform(this.context)).placeholder(R.drawable.default_avatar)
                 .into(this.avatar);
     }
@@ -50,9 +56,10 @@ public class SpeakerViewHolder extends RecyclerView.ViewHolder implements View.O
     @Override
     public void onClick(View view) {
         Intent sInfo = new Intent(view.getContext(), SpeakerDetail.class);
+        sInfo.putExtra("id", speaker.getId());
         sInfo.putExtra("name", speaker.getName());
         sInfo.putExtra("bio", speaker.getBio());
-        sInfo.putExtra("avatar", speaker.getAvatar());
+        sInfo.putExtra("avatar", speaker.getEmail());
         sInfo.putExtra("country", speaker.getCountry());
         sInfo.putExtra("twitter", speaker.getTwitter());
         sInfo.putExtra("organization", speaker.getOrganization());

@@ -1,9 +1,6 @@
 package cz.devconf2017;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,25 +8,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,7 +92,7 @@ public class VotingDetail extends AppCompatActivity{
         recycler.setAdapter(mAdapter);
 
 
-        myRef.child(String.valueOf(id)).addValueEventListener(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -113,10 +100,19 @@ public class VotingDetail extends AppCompatActivity{
                 if(list.size() > 0){
                     list.clear();
                 }
+
                 for(DataSnapshot vote: dataSnapshot.getChildren()) {
-                    Feedback f = vote.getValue(Feedback.class);
-                    list.add(f);
+                    Iterator talk = vote.getChildren().iterator();
+                    while (talk.hasNext()) {
+                        DataSnapshot ds = (DataSnapshot) talk.next();
+                        int talkId = Integer.parseInt(ds.getKey());
+                        if (id == talkId){
+                            Feedback f = ds.getValue(Feedback.class);
+                            list.add(f);
+                        }
+                    }
                 }
+
                 setLoadingBox();
                 mAdapter.notifyDataSetChanged();
 

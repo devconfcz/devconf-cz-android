@@ -1,13 +1,10 @@
 package cz.devconf2017;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +44,7 @@ public class VotingFragment extends Fragment {
     static RecyclerView recycler;
     FirebaseRecyclerAdapter mAdapter;
 
-    List<Voting> list;
+    static List<Voting> list;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,6 +67,16 @@ public class VotingFragment extends Fragment {
                     votingHolder.setVote(list.get(position));
                 }
             }
+
+            @Override
+            public int getItemCount() {
+                return list.size();
+            }
+
+            @Override
+            public Voting getItem(int position){
+                return list.get(position);
+            }
         };
 
         recycler.setAdapter(mAdapter);
@@ -83,18 +90,25 @@ public class VotingFragment extends Fragment {
                 if(list.size() > 0){
                     list.clear();
                 }
-                for(DataSnapshot vote: dataSnapshot.getChildren()) {
-                    String name = vote.getKey();
-                    Voting v = new Voting(Integer.parseInt(name));
-                    Iterator usr = vote.getChildren().iterator();
-                    while(usr.hasNext()) {
-                            Feedback fb = ((DataSnapshot) usr.next()).getValue(Feedback.class);
-                            v.add(Integer.parseInt(fb.rating));
 
+                for(DataSnapshot vote: dataSnapshot.getChildren()) {
+                    Iterator talk = vote.getChildren().iterator();
+                    while (talk.hasNext()) {
+                        DataSnapshot ds = (DataSnapshot) talk.next();
+                        int talkId = Integer.parseInt(ds.getKey());
+                        int index = getVote(talkId);
+                        Feedback fb = ds.getValue(Feedback.class);
+                        if(index < 0) {
+                            Voting voting = new Voting(talkId);
+                            voting.add(Integer.parseInt(fb.rating));
+                            list.add(voting);
+                        }else{
+                            list.get(index).add(Integer.parseInt(fb.rating));
+                        }
                     }
-                    list.add(v);
                 }
-                Collections.sort(list, sortByVotes);
+
+                countVotes();
                 setLoadingBox();
                 mAdapter.notifyDataSetChanged();
 
@@ -111,15 +125,60 @@ public class VotingFragment extends Fragment {
         return view;
     }
 
+    public int getVote(int talkId){
+        for(int i = 0; i < list.size(); i++){
+            if(list.get(i).talk.getId() == talkId){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void countVotes(){
+        Collections.sort(list, sortByVotes);
+        for(int i = 0; i < list.size(); i++){
+            list.get(i).addScore(i+1);
+        }
+
+        Collections.sort(list, sortByAvg);
+        for(int i = 0; i < list.size(); i++){
+            list.get(i).addScore(i+1);
+        }
+
+        Collections.sort(list, sortByScore);
+        
+    }
+
     public static Comparator<Voting> sortByVotes = new Comparator<Voting>() {
         @Override
         public int compare(Voting talk, Voting t1) {
-            int vote = talk.votes;
-            int vote2 = t1.votes;
+            int vote = talk.numVotes;
+            int vote2 = t1.numVotes;
             int dateComparision = vote2 - vote;
-            return dateComparision == 0? talk.talk.getTitle().compareTo(t1.talk.getTitle()) : dateComparision;
+            return dateComparision;
         }
     };
+
+    public static Comparator<Voting> sortByAvg = new Comparator<Voting>() {
+        @Override
+        public int compare(Voting talk, Voting t1) {
+            float vote = talk.getAvgVotes();
+            float vote2 = t1.getAvgVotes();
+            int dateComparision = (int)(vote - vote2);
+            return dateComparision;
+        }
+    };
+
+    public static Comparator<Voting> sortByScore = new Comparator<Voting>() {
+        @Override
+        public int compare(Voting talk, Voting t1) {
+            int vote = talk.score;
+            int vote2 = t1.score;
+            int dateComparision = vote2 - vote;
+            return dateComparision == 0? t1.votes - talk.votes : dateComparision;
+        }
+    };
+
     public void setLoadingBox(){
         loading.setVisibility(View.GONE);
         recycler.setVisibility(View.VISIBLE);

@@ -1,13 +1,11 @@
 package cz.devconf2017;
 
-import android.util.Log;
-
 /**
  * Created by jridky on 11.1.17.
  */
 public class Voting {
 
-    public int votes;
+    public int votes, numVotes, score;
     public Talk talk;
 
     public Voting(){
@@ -17,14 +15,25 @@ public class Voting {
     public Voting(int talk){
         this.talk = MainActivity.TALKS.findTalk(talk);
         this.votes = 0;
+        this.numVotes = 0;
+        this.score = 0;
     }
 
     public void add(int count){
         votes = votes + count;
+        numVotes++;
     }
 
-    public String getVotes(){
-        return String.valueOf(votes);
+    public void addScore(int s){
+        score = score + s;
+    }
+
+    public String getScore(){
+        return String.valueOf(score);
+    }
+
+    public float getAvgVotes(){
+        return ((float)votes)/((float) numVotes);
     }
 
     public String getTitle(){
@@ -33,5 +42,9 @@ public class Voting {
 
     public String getSpeaker(){
         return talk.getSpeakerInfo();
+    }
+
+    public String getStatistic(){
+        return "Total rating: " + votes + "\nNo. Votes: " + numVotes + ", Avg. Score: " + getAvgVotes();
     }
 }

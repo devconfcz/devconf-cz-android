@@ -2,14 +2,12 @@ package cz.devconf2017;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +16,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -63,7 +60,8 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
     EditText feedbackText;
     @BindView(R.id.sendFeedback)
     Button submit;
-
+    @BindView(R.id.resetFeedback)
+    Button reset;
 
 
 
@@ -99,22 +97,26 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
         datetime.setText("Day " + t.getDay() + " at " + t.getFormatedStart());
         difficulty.setText(t.getDifficulty());
 
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             hideFeedback(true);
         }else{
             hideFeedback(false);
-            DatabaseReference mref = MainActivity.FBDB.getDatabase().getReference("votes").child(String.valueOf(t.getId()));
+            DatabaseReference mref = MainActivity.FBDB.getDatabase().getReference("votes").child(user.getUid());
+            reset.setVisibility(View.GONE);
             mref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
                     for(DataSnapshot vote: dataSnapshot.getChildren()) {
-                        Feedback f = vote.getValue(Feedback.class);
-                        if(f.user.equalsIgnoreCase(user.getEmail())) {
-                            feedbackText.setText(f.feedback);
-                            rating.setRating(Float.valueOf(f.rating));
+                        if(vote.getKey().equals(t.id)){
+                            Feedback f = vote.getValue(Feedback.class);
+                            if(Integer.parseInt(f.rating) > 0){
+                                reset.setVisibility(View.VISIBLE);
+                                feedbackText.setText(f.feedback);
+                                rating.setRating(Float.valueOf(f.rating));
+                            }
                         }
                     }
                 }
@@ -133,10 +135,41 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
             @Override
             public void onClick(View view) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Feedback feedback = new Feedback(rating.getRating(), feedbackText.getText().toString(), user.getEmail());
+                float rtg = rating.getRating();
+                if(rtg < 1.0f){
+                    rtg = 1.0f;
+                    rating.setRating(rtg);
+                }
+                Feedback feedback = new Feedback(rtg, feedbackText.getText().toString());
                 feedback.save(t.getId(), user.getUid());
+                reset.setVisibility(View.VISIBLE);
                 Toast.makeText(getBaseContext(),R.string.feedbackSent,Toast.LENGTH_LONG).show();
             }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference dr = MainActivity.FBDB.getDatabase().getReference();
+                rating.setRating(0.0f);
+                feedbackText.setText("");
+                reset.setVisibility(View.GONE);
+                dr.child("votes").child(user.getUid()).child(String.valueOf(t.getId())).removeValue();
+                Toast.makeText(getBaseContext(),R.string.feedbackReset,Toast.LENGTH_LONG).show();
+            }
+        });
+
+        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
+
+            @Override
+            public void onRatingChanged(RatingBar bar, float rating, boolean bool){
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Feedback feedback = new Feedback(rating, feedbackText.getText().toString());
+                feedback.save(t.getId(), user.getUid());
+            }
+
+
         });
 
 
@@ -202,9 +235,10 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
         if(s != null) {
 
             Intent sInfo = new Intent(view.getContext(), SpeakerDetail.class);
+            sInfo.putExtra("id", s.getId());
             sInfo.putExtra("name", s.getName());
             sInfo.putExtra("bio", s.getBio());
-            sInfo.putExtra("avatar", s.getAvatar());
+            sInfo.putExtra("avatar", s.getEmail());
             sInfo.putExtra("country", s.getCountry());
             sInfo.putExtra("twitter", s.getTwitter());
             sInfo.putExtra("organization", s.getOrganization());
