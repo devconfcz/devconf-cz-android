@@ -1,7 +1,5 @@
 package cz.devconf2017;
 
-import com.google.firebase.database.DatabaseReference;
-
 import java.util.List;
 
 /**
@@ -13,12 +11,4 @@ public class Favorites {
     public Favorites(){
         // for firebase purposes
     }
-
-    public void save(String user){
-
-        DatabaseReference dr = MainActivity.FBDB.getDatabase().getReference();
-        dr.child("favorites").child(user).setValue(this);
-    }
-
-
 }

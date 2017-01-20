@@ -112,11 +112,8 @@ public class VotingDetail extends AppCompatActivity{
                         }
                     }
                 }
-
                 setLoadingBox();
                 mAdapter.notifyDataSetChanged();
-
-
             }
 
             @Override

@@ -24,7 +24,7 @@
             <TextView
                 android:id="@+id/start"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
                 android:clickable="false"
                 android:textSize="30sp"
@@ -45,6 +45,18 @@
                 android:background="@color/transparent"
                 android:fontFamily="sans-serif"
                 android:paddingLeft="5dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:clickable="false"
+                android:textSize="10sp"
+                android:textColor="@color/primary_text_dark"
+                android:background="@color/transparent"
+                android:fontFamily="sans-serif"
+                android:paddingLeft="7dp"
+                android:text="@string/GMT"/>
 
             <TextView
                 android:id="@+id/running"

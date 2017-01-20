@@ -146,7 +146,7 @@ public class VotingFragment extends Fragment {
         }
 
         Collections.sort(list, sortByScore);
-        
+
     }
 
     public static Comparator<Voting> sortByVotes = new Comparator<Voting>() {
@@ -154,8 +154,8 @@ public class VotingFragment extends Fragment {
         public int compare(Voting talk, Voting t1) {
             int vote = talk.numVotes;
             int vote2 = t1.numVotes;
-            int dateComparision = vote2 - vote;
-            return dateComparision;
+            int dateComparision = vote - vote2;
+            return dateComparision == 0 ? (int)(talk.getAvgVotes() - t1.getAvgVotes()) :dateComparision;
         }
     };
 

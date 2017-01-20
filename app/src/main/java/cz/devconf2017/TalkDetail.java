@@ -67,6 +67,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
     int day, id;
     Talk t;
+    boolean resetClicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,8 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
         day = getIntent().getIntExtra("day",1);
         id = getIntent().getIntExtra("id",0);
 
+        resetClicked = false;
+
         t = MainActivity.TALKS.findTalk(day,id);
 
         if(t == null)
@@ -94,7 +97,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
         description.setText(t.getDescription());
         background.setBackgroundColor(Color.parseColor(MainActivity.TRACKS.findColor(t.getTrack())));
         speaker.setText(t.getSpeakerCompleteInfo());
-        datetime.setText("Day " + t.getDay() + " at " + t.getFormatedStart());
+        datetime.setText("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00");
         difficulty.setText(t.getDifficulty());
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -152,10 +155,12 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
             public void onClick(View view) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 DatabaseReference dr = MainActivity.FBDB.getDatabase().getReference();
+                resetClicked = true;
                 rating.setRating(0.0f);
                 feedbackText.setText("");
                 reset.setVisibility(View.GONE);
                 dr.child("votes").child(user.getUid()).child(String.valueOf(t.getId())).removeValue();
+                resetClicked = false;
                 Toast.makeText(getBaseContext(),R.string.feedbackReset,Toast.LENGTH_LONG).show();
             }
         });
@@ -165,13 +170,17 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
             @Override
             public void onRatingChanged(RatingBar bar, float rating, boolean bool){
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(rating < 1.0f){
+                    if(!resetClicked) {
+                        rating = 1.0f;
+                        bar.setRating(rating);
+                    }
+                }
                 Feedback feedback = new Feedback(rating, feedbackText.getText().toString());
+                reset.setVisibility(View.VISIBLE);
                 feedback.save(t.getId(), user.getUid());
             }
-
-
         });
-
 
 
     }

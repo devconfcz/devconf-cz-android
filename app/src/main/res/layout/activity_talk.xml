@@ -85,7 +85,9 @@
                 <ImageView
                     android:layout_width="10dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/tracker"/>
+                    android:src="@drawable/tracker"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -138,13 +140,17 @@
                     android:textColor="@color/primary_text_dark"
                     android:background="@color/transparent"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
+</LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp">
                 <ImageView
                     android:layout_width="13dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_event"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginStart="5dp"/>
+                    android:src="@drawable/ic_event"/>
 
                 <TextView
                     android:layout_width="wrap_content"

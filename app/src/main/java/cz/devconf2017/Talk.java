@@ -142,7 +142,7 @@ public class Talk {
         String result = "";
         Speaker s;
 
-        if(speaker.size() > 0) {
+        if(speaker != null && speaker.size() > 0) {
             s = speaker.get(0);
             result = s.getName() + " (" + s.getCountry() + ", " + s.getOrganization() + ")";
 
@@ -186,10 +186,6 @@ public class Talk {
 
     public String getTrack() {
         return track;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public int getId() {

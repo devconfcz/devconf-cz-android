@@ -25,6 +25,7 @@
     <string name="lastofday">LAST TALK OF THIS DAY</string>
     <string name="confend">DevConf is over. See you next year!</string>
     <string name="nofavorites">You haven\'t set any talks as your favorite ones yet.</string>
+    <string name="GMT">GMT +01:00</string>
 
     <!-- Talk detail -->
     <string name="sendFeedback">Save feedback</string>

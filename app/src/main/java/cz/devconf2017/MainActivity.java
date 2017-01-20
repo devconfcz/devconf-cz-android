@@ -630,13 +630,11 @@ public class MainActivity extends AppCompatActivity {
                 // Read from the database
                 if (user != null) {
                     myRef.child(user.getUid()).child(String.valueOf(id)).setValue(String.valueOf(id));
-
                 }
             }
         }
 
         public static void remove(int id){
-            Collections.sort(favorites,TALKS.orderByStart);
             FirebaseDatabase database = new FBDB().getDatabase();
             DatabaseReference myRef = database.getReference("favorites");
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -658,14 +656,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return false;
-        }
-
-        public static List<String> getTalkIds(){
-            ArrayList<String> result = new ArrayList<>();
-            for(Talk t: favorites){
-                result.add(t.id);
-            }
-            return result;
         }
     }
 
@@ -726,16 +716,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return color;
-        }
-
-        public static boolean findTrack(String track){
-            for (Track t: tracks) {
-                if(t.getName().equalsIgnoreCase(track)){
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 
@@ -1161,9 +1141,9 @@ public class MainActivity extends AppCompatActivity {
             String ret = "";
             for(Talk t: result){
                 if(ret.equals("")){
-                  ret = ret.concat("Day " + t.getDay() + " at " + t.getFormatedStart() + " in " + t.getRoom().toUpperCase());
+                  ret = ret.concat("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
                 }else {
-                  ret = ret.concat(", Day " + t.getDay() + " at " + t.getFormatedStart() + " in " + t.getRoom().toUpperCase());
+                  ret = ret.concat(", Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
                 }
             }
 
