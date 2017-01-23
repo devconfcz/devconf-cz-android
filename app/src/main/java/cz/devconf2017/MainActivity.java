@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -14,8 +15,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -134,6 +139,22 @@ public class MainActivity extends AppCompatActivity {
                 System.err.println("Listener was cancelled");
             }
         });
+
+        String message = getIntent().getStringExtra("message");
+
+        if(message != null && !message.equals("")){
+            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+            float dpi = getResources().getDisplayMetrics().density;
+            TextView m = new TextView(this);
+            m.setText(message);
+            m.setPadding((int)(25*dpi), (int)(19*dpi), (int)(25*dpi), (int)(14*dpi));
+            dlgAlert.setView(m);
+            dlgAlert.setPositiveButton("OK", null);
+            dlgAlert.setCancelable(true);
+            dlgAlert.create().show();
+            getIntent().putExtra("message","");
+        }
+
     }
 
     public boolean isNetworkAvailable() {

@@ -24,6 +24,7 @@ public class Splash extends AppCompatActivity {
                     e.printStackTrace();
                 }finally {
                     Intent i = new Intent(Splash.this, MainActivity.class);
+                    i.putExtra("message",getIntent().getStringExtra("message"));
                     startActivity(i);
                     finish();
                 }

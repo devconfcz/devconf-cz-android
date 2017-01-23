@@ -67,7 +67,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
     int day, id;
     Talk t;
-    boolean resetClicked;
+    boolean resetClicked, fromCreate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
         id = getIntent().getIntExtra("id",0);
 
         resetClicked = false;
+        fromCreate = true;
 
         t = MainActivity.TALKS.findTalk(day,id);
 
@@ -122,6 +123,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                             }
                         }
                     }
+                    fromCreate = false;
                 }
 
                 @Override
@@ -176,6 +178,12 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                         bar.setRating(rating);
                     }
                 }
+
+                if(!resetClicked && !fromCreate){
+                    Toast.makeText(getBaseContext(),R.string.thanks,Toast.LENGTH_LONG).show();
+                }
+
+                fromCreate = false;
                 Feedback feedback = new Feedback(rating, feedbackText.getText().toString());
                 reset.setVisibility(View.VISIBLE);
                 feedback.save(t.getId(), user.getUid());

@@ -95,15 +95,19 @@ public class VotingFragment extends Fragment {
                     Iterator talk = vote.getChildren().iterator();
                     while (talk.hasNext()) {
                         DataSnapshot ds = (DataSnapshot) talk.next();
-                        int talkId = Integer.parseInt(ds.getKey());
-                        int index = getVote(talkId);
-                        Feedback fb = ds.getValue(Feedback.class);
-                        if(index < 0) {
-                            Voting voting = new Voting(talkId);
-                            voting.add(Integer.parseInt(fb.rating));
-                            list.add(voting);
-                        }else{
-                            list.get(index).add(Integer.parseInt(fb.rating));
+                        try{
+                            int talkId = Integer.parseInt(ds.getKey());
+                            int index = getVote(talkId);
+                            Feedback fb = ds.getValue(Feedback.class);
+                            if(index < 0) {
+                                Voting voting = new Voting(talkId);
+                                voting.add(Integer.parseInt(fb.rating));
+                                list.add(voting);
+                            }else{
+                                list.get(index).add(Integer.parseInt(fb.rating));
+                            }
+                        }catch(NumberFormatException e){
+                            Log.e("NFE",e.getMessage());
                         }
                     }
                 }
