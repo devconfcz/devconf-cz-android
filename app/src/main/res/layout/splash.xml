@@ -10,18 +10,19 @@
         android:id="@+id/imageView"
         android:src="@drawable/ic_launcher"
         android:layout_width="175dp"
-        android:layout_above="@+id/progressBar"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_alignBottom="@+id/progressBar" />
+        android:layout_above="@+id/progressBar"
+        android:layout_alignParentTop="true" />
 
     <ProgressBar
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:color="@android:color/white"/>
+        android:color="@android:color/white"
+        android:layout_marginBottom="171dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

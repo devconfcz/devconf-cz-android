@@ -8,14 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-
-import uk.co.senab.photoview.PhotoView;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 /**
  * Created by jridky on 5.1.17.
  */
 public class FloorPlanFragment extends Fragment {
-        PhotoView image;
+    SubsamplingScaleImageView image;
 
         View view;
 
@@ -24,8 +24,8 @@ public class FloorPlanFragment extends Fragment {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             view = inflater.inflate(R.layout.fragment_floorplan, container, false);
 
-            image = (PhotoView) view.findViewById(R.id.image);
-            Glide.with(this).load(R.drawable.floorplan).into(image);
+            image = (SubsamplingScaleImageView) view.findViewById(R.id.image);
+            image.setImage(ImageSource.resource(R.drawable.floorplan));
 
             return view;
         }

@@ -88,8 +88,11 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
         t = MainActivity.TALKS.findTalk(day,id);
 
-        if(t == null)
-                finish();
+        if(t == null){
+            Toast.makeText(this, getString(R.string.removed) ,Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         title.setText(t.getTitle());
         track.setText(t.getTrack());

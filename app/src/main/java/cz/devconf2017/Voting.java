@@ -32,9 +32,7 @@ public class Voting {
         return String.valueOf(score);
     }
 
-    public float getAvgVotes(){
-        return ((float)votes)/((float) numVotes);
-    }
+    public float getAvgVotes(){ return Float.intBitsToFloat(votes)/Float.intBitsToFloat(numVotes); }
 
     public String getTitle(){
         return talk.getTitle();

@@ -26,6 +26,7 @@
     <string name="confend">DevConf is over. See you next year!</string>
     <string name="nofavorites">You haven\'t set any talks as your favorite ones yet.</string>
     <string name="GMT">GMT +01:00</string>
+    <string name="back_press">Tap BACK again to exit.</string>
 
     <!-- Talk detail -->
     <string name="sendFeedback">Save feedback</string>
@@ -34,6 +35,7 @@
     <string name="feedbackReset">Your feedback has been successfully removed.</string>
     <string name="leaveFeedback">Leave your feedback ...</string>
     <string name="resetFeedback">Remove feedback</string>
+    <string name="removed">This talk has been removed from the schedule by organizers.</string>
 
     <!-- Venue data source -->
 <string name="venueData" formatted="false">"<![CDATA[

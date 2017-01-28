@@ -12,7 +12,7 @@
                     android:textSize="35sp"
                     android:text="@string/floor_plan"
                     android:textAlignment="center" />
-                <uk.co.senab.photoview.PhotoView
+                <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/image"/>

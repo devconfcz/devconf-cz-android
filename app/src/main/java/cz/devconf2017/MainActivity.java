@@ -3,12 +3,14 @@ package cz.devconf2017;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     static int RC_SIGN_IN = 16;
     enum LastFragment {HOME,DAY1, DAY2, DAY3 ,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,ABOUT,VOTING,FAVORITES};
     static LastFragment lastFragment = LastFragment.HOME;
-    static boolean notificationPosted = false;
+    static boolean notificationPosted = false, doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,10 +152,14 @@ public class MainActivity extends AppCompatActivity {
             m.setText(message);
             m.setPadding((int)(25*dpi), (int)(19*dpi), (int)(25*dpi), (int)(14*dpi));
             dlgAlert.setView(m);
-            dlgAlert.setPositiveButton("OK", null);
-            dlgAlert.setCancelable(true);
+            dlgAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    getIntent().removeExtra("message");
+                }
+            });
+            dlgAlert.setCancelable(false);
             dlgAlert.create().show();
-            getIntent().putExtra("message","");
         }
 
     }
@@ -1290,4 +1297,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, getString(R.string.back_press), Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
+
 }

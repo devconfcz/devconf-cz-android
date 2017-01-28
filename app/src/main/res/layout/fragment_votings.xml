@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabMode="scrollable"
+        android:background="@color/icons"
+        android:theme="@style/TabTheme"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/loading_box"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:text="@string/loadingData"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:id="@+id/loading_label"
+            android:layout_margin="10dp"
+            android:textAlignment="center"
+            style="@style/Widget.AppCompat.TextView.SpinnerItem" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/loading_bar"
+            android:layout_weight="0.09" />
+
+    </LinearLayout>
+
+    <!--including the recycleView-->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</LinearLayout>
