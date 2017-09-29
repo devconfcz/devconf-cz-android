@@ -28,13 +28,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static io.fabric.sdk.android.Fabric.TAG;
-
-
 /**
  * Created by jridky on 3.1.17.
  */
 public class DayVotingFragment extends Fragment {
+    private static final String TAG = DayVotingFragment.class.getName();
     @BindView(R.id.loading_label)
     TextView loadingLabel;
     @BindView(R.id.loading_bar)

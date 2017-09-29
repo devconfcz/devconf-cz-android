@@ -58,8 +58,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static io.fabric.sdk.android.Fabric.TAG;
-
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
@@ -475,6 +473,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Room identification
      */
     public static class ROOMDB {
+        private static final String TAG = ROOMDB.class.getName();
         private static List<Room> rooms = new ArrayList<Room>();
 
         public static void load(){
@@ -540,6 +539,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Admins
      */
     public static class ADMINS {
+        private static final String TAG = ADMINS.class.getName();
         private static List<String> admins = new ArrayList<String>();
         public static NavigationView view;
 
@@ -601,6 +601,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent favorites talks
      */
     public static class FAVORITES {
+        private static final String TAG = FAVORITES.class.getName();
         private static List<Talk> favorites = new ArrayList<Talk>();
         public static HomeRecycleViewAdapter adapter;
 
@@ -691,6 +692,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent tracks
      */
     public static class TRACKS {
+        private static final String TAG = TRACKS.class.getName();
         private static List<Track> tracks = new ArrayList<Track>();
 
         public static void checkLoad() {
@@ -751,6 +753,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Schedule information
      */
     public static class TALKS {
+        private static final String TAG = TALKS.class.getName();
         private static List<Talk> talksD1 = new ArrayList<Talk>();
         private static List<Talk> talksD2 = new ArrayList<Talk>();
         private static List<Talk> talksD3 = new ArrayList<Talk>();
@@ -1214,6 +1217,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Speakers database
      */
     public static class SPEAKERS {
+        private static final String TAG = SPEAKERS.class.getName();
         private static List<Speaker> speakers = new ArrayList<Speaker>();
         public static DatabaseReference myRef;
 

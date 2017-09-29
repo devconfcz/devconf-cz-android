@@ -26,14 +26,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static io.fabric.sdk.android.Fabric.TAG;
-
 /**
  * Created by jridky on 10.12.16.
  */
 
 public class VotingDetail extends AppCompatActivity{
 
+    private static final String TAG = VotingDetail.class.getName();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
