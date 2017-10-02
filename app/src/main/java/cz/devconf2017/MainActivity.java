@@ -8,21 +8,17 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,57 +52,55 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final MainNavigationHelper.Section DEFAULT_HOME_SCREEN_SECTION = MainNavigationHelper.Section.HOME;
 
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    protected Toolbar toolbar;
 
-    @BindView(R.id.menu)
-    NavigationView navigationView;
+    @BindView(R.id.main_nav)
+    protected NavigationView navigationView;
 
     @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
+    protected DrawerLayout drawerLayout;
 
+    private MainNavigationHelper navigationHelper;
+    private MainNavigationHelper.Section selectedSection;
+
+    // Todo refactor props below
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
 
     static int RC_SIGN_IN = 16;
 
-    private enum LastFragment {HOME, DAY1, DAY2, DAY3, VENUE, FLOORPLAN, SPEAKERS, SOCIALEVENT, ABOUT, VOTING, FAVORITES}
-
-    static LastFragment lastFragment = LastFragment.HOME;
-    static boolean notificationPosted = false, doubleBackToExitPressedOnce = false;
+    static boolean notificationPosted;
+    static boolean doubleBackToExitPressedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
-        View drawerHeader = navigationView.getHeaderView(0);
-        drawerHeaderViewHolder = new DrawerHeaderViewHolder(drawerHeader);
-        drawerHeaderViewHolder.mSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
+        // TODO handle intents from notifications
 
-        ADMINS.view = navigationView;
+        // todo: refactor ..
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy", Locale.US);
+        try {
+            TALKS.dayOne = sdf.parse("27/1/2017");
+            TALKS.dayTwo = sdf.parse("28/1/2017");
+            TALKS.dayThree = sdf.parse("29/1/2017");
 
-        displayLastFragment();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // todo: .. until here
 
-        setupNavigationMenu();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd ", Locale.US);
-
-        navigationView.getMenu().findItem(R.id.day1).setTitle(navigationView.getMenu().findItem(R.id.day1).getTitle() + sdf.format(TALKS.dayOne));
-        navigationView.getMenu().findItem(R.id.day2).setTitle(navigationView.getMenu().findItem(R.id.day2).getTitle() + sdf.format(TALKS.dayTwo));
-        navigationView.getMenu().findItem(R.id.day3).setTitle(navigationView.getMenu().findItem(R.id.day3).getTitle() + sdf.format(TALKS.dayThree));
+        configureDrawer();
+        configureNavigation();
 
         DatabaseReference connectedRef = new FBDB().getDatabase().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
@@ -166,6 +160,101 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void configureDrawer() {
+        // Drawer toggle
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Drawer header
+        View drawerHeader = navigationView.getHeaderView(0);
+        drawerHeaderViewHolder = new DrawerHeaderViewHolder(drawerHeader);
+        drawerHeaderViewHolder.mSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
+
+        ADMINS.view = navigationView;
+
+        // todo: refactor below
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd ", Locale.US);
+
+        navigationView.getMenu().findItem(R.id.nav_day_1).setTitle(navigationView.getMenu().findItem(R.id.nav_day_1).getTitle() + sdf.format(TALKS.dayOne));
+        navigationView.getMenu().findItem(R.id.nav_day_2).setTitle(navigationView.getMenu().findItem(R.id.nav_day_2).getTitle() + sdf.format(TALKS.dayTwo));
+        navigationView.getMenu().findItem(R.id.nav_day_3).setTitle(navigationView.getMenu().findItem(R.id.nav_day_3).getTitle() + sdf.format(TALKS.dayThree));
+    }
+
+    private void configureNavigation() {
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationHelper = new MainNavigationHelper(getSupportFragmentManager());
+        navigationHelper.navigate(DEFAULT_HOME_SCREEN_SECTION);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                navigationHelper.navigate(MainNavigationHelper.Section.HOME);
+                break;
+
+            case R.id.nav_day_1:
+                navigationHelper.navigate(MainNavigationHelper.Section.DAY_1);
+                break;
+
+            case R.id.nav_day_2:
+                navigationHelper.navigate(MainNavigationHelper.Section.DAY_2);
+                break;
+
+            case R.id.nav_day_3:
+                navigationHelper.navigate(MainNavigationHelper.Section.DAY_3);
+                break;
+
+            case R.id.nav_favorites:
+                navigationHelper.navigate(MainNavigationHelper.Section.FAVORITES);
+                break;
+
+            case R.id.nav_voting:
+                navigationHelper.navigate(MainNavigationHelper.Section.VOTING);
+                break;
+
+            case R.id.nav_venue:
+                navigationHelper.navigate(MainNavigationHelper.Section.VENUE);
+                break;
+
+            case R.id.nav_floor_plan:
+                navigationHelper.navigate(MainNavigationHelper.Section.FLOOR_PLAN);
+                break;
+
+            case R.id.nav_speakers:
+                navigationHelper.navigate(MainNavigationHelper.Section.SPEAKERS);
+                break;
+
+            case R.id.nav_social_event:
+                navigationHelper.navigate(MainNavigationHelper.Section.SOCIAL_EVENT);
+                break;
+
+            case R.id.nav_about:
+                navigationHelper.navigate(MainNavigationHelper.Section.ABOUT);
+                break;
+
+            case R.id.nav_sign_out:
+                signOut();
+                return true;
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo info = connectivityManager.getActiveNetworkInfo();
@@ -216,7 +305,9 @@ public class MainActivity extends AppCompatActivity {
                         .setProviders(providers)
                         .build(),
                 RC_SIGN_IN);
-        displayLastFragment();
+
+        // TODO refactor
+        // displayLastFragment();
     }
 
     private void signOut() {
@@ -240,8 +331,8 @@ public class MainActivity extends AppCompatActivity {
         drawerHeaderViewHolder.mUserName.setVisibility(View.VISIBLE);
 
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.GONE);
-        navigationView.getMenu().findItem(R.id.signout).setVisible(true);
-        navigationView.getMenu().findItem(R.id.favorites).setVisible(true);
+        navigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
+        navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(true);
         isAdmin(currentUser.getEmail());
     }
 
@@ -250,199 +341,24 @@ public class MainActivity extends AppCompatActivity {
         drawerHeaderViewHolder.mUserName.setVisibility(View.GONE);
 
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.VISIBLE);
-        navigationView.getMenu().findItem(R.id.signout).setVisible(false);
-        navigationView.getMenu().findItem(R.id.favorites).setVisible(false);
-        if (lastFragment == LastFragment.VOTING || lastFragment == LastFragment.FAVORITES) {
-            lastFragment = LastFragment.HOME;
-            displayHome();
-        }
+        navigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(false);
+        // TODO refactor
+//        if (lastFragment == LastFragment.VOTING || lastFragment == LastFragment.FAVORITES) {
+//            lastFragment = LastFragment.HOME;
+//            displayHome();
+//        }
         isAdmin("");
     }
 
     public void isAdmin(String email) {
         if (ADMINS.find(email)) {
-            navigationView.getMenu().findItem(R.id.voting).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(true);
         } else {
-            navigationView.getMenu().findItem(R.id.voting).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
         }
     }
     // -- Navigation ------------------------------------------------------------------------------
-
-    private void setupNavigationMenu() {
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                switch (item.getItemId()) {
-                    case R.id.home:
-                        lastFragment = LastFragment.HOME;
-                        displayHome();
-                        break;
-                    case R.id.day1:
-                        lastFragment = LastFragment.DAY1;
-                        displayPresentation(LastFragment.DAY1);
-                        break;
-                    case R.id.day2:
-                        lastFragment = LastFragment.DAY2;
-                        displayPresentation(LastFragment.DAY2);
-                        break;
-                    case R.id.day3:
-                        lastFragment = LastFragment.DAY3;
-                        displayPresentation(LastFragment.DAY3);
-                        break;
-                    case R.id.favorites:
-                        lastFragment = LastFragment.FAVORITES;
-                        displayFavorites();
-                        break;
-                    case R.id.voting:
-                        lastFragment = LastFragment.VOTING;
-                        displayVoting();
-                        break;
-                    case R.id.venue:
-                        lastFragment = LastFragment.VENUE;
-                        displayVenue();
-                        break;
-                    case R.id.floor_plan:
-                        lastFragment = LastFragment.FLOORPLAN;
-                        displayFloorPlan();
-                        break;
-                    case R.id.speakers:
-                        lastFragment = LastFragment.SPEAKERS;
-                        displaySpeakers();
-                        break;
-                    case R.id.social_event:
-                        lastFragment = LastFragment.SOCIALEVENT;
-                        displaySocialEvent();
-                        break;
-                    case R.id.about:
-                        lastFragment = LastFragment.ABOUT;
-                        displayAbout();
-                        break;
-                    case R.id.signout:
-                        signOut();
-                        break;
-                }
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return false;
-            }
-        });
-    }
-
-    private void display(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content, fragment)
-                .commit();
-    }
-
-    private void displayHome() {
-        display(new HomeFragment());
-    }
-
-    private void displayPresentation(LastFragment day) {
-        int noDay;
-
-        switch (day) {
-            case DAY2:
-                noDay = 2;
-                break;
-            case DAY3:
-                noDay = 3;
-                break;
-            default:
-                noDay = 1;
-                break;
-        }
-
-        TalkFragment t = new TalkFragment();
-        Bundle b = new Bundle();
-        b.putInt("day", noDay);
-        t.setArguments(b);
-        display(t);
-    }
-
-    private void displayVenue() {
-        display(new VenueFragment());
-    }
-
-    private void displayFavorites() {
-        display(new FavoritesFragment());
-    }
-
-    private void displayVoting() {
-        display(new VotingFragment());
-    }
-
-    private void displayFloorPlan() {
-        display(new FloorPlanFragment());
-    }
-
-    private void displaySpeakers() {
-        display(new SpeakersFragment());
-    }
-
-    private void displaySocialEvent() {
-        display(new SocialFragment());
-    }
-
-    private void displayAbout() {
-        display(new AboutFragment());
-    }
-
-    private void displayLastFragment() {
-        switch (lastFragment) {
-            case DAY1:
-                displayPresentation(LastFragment.DAY1);
-                break;
-            case DAY2:
-                displayPresentation(LastFragment.DAY2);
-                break;
-            case DAY3:
-                displayPresentation(LastFragment.DAY3);
-                break;
-            case VENUE:
-                displayVenue();
-                break;
-            case ABOUT:
-                displayAbout();
-                break;
-            case FLOORPLAN:
-                displayFloorPlan();
-                break;
-            case SPEAKERS:
-                displaySpeakers();
-                break;
-            case SOCIALEVENT:
-                displaySocialEvent();
-                break;
-            case VOTING:
-                displayVoting();
-                break;
-            case FAVORITES:
-                displayFavorites();
-                break;
-            default:
-                displayHome();
-                break;
-        }
-
-        SPEAKERS.checkLoad();
-        ADMINS.checkLoad();
-        TRACKS.checkLoad();
-        ROOMDB.checkLoad();
-        TALKS.checkLoad();
-        FAVORITES.checkLoad();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-        try {
-            TALKS.dayOne = sdf.parse("27/1/2017");
-            TALKS.dayTwo = sdf.parse("28/1/2017");
-            TALKS.dayThree = sdf.parse("29/1/2017");
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     /**
      * Class to represent the Drawer Header
@@ -582,9 +498,9 @@ public class MainActivity extends AppCompatActivity {
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null && find(user.getEmail())) {
-                        view.getMenu().findItem(R.id.voting).setVisible(true);
+                        view.getMenu().findItem(R.id.nav_voting).setVisible(true);
                     } else {
-                        view.getMenu().findItem(R.id.voting).setVisible(false);
+                        view.getMenu().findItem(R.id.nav_voting).setVisible(false);
                     }
                 }
 
@@ -1338,6 +1254,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
