@@ -34,8 +34,6 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static io.fabric.sdk.android.Fabric.TAG;
-
 /**
  * Created by jridky on 11.1.17.
  */

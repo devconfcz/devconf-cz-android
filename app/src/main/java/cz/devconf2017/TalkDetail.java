@@ -26,14 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static io.fabric.sdk.android.Fabric.TAG;
-
 /**
  * Created by jridky on 10.12.16.
  */
 
 public class TalkDetail extends AppCompatActivity implements View.OnClickListener{
 
+    private static final String TAG = TalkDetail.class.getName();
     @BindView(R.id.background)
     DrawerLayout background;
     @BindView(R.id.toolbar)
