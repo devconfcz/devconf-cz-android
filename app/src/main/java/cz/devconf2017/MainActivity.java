@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     notificationPosted = false;
                 } else {
                     Log.d("CONNECTION", "not connected");
-                    if (!isNetworkAvailable() && !notificationPosted) {
+                    if (!NetworkUtils.isNetworkAvailable(MainActivity.this) && !notificationPosted) {
                         notificationPosted = true;
                         PendingIntent notifIntent = PendingIntent.getActivity(getBaseContext(), 0, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
                         NotificationCompat.Builder notification = new NotificationCompat.Builder(getBaseContext())
@@ -253,16 +253,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        if (info != null && info.isConnected()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override
