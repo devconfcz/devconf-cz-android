@@ -27,6 +27,8 @@
     <string name="nofavorites">You haven\'t set any talks as your favorite ones yet.</string>
     <string name="GMT">GMT +01:00</string>
     <string name="back_press">Tap BACK again to exit.</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Talk detail -->
     <string name="sendFeedback">Save feedback</string>

@@ -6,23 +6,17 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,51 +52,55 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+import static cz.devconf2017.MainNavigationHelper.Section;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final Section DEFAULT_HOME_SCREEN_SECTION = Section.HOME;
+    public static final int RC_SIGN_IN = 16;
 
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.menu)
-    NavigationView navigationView;
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
+    protected Toolbar toolbar;
 
+    @BindView(R.id.main_nav)
+    protected NavigationView navigationView;
+
+    @BindView(R.id.drawer_layout)
+    protected DrawerLayout drawerLayout;
+
+    private MainNavigationHelper navigationHelper;
+
+    // Todo refactor props below
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
 
-    static int RC_SIGN_IN = 16;
-    enum LastFragment {HOME,DAY1, DAY2, DAY3 ,VENUE,FLOORPLAN,SPEAKERS,SOCIALEVENT,ABOUT,VOTING,FAVORITES};
-    static LastFragment lastFragment = LastFragment.HOME;
-    static boolean notificationPosted = false, doubleBackToExitPressedOnce = false;
+    private boolean notificationPosted;
+    private boolean doubleBackToExitPressedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
-        View drawerHeader = navigationView.getHeaderView(0);
-        drawerHeaderViewHolder = new DrawerHeaderViewHolder(drawerHeader);
-        drawerHeaderViewHolder.mSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
+        // TODO handle intents from notifications and set initial section
+        Section selectedSection = DEFAULT_HOME_SCREEN_SECTION;
 
-        ADMINS.view = navigationView;
+        // todo: refactor ..
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy", Locale.US);
+        try {
+            TALKS.dayOne = sdf.parse("27/1/2017");
+            TALKS.dayTwo = sdf.parse("28/1/2017");
+            TALKS.dayThree = sdf.parse("29/1/2017");
 
-        displayLastFragment();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // todo: .. until here
 
-        setupNavigationMenu();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd ", Locale.US);
-
-        navigationView.getMenu().findItem(R.id.day1).setTitle(navigationView.getMenu().findItem(R.id.day1).getTitle() + sdf.format(TALKS.dayOne));
-        navigationView.getMenu().findItem(R.id.day2).setTitle(navigationView.getMenu().findItem(R.id.day2).getTitle() + sdf.format(TALKS.dayTwo));
-        navigationView.getMenu().findItem(R.id.day3).setTitle(navigationView.getMenu().findItem(R.id.day3).getTitle() + sdf.format(TALKS.dayThree));
+        configureDrawer();
+        configureNavigation(selectedSection);
 
         DatabaseReference connectedRef = new FBDB().getDatabase().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
@@ -110,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 boolean connected = snapshot.getValue(Boolean.class);
                 if (connected) {
-                    Log.d("CONNECTION","connected");
+                    Log.d("CONNECTION", "connected");
                     notificationPosted = false;
                 } else {
-                    Log.d("CONNECTION","not connected");
-                    if(!isNetworkAvailable() && !notificationPosted) {
+                    Log.d("CONNECTION", "not connected");
+                    if (!NetworkUtils.isNetworkAvailable(MainActivity.this) && !notificationPosted) {
                         notificationPosted = true;
                         PendingIntent notifIntent = PendingIntent.getActivity(getBaseContext(), 0, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
                         NotificationCompat.Builder notification = new NotificationCompat.Builder(getBaseContext())
@@ -143,12 +141,12 @@ public class MainActivity extends AppCompatActivity {
 
         String message = getIntent().getStringExtra("message");
 
-        if(message != null && !message.equals("")){
-            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+        if (message != null && !message.equals("")) {
+            AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
             float dpi = getResources().getDisplayMetrics().density;
             TextView m = new TextView(this);
             m.setText(message);
-            m.setPadding((int)(25*dpi), (int)(19*dpi), (int)(25*dpi), (int)(14*dpi));
+            m.setPadding((int) (25 * dpi), (int) (19 * dpi), (int) (25 * dpi), (int) (14 * dpi));
             dlgAlert.setView(m);
             dlgAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
@@ -162,20 +160,98 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        if(info != null && info.isConnected()){
-            return true;
-        } else {
-            return false;
-        }
+    private void configureDrawer() {
+        // Drawer toggle
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Drawer header
+        View drawerHeader = navigationView.getHeaderView(0);
+        drawerHeaderViewHolder = new DrawerHeaderViewHolder(drawerHeader);
+
+        ADMINS.view = navigationView;
+
+        // todo: refactor below
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd ", Locale.US);
+
+        navigationView.getMenu().findItem(R.id.nav_day_1).setTitle(navigationView.getMenu().findItem(R.id.nav_day_1).getTitle() + sdf.format(TALKS.dayOne));
+        navigationView.getMenu().findItem(R.id.nav_day_2).setTitle(navigationView.getMenu().findItem(R.id.nav_day_2).getTitle() + sdf.format(TALKS.dayTwo));
+        navigationView.getMenu().findItem(R.id.nav_day_3).setTitle(navigationView.getMenu().findItem(R.id.nav_day_3).getTitle() + sdf.format(TALKS.dayThree));
+    }
+
+    private void configureNavigation(@NonNull Section selectedSection) {
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationHelper = new MainNavigationHelper(getSupportFragmentManager());
+        navigationHelper.navigate(selectedSection);
     }
 
     @Override
-    protected void onStart(){
-        super.onStart();
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                navigationHelper.navigate(Section.HOME);
+                break;
 
+            case R.id.nav_day_1:
+                navigationHelper.navigate(Section.DAY_1);
+                break;
+
+            case R.id.nav_day_2:
+                navigationHelper.navigate(Section.DAY_2);
+                break;
+
+            case R.id.nav_day_3:
+                navigationHelper.navigate(Section.DAY_3);
+                break;
+
+            case R.id.nav_favorites:
+                navigationHelper.navigate(Section.FAVORITES);
+                break;
+
+            case R.id.nav_voting:
+                navigationHelper.navigate(Section.VOTING);
+                break;
+
+            case R.id.nav_venue:
+                navigationHelper.navigate(Section.VENUE);
+                break;
+
+            case R.id.nav_floor_plan:
+                navigationHelper.navigate(Section.FLOOR_PLAN);
+                break;
+
+            case R.id.nav_speakers:
+                navigationHelper.navigate(Section.SPEAKERS);
+                break;
+
+            case R.id.nav_social_event:
+                navigationHelper.navigate(Section.SOCIAL_EVENT);
+                break;
+
+            case R.id.nav_about:
+                navigationHelper.navigate(Section.ABOUT);
+                break;
+
+            case R.id.nav_sign_out:
+                signOut();
+                return true;
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -189,7 +265,6 @@ public class MainActivity extends AppCompatActivity {
         }
         String token = FirebaseInstanceId.getInstance().getToken();
         Log.d("TOKEN", "Refreshed Token: " + token);
-
     }
 
     @Override
@@ -214,7 +289,9 @@ public class MainActivity extends AppCompatActivity {
                         .setProviders(providers)
                         .build(),
                 RC_SIGN_IN);
-        displayLastFragment();
+
+        // TODO refactor
+        // displayLastFragment();
     }
 
     private void signOut() {
@@ -226,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
                         FAVORITES.favorites.clear();
                     }
                 });
-
     }
 
     public void showUserInfo(FirebaseUser currentUser) {
@@ -239,204 +315,38 @@ public class MainActivity extends AppCompatActivity {
         drawerHeaderViewHolder.mUserName.setVisibility(View.VISIBLE);
 
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.GONE);
-        navigationView.getMenu().findItem(R.id.signout).setVisible(true);
-        navigationView.getMenu().findItem(R.id.favorites).setVisible(true);
+        navigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
+        navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(true);
+
         isAdmin(currentUser.getEmail());
     }
 
     private void hideUserInfo() {
         drawerHeaderViewHolder.mUserAvatar.setVisibility(View.GONE);
         drawerHeaderViewHolder.mUserName.setVisibility(View.GONE);
-
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.VISIBLE);
-        navigationView.getMenu().findItem(R.id.signout).setVisible(false);
-        navigationView.getMenu().findItem(R.id.favorites).setVisible(false);
-        if(lastFragment == LastFragment.VOTING || lastFragment == LastFragment.FAVORITES){
-            lastFragment=LastFragment.HOME;
-            displayHome();
+
+        navigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(false);
+
+        if (navigationHelper.isCurrentSection(Section.VOTING)
+                || navigationHelper.isCurrentSection(Section.FAVORITES)) {
+            navigationHelper.navigate(Section.HOME);
         }
+
         isAdmin("");
     }
 
-    public void isAdmin(String email){
-        if(ADMINS.find(email)){
-            navigationView.getMenu().findItem(R.id.voting).setVisible(true);
-        }else{
-            navigationView.getMenu().findItem(R.id.voting).setVisible(false);
+    public void isAdmin(String email) {
+        if (ADMINS.find(email)) {
+            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(true);
+        } else {
+            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
         }
     }
     // -- Navigation ------------------------------------------------------------------------------
 
-    @OnClick(R.id.drawer)
-    void openDrawerMenu() {
-        drawerLayout.openDrawer(GravityCompat.START);
-    }
-
-    private void setupNavigationMenu() {
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                switch (item.getItemId()) {
-                    case R.id.home:
-                        lastFragment = LastFragment.HOME;
-                        displayHome();
-                        break;
-                    case R.id.day1:
-                        lastFragment = LastFragment.DAY1;
-                        displayPresentation(LastFragment.DAY1);
-                        break;
-                    case R.id.day2:
-                        lastFragment = LastFragment.DAY2;
-                        displayPresentation(LastFragment.DAY2);
-                        break;
-                    case R.id.day3:
-                        lastFragment = LastFragment.DAY3;
-                        displayPresentation(LastFragment.DAY3);
-                        break;
-                    case R.id.favorites:
-                        lastFragment = LastFragment.FAVORITES;
-                        displayFavorites();
-                        break;
-                    case R.id.voting:
-                        lastFragment = LastFragment.VOTING;
-                        displayVoting();
-                        break;
-                    case R.id.venue:
-                        lastFragment = LastFragment.VENUE;
-                        displayVenue();
-                        break;
-                    case R.id.floor_plan:
-                        lastFragment = LastFragment.FLOORPLAN;
-                        displayFloorPlan();
-                        break;
-                    case R.id.speakers:
-                        lastFragment = LastFragment.SPEAKERS;
-                        displaySpeakers();
-                        break;
-                    case R.id.social_event:
-                        lastFragment = LastFragment.SOCIALEVENT;
-                        displaySocialEvent();
-                        break;
-                    case R.id.about:
-                        lastFragment = LastFragment.ABOUT;
-                        displayAbout();
-                        break;
-                    case R.id.signout:
-                        signOut();
-                        break;
-                }
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return false;
-            }
-        });
-    }
-
-    private void display(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content, fragment)
-                .commit();
-    }
-
-    private void displayHome() {
-        display(new HomeFragment());
-    }
-
-    private void displayPresentation(LastFragment day) {
-        int noDay;
-
-        switch(day){
-            case DAY2: noDay = 2;
-                       break;
-            case DAY3: noDay = 3;
-                       break;
-            default:   noDay = 1;
-                       break;
-        }
-
-        TalkFragment t = new TalkFragment();
-        Bundle b = new Bundle();
-        b.putInt("day", noDay);
-        t.setArguments(b);
-        display(t);
-    }
-
-    private void displayVenue() { display(new VenueFragment()); }
-
-    private void displayFavorites() { display(new FavoritesFragment()); }
-
-    private void displayVoting() { display(new VotingFragment()); }
-
-    private void displayFloorPlan() { display(new FloorPlanFragment()); }
-
-    private void displaySpeakers() {
-        display(new SpeakersFragment());
-    }
-
-    private void displaySocialEvent() { display(new SocialFragment()); }
-
-    private void displayAbout() { display(new AboutFragment()); }
-
-    private void displayLastFragment(){
-        switch(lastFragment){
-            case DAY1:
-                displayPresentation(LastFragment.DAY1);
-                break;
-            case DAY2:
-                displayPresentation(LastFragment.DAY2);
-                break;
-            case DAY3:
-                displayPresentation(LastFragment.DAY3);
-                break;
-            case VENUE:
-                displayVenue();
-                break;
-            case ABOUT:
-                displayAbout();
-                break;
-            case FLOORPLAN:
-                displayFloorPlan();
-                break;
-            case SPEAKERS:
-                displaySpeakers();
-                break;
-            case SOCIALEVENT:
-                displaySocialEvent();
-                break;
-            case VOTING:
-                displayVoting();
-                break;
-            case FAVORITES:
-                displayFavorites();
-                break;
-            default:
-                displayHome();
-                break;
-        }
-
-        SPEAKERS.checkLoad();
-        ADMINS.checkLoad();
-        TRACKS.checkLoad();
-        ROOMDB.checkLoad();
-        TALKS.checkLoad();
-        FAVORITES.checkLoad();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-        try {
-            TALKS.dayOne = sdf.parse("27/1/2017");
-            TALKS.dayTwo = sdf.parse("28/1/2017");
-            TALKS.dayThree = sdf.parse("29/1/2017");
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-    }
-    /**
-     * Class to represent the Drawer Header
-     */
-
-    protected static class DrawerHeaderViewHolder {
+    class DrawerHeaderViewHolder {
 
         @BindView(R.id.signIn)
         SignInButton mSignInButton;
@@ -451,19 +361,23 @@ public class MainActivity extends AppCompatActivity {
             ButterKnife.bind(this, view);
         }
 
+        @OnClick(R.id.signIn)
+        void onSignInClick() {
+            signIn();
+        }
     }
 
     /**
      * Class to represent Firebase Database
      */
-
     public static class FBDB {
+
         private static FirebaseDatabase db;
 
-        public static FirebaseDatabase getDatabase(){
-            if(db == null){
-               db = FirebaseDatabase.getInstance();
-               db.setPersistenceEnabled(true);
+        public static FirebaseDatabase getDatabase() {
+            if (db == null) {
+                db = FirebaseDatabase.getInstance();
+                db.setPersistenceEnabled(true);
             }
             return db;
         }
@@ -473,10 +387,11 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Room identification
      */
     public static class ROOMDB {
+
         private static final String TAG = ROOMDB.class.getName();
         private static List<Room> rooms = new ArrayList<Room>();
 
-        public static void load(){
+        public static void load() {
 
             rooms.clear();
 
@@ -489,10 +404,10 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
-                    if(rooms.size() > 0){
+                    if (rooms.size() > 0) {
                         rooms.clear();
                     }
-                    for(DataSnapshot room: dataSnapshot.getChildren()) {
+                    for (DataSnapshot room : dataSnapshot.getChildren()) {
                         Room name = room.getValue(Room.class);
                         rooms.add(name);
                     }
@@ -510,24 +425,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public static void checkLoad() {
-            if(rooms == null || rooms.size() < 1){
+            if (rooms == null || rooms.size() < 1) {
                 load();
             }
         }
 
-        public static List<Room> getRooms() { return rooms; }
+        public static List<Room> getRooms() {
+            return rooms;
+        }
 
-        public static String getRoomName(int id){
+        public static String getRoomName(int id) {
             checkLoad();
-            if(id < rooms.size()){
+            if (id < rooms.size()) {
                 return rooms.get(id).getName();
             }
             return null;
         }
 
-        public static boolean isLoad(String room){
-            for(Room r: rooms){
-                if(r.getName().equalsIgnoreCase(room)){
+        public static boolean isLoad(String room) {
+            for (Room r : rooms) {
+                if (r.getName().equalsIgnoreCase(room)) {
                     return true;
                 }
             }
@@ -539,11 +456,12 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Admins
      */
     public static class ADMINS {
+
         private static final String TAG = ADMINS.class.getName();
         private static List<String> admins = new ArrayList<String>();
         public static NavigationView view;
 
-        public static void load(){
+        public static void load() {
 
             admins.clear();
 
@@ -556,20 +474,20 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
-                    if(admins.size() > 0){
+                    if (admins.size() > 0) {
                         admins.clear();
                     }
-                    for(DataSnapshot a: dataSnapshot.getChildren()) {
+                    for (DataSnapshot a : dataSnapshot.getChildren()) {
                         String name = a.getValue(String.class);
                         admins.add(name);
                     }
                     Log.d("LOADING", "ADMINS are done " + admins.size());
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(user != null && find(user.getEmail())) {
-                        view.getMenu().findItem(R.id.voting).setVisible(true);
-                    }else{
-                        view.getMenu().findItem(R.id.voting).setVisible(false);
+                    if (user != null && find(user.getEmail())) {
+                        view.getMenu().findItem(R.id.nav_voting).setVisible(true);
+                    } else {
+                        view.getMenu().findItem(R.id.nav_voting).setVisible(false);
                     }
                 }
 
@@ -582,14 +500,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public static void checkLoad() {
-            if(admins == null || admins.size() < 1){
+            if (admins == null || admins.size() < 1) {
                 load();
             }
         }
 
-        public static boolean find(String email){
-            for(String a: admins){
-                if(a.equalsIgnoreCase(email)){
+        public static boolean find(String email) {
+            for (String a : admins) {
+                if (a.equalsIgnoreCase(email)) {
                     return true;
                 }
             }
@@ -601,6 +519,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent favorites talks
      */
     public static class FAVORITES {
+
         private static final String TAG = FAVORITES.class.getName();
         private static List<Talk> favorites = new ArrayList<Talk>();
         public static HomeRecycleViewAdapter adapter;
@@ -631,11 +550,11 @@ public class MainActivity extends AppCompatActivity {
                         for (DataSnapshot f : dataSnapshot.getChildren()) {
                             String id = f.getValue(String.class);
                             Talk t = TALKS.findTalk(Integer.parseInt(id));
-                            if(t!=null){
+                            if (t != null) {
                                 favorites.add(t);
                             }
                         }
-                        if(adapter != null){
+                        if (adapter != null) {
                             adapter.updateData(getTalks());
                         }
                         Log.d("LOADING", "FAVORITES are done " + favorites.size());
@@ -650,9 +569,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public static void add(int id){
+        public static void add(int id) {
             Talk t = TALKS.findTalk(id);
-            if(t != null){
+            if (t != null) {
                 FirebaseDatabase database = new FBDB().getDatabase();
                 DatabaseReference myRef = database.getReference("favorites");
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -663,23 +582,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public static void remove(int id){
+        public static void remove(int id) {
             FirebaseDatabase database = new FBDB().getDatabase();
             DatabaseReference myRef = database.getReference("favorites");
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user != null) {
+            if (user != null) {
                 myRef.child(user.getUid()).child(String.valueOf(id)).removeValue();
             }
         }
 
-        public static List<Talk> getTalks(){
+        public static List<Talk> getTalks() {
             Collections.sort(favorites, TALKS.orderByStart);
             return favorites;
         }
 
-        public static boolean isFavorite(int id){
-            for(Talk t: favorites){
-                if(t.getId() == id){
+        public static boolean isFavorite(int id) {
+            for (Talk t : favorites) {
+                if (t.getId() == id) {
                     return true;
                 }
             }
@@ -692,16 +611,17 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent tracks
      */
     public static class TRACKS {
+
         private static final String TAG = TRACKS.class.getName();
         private static List<Track> tracks = new ArrayList<Track>();
 
         public static void checkLoad() {
-            if(tracks == null || tracks.size() < 1){
+            if (tracks == null || tracks.size() < 1) {
                 load();
             }
         }
 
-        public static void load(){
+        public static void load() {
             tracks.clear();
             FirebaseDatabase database = new FBDB().getDatabase();
             DatabaseReference myRef = database.getReference("tracks");
@@ -712,10 +632,10 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
-                    if(tracks.size() > 0){
+                    if (tracks.size() > 0) {
                         tracks.clear();
                     }
-                    for(DataSnapshot track: dataSnapshot.getChildren()) {
+                    for (DataSnapshot track : dataSnapshot.getChildren()) {
                         Track t = track.getValue(Track.class);
                         tracks.add(t);
                     }
@@ -736,11 +656,11 @@ public class MainActivity extends AppCompatActivity {
             return tracks;
         }
 
-        public static String findColor(String trackName){
+        public static String findColor(String trackName) {
             String color = "#888888";
 
-            for (Track t: tracks) {
-                if(t.getName().equalsIgnoreCase(trackName)){
+            for (Track t : tracks) {
+                if (t.getName().equalsIgnoreCase(trackName)) {
                     return t.getColor();
                 }
             }
@@ -753,6 +673,7 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Schedule information
      */
     public static class TALKS {
+
         private static final String TAG = TALKS.class.getName();
         private static List<Talk> talksD1 = new ArrayList<Talk>();
         private static List<Talk> talksD2 = new ArrayList<Talk>();
@@ -764,7 +685,7 @@ public class MainActivity extends AppCompatActivity {
         private static Date dayTwo;
         private static Date dayThree;
 
-        public static void load(){
+        public static void load() {
 
             talksD1.clear();
             talksD2.clear();
@@ -779,31 +700,34 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
-                    if(talksD1.size() > 0){
+                    if (talksD1.size() > 0) {
                         talksD1.clear();
                     }
-                    if(talksD2.size() > 0){
+                    if (talksD2.size() > 0) {
                         talksD2.clear();
                     }
-                    if(talksD3.size() > 0){
+                    if (talksD3.size() > 0) {
                         talksD3.clear();
                     }
-                    for(DataSnapshot t: dataSnapshot.getChildren()) {
+                    for (DataSnapshot t : dataSnapshot.getChildren()) {
                         Talk talk = t.getValue(Talk.class);
-                        if(talk.id == null || talk.day.equalsIgnoreCase("")){
+                        if (talk.id == null || talk.day.equalsIgnoreCase("")) {
                             Log.d("SKIPPED", talk.getTitle());
                             continue;
-                        }else {
+                        } else {
                             talk.setSufficientDataTypes();
                         }
 
-                        switch (talk.getDay()){
-                            case 1:  talksD1.add(talk);
-                                     break;
-                            case 2:  talksD2.add(talk);
-                                     break;
-                            default: talksD3.add(talk);
-                                     break;
+                        switch (talk.getDay()) {
+                            case 1:
+                                talksD1.add(talk);
+                                break;
+                            case 2:
+                                talksD2.add(talk);
+                                break;
+                            default:
+                                talksD3.add(talk);
+                                break;
                         }
 
                     }
@@ -820,31 +744,34 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        public static void checkLoad(){
-            if(talksD1 == null || talksD2 == null || talksD3 == null || talksD1.size() < 1 || talksD2.size() < 1 || talksD3.size() < 1){
+        public static void checkLoad() {
+            if (talksD1 == null || talksD2 == null || talksD3 == null || talksD1.size() < 1 || talksD2.size() < 1 || talksD3.size() < 1) {
                 load();
             }
         }
 
-        public static Date getDay(int day){
-            switch (day){
-                case 1: return dayOne;
-                case 2: return dayTwo;
-                default: return dayThree;
+        public static Date getDay(int day) {
+            switch (day) {
+                case 1:
+                    return dayOne;
+                case 2:
+                    return dayTwo;
+                default:
+                    return dayThree;
             }
         }
 
-        public static List<Talk> getActualTalks(){
+        public static List<Talk> getActualTalks() {
             List<Talk> result = new ArrayList<Talk>();
             Date now = new Date();
 
-            if(now.compareTo(dayOne) <= 0){
+            if (now.compareTo(dayOne) <= 0) {
                 Collections.sort(talksD1, TALKS.orderByRoom);
                 String room = "";
-                for(Talk t: talksD1){
+                for (Talk t : talksD1) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                    if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                         result.add(t);
                     }
 
@@ -852,7 +779,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-            if(now.compareTo(dayOne) > 0 && now.compareTo(dayTwo) <= 0){
+            if (now.compareTo(dayOne) > 0 && now.compareTo(dayTwo) <= 0) {
                 String time = String.format("%02d:%02d", now.getHours(), now.getMinutes());
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
@@ -867,19 +794,19 @@ public class MainActivity extends AppCompatActivity {
                 Collections.sort(talksD1, TALKS.orderByRoom);
                 Talk last = null;
                 String room = null;
-                for(Talk t: talksD1){
+                for (Talk t : talksD1) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if(t.getStart().compareTo(numNow) <= 0){
+                    if (t.getStart().compareTo(numNow) <= 0) {
                         last = t;
-                    }else{
-                        if(last == null){
-                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                    } else {
+                        if (last == null) {
+                            if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                                 result.add(t);
                                 room = t.getRoom();
                             }
-                        }else{
-                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                        } else {
+                            if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                                 last.setRunning();
                                 result.add(last);
                                 result.add(t);
@@ -890,28 +817,28 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                if(result.size() < 1){
+                if (result.size() < 1) {
 
                     last = null;
-                    for(Talk t: talksD1){
-                        if(last != null){
-                            if(last.getStart().compareTo(t.getStart()) <= 0){
+                    for (Talk t : talksD1) {
+                        if (last != null) {
+                            if (last.getStart().compareTo(t.getStart()) <= 0) {
                                 last = t;
                             }
-                        }else{
+                        } else {
                             last = t;
                         }
                     }
 
-                    if(last != null){
+                    if (last != null) {
                         last.setLastOfDay();
                         result.add(last);
                     }
 
                     room = "";
                     Collections.sort(talksD2, TALKS.orderByRoom);
-                    for(Talk t: talksD2){
-                        if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                    for (Talk t : talksD2) {
+                        if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                             result.add(t);
                         }
 
@@ -921,10 +848,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-
             }
 
-            if(now.compareTo(dayTwo) > 0 && now.compareTo(dayThree) <= 0){
+            if (now.compareTo(dayTwo) > 0 && now.compareTo(dayThree) <= 0) {
                 String time = String.format("%02d:%02d", now.getHours(), now.getMinutes());
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
@@ -939,19 +865,19 @@ public class MainActivity extends AppCompatActivity {
                 Collections.sort(talksD2, TALKS.orderByRoom);
                 Talk last = null;
                 String room = null;
-                for(Talk t: talksD2){
+                for (Talk t : talksD2) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if(t.getStart().compareTo(numNow) <= 0){
+                    if (t.getStart().compareTo(numNow) <= 0) {
                         last = t;
-                    }else{
-                        if(last == null){
-                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                    } else {
+                        if (last == null) {
+                            if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                                 result.add(t);
                                 room = t.getRoom();
                             }
-                        }else{
-                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                        } else {
+                            if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                                 last.setRunning();
                                 result.add(last);
                                 result.add(t);
@@ -962,27 +888,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                if(result.size() < 1){
+                if (result.size() < 1) {
 
                     last = null;
-                    for(Talk t: talksD2){
-                        if(last != null){
-                            if(last.getStart().compareTo(t.getStart()) <= 0){
+                    for (Talk t : talksD2) {
+                        if (last != null) {
+                            if (last.getStart().compareTo(t.getStart()) <= 0) {
                                 last = t;
                             }
-                        }else{
+                        } else {
                             last = t;
                         }
                     }
-                    if(last != null){
+                    if (last != null) {
                         last.setLastOfDay();
                         result.add(last);
                     }
 
                     room = "";
                     Collections.sort(talksD2, TALKS.orderByRoom);
-                    for(Talk t: talksD3){
-                        if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                    for (Talk t : talksD3) {
+                        if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                             result.add(t);
                         }
 
@@ -992,7 +918,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            if(now.compareTo(dayThree) > 0){
+            if (now.compareTo(dayThree) > 0) {
                 String time = String.format("%02d:%02d", now.getHours(), now.getMinutes());
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
@@ -1007,19 +933,19 @@ public class MainActivity extends AppCompatActivity {
                 Collections.sort(talksD3, TALKS.orderByRoom);
                 Talk last = null;
                 String room = null;
-                for(Talk t: talksD3){
+                for (Talk t : talksD3) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if(t.getStart().compareTo(numNow) <= 0){
+                    if (t.getStart().compareTo(numNow) <= 0) {
                         last = t;
-                    }else{
-                        if(last == null){
-                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                    } else {
+                        if (last == null) {
+                            if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                                 result.add(t);
                                 room = t.getRoom();
                             }
-                        }else{
-                            if(!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())){
+                        } else {
+                            if (!t.getRoom().equalsIgnoreCase(room) && ROOMDB.isLoad(t.getRoom())) {
                                 last.setRunning();
                                 result.add(last);
                                 result.add(t);
@@ -1030,26 +956,26 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                if(result.size() < 1){
+                if (result.size() < 1) {
 
                     last = null;
-                    for(Talk t: talksD3){
-                        if(last != null){
-                            if(last.getStart().compareTo(t.getStart()) <= 0){
+                    for (Talk t : talksD3) {
+                        if (last != null) {
+                            if (last.getStart().compareTo(t.getStart()) <= 0) {
                                 last = t;
                             }
-                        }else{
+                        } else {
                             last = t;
                         }
                     }
-                    if(last != null){
+                    if (last != null) {
                         last.setLastOfDay();
                         result.add(last);
                     }
                 }
             }
 
-            Collections.sort(result,TALKS.orderByStart);
+            Collections.sort(result, TALKS.orderByStart);
             return result;
         }
 
@@ -1058,74 +984,80 @@ public class MainActivity extends AppCompatActivity {
             String room = ROOMDB.getRoomName(roomId);
             List<Talk> result = new ArrayList<Talk>();
 
-            switch (day){
-                case 1: Collections.sort(talksD1, TALKS.orderByRoom);
-                        for (Talk t: talksD1) {
-                            if(t.getRoom().equalsIgnoreCase(room)){
-                                result.add(t);
-                            }
+            switch (day) {
+                case 1:
+                    Collections.sort(talksD1, TALKS.orderByRoom);
+                    for (Talk t : talksD1) {
+                        if (t.getRoom().equalsIgnoreCase(room)) {
+                            result.add(t);
                         }
-                        break;
-                case 2: Collections.sort(talksD2, TALKS.orderByRoom);
-                        for (Talk t: talksD2) {
-                            if(t.getRoom().equalsIgnoreCase(room)){
-                                result.add(t);
-                            }
+                    }
+                    break;
+                case 2:
+                    Collections.sort(talksD2, TALKS.orderByRoom);
+                    for (Talk t : talksD2) {
+                        if (t.getRoom().equalsIgnoreCase(room)) {
+                            result.add(t);
                         }
-                        break;
-                default:Collections.sort(talksD3, TALKS.orderByRoom);
-                        for (Talk t: talksD3) {
-                            if(t.getRoom().equalsIgnoreCase(room)){
-                                result.add(t);
-                            }
+                    }
+                    break;
+                default:
+                    Collections.sort(talksD3, TALKS.orderByRoom);
+                    for (Talk t : talksD3) {
+                        if (t.getRoom().equalsIgnoreCase(room)) {
+                            result.add(t);
                         }
-                        break;
+                    }
+                    break;
             }
             return result;
         }
 
-        public static Talk findTalk(int day, int id){
-            switch(day){
-                case 1:  for(Talk t: talksD1){
-                             if(t.getId() == id){
-                                 return t;
-                             }
-                         }
-                         break;
-                case 2:  for(Talk t: talksD2){
-                            if(t.getId() == id){
-                                return t;
-                            }
-                         }
-                         break;
-                default: for(Talk t: talksD3){
-                             if(t.getId() == id){
-                                 return t;
-                             }
-                         }
-                         break;
+        public static Talk findTalk(int day, int id) {
+            switch (day) {
+                case 1:
+                    for (Talk t : talksD1) {
+                        if (t.getId() == id) {
+                            return t;
+                        }
+                    }
+                    break;
+                case 2:
+                    for (Talk t : talksD2) {
+                        if (t.getId() == id) {
+                            return t;
+                        }
+                    }
+                    break;
+                default:
+                    for (Talk t : talksD3) {
+                        if (t.getId() == id) {
+                            return t;
+                        }
+                    }
+                    break;
             }
 
             return null;
 
         }
 
-        public static Talk findTalk(int id){
+        public static Talk findTalk(int id) {
 
-            for(Talk t: talksD1){
-                if(t.getId() == id){
+            for (Talk t : talksD1) {
+                if (t.getId() == id) {
                     return t;
                 }
             }
 
-            for(Talk t: talksD2){
-                if(t.getId() == id){
+            for (Talk t : talksD2) {
+                if (t.getId() == id) {
                     return t;
                 }
             }
 
-            for(Talk t: talksD3){
-                if(t.getId() == id){
+            for (Talk t : talksD3) {
+                if (t.getId() == id) {
                     return t;
                 }
             }
@@ -1134,47 +1066,50 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public static void add(Talk t, int day){
-            switch (day){
-                case 1:  talksD1.add(t);
-                         break;
-                case 2:  talksD2.add(t);
-                         break;
-                default: talksD3.add(t);
-                         break;
+        public static void add(Talk t, int day) {
+            switch (day) {
+                case 1:
+                    talksD1.add(t);
+                    break;
+                case 2:
+                    talksD2.add(t);
+                    break;
+                default:
+                    talksD3.add(t);
+                    break;
             }
         }
 
-        public static String getSpeakerTalks(String speaker){
+        public static String getSpeakerTalks(String speaker) {
 
             List<Talk> result = new ArrayList<Talk>();
 
-            for(Talk t: talksD1){
-                if(t.isMySpeaker(speaker)){
+            for (Talk t : talksD1) {
+                if (t.isMySpeaker(speaker)) {
                     result.add(t);
                 }
             }
 
-            for(Talk t: talksD2){
-                if(t.isMySpeaker(speaker)){
+            for (Talk t : talksD2) {
+                if (t.isMySpeaker(speaker)) {
                     result.add(t);
                 }
             }
 
-            for(Talk t: talksD3){
-                if(t.isMySpeaker(speaker)){
+            for (Talk t : talksD3) {
+                if (t.isMySpeaker(speaker)) {
                     result.add(t);
                 }
             }
 
-            Collections.sort(result,TALKS.orderByStart);
+            Collections.sort(result, TALKS.orderByStart);
 
             String ret = "";
-            for(Talk t: result){
-                if(ret.equals("")){
-                  ret = ret.concat("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
-                }else {
-                  ret = ret.concat(", Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
+            for (Talk t : result) {
+                if (ret.equals("")) {
+                    ret = ret.concat("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
+                } else {
+                    ret = ret.concat(", Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
                 }
             }
 
@@ -1187,7 +1122,7 @@ public class MainActivity extends AppCompatActivity {
                 String room1 = talk.getRoom();
                 String room2 = t1.getRoom();
                 int dateComparision = room1.compareTo(room2);
-                return dateComparision == 0? talk.getStart().compareTo(t1.getStart()) : dateComparision;
+                return dateComparision == 0 ? talk.getStart().compareTo(t1.getStart()) : dateComparision;
             }
         };
 
@@ -1198,13 +1133,13 @@ public class MainActivity extends AppCompatActivity {
                 Date start2 = t1.getStart();
                 int dateComparision = start1.compareTo(start2);
 
-                if(talk.getDay() == t1.getDay()){
-                    if(dateComparision == 0){
+                if (talk.getDay() == t1.getDay()) {
+                    if (dateComparision == 0) {
                         return talk.getRoom().compareTo(t1.getRoom());
-                    }else{
+                    } else {
                         return dateComparision;
                     }
-                }else {
+                } else {
                     return (talk.getDay() - t1.getDay());
                 }
 
@@ -1217,17 +1152,18 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Speakers database
      */
     public static class SPEAKERS {
+
         private static final String TAG = SPEAKERS.class.getName();
         private static List<Speaker> speakers = new ArrayList<Speaker>();
         public static DatabaseReference myRef;
 
         public static void checkLoad() {
-            if(speakers == null || speakers.size() < 1){
+            if (speakers == null || speakers.size() < 1) {
                 load();
             }
         }
 
-        public static void load(){
+        public static void load() {
             speakers.clear();
             FirebaseDatabase database = new FBDB().getDatabase();
             myRef = database.getReference("speakers");
@@ -1238,10 +1174,10 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
-                    if(speakers.size() > 0){
+                    if (speakers.size() > 0) {
                         speakers.clear();
                     }
-                    for(DataSnapshot speaker: dataSnapshot.getChildren()) {
+                    for (DataSnapshot speaker : dataSnapshot.getChildren()) {
                         Speaker s = speaker.getValue(Speaker.class);
                         speakers.add(s);
                     }
@@ -1264,12 +1200,12 @@ public class MainActivity extends AppCompatActivity {
             return speakers;
         }
 
-        public static Speaker findSpeaker(String id){
-            if(speakers == null){
+        public static Speaker findSpeaker(String id) {
+            if (speakers == null) {
                 return null;
             }
-            for (Speaker s: speakers) {
-                if(id.equalsIgnoreCase(s.getId())){
+            for (Speaker s : speakers) {
+                if (id.equalsIgnoreCase(s.getId())) {
                     return s;
                 }
             }
@@ -1282,18 +1218,19 @@ public class MainActivity extends AppCompatActivity {
      * Class to represent Speakers database
      */
     public static class ALLLOADED {
+
         public static HomeFragment fragment;
         public static boolean speakers = false, tracks = false, talks = false, rooms = false;
 
-        public static void loaded(){
-            if(speakers && tracks && talks && rooms){
-                for(Talk t: TALKS.talksD1){
+        public static void loaded() {
+            if (speakers && tracks && talks && rooms) {
+                for (Talk t : TALKS.talksD1) {
                     t.connectSpeaker();
                 }
-                for(Talk t: TALKS.talksD2){
+                for (Talk t : TALKS.talksD2) {
                     t.connectSpeaker();
                 }
-                for(Talk t: TALKS.talksD3){
+                for (Talk t : TALKS.talksD3) {
                     t.connectSpeaker();
                 }
                 fragment.mAdapter.updateData(TALKS.getActualTalks());
@@ -1304,6 +1241,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
@@ -1316,7 +1258,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }
