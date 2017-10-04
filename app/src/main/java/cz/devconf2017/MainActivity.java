@@ -6,8 +6,6 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -73,8 +71,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Todo refactor props below
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
-
-    static int RC_SIGN_IN = 16;
 
     static boolean notificationPosted;
     static boolean doubleBackToExitPressedOnce;
@@ -326,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.GONE);
         navigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
         navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(true);
+
         isAdmin(currentUser.getEmail());
     }
 
@@ -354,10 +351,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     // -- Navigation ------------------------------------------------------------------------------
 
-    /**
-     * Class to represent the Drawer Header
-     */
-    protected static class DrawerHeaderViewHolder {
+    class DrawerHeaderViewHolder {
 
         @BindView(R.id.signIn)
         SignInButton mSignInButton;

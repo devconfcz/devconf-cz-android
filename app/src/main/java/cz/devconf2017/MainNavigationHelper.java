@@ -26,7 +26,7 @@ public class MainNavigationHelper {
     }
 
     private Fragment getFragment(Section section) {
-        Fragment fragment = null;
+        Fragment fragment;
 
         switch (section) {
             case HOME:
