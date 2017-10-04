@@ -50,6 +50,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static cz.devconf2017.MainNavigationHelper.Section;
 
@@ -175,12 +176,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Drawer header
         View drawerHeader = navigationView.getHeaderView(0);
         drawerHeaderViewHolder = new DrawerHeaderViewHolder(drawerHeader);
-        drawerHeaderViewHolder.mSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
 
         ADMINS.view = navigationView;
 
@@ -366,6 +361,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ButterKnife.bind(this, view);
         }
 
+        @OnClick(R.id.signIn)
+        void onSignInClick() {
+            signIn();
+        }
     }
 
     /**
