@@ -87,6 +87,10 @@ public class MainNavigationHelper {
                 .commit();
     }
 
+    public boolean isCurrentSection(Section section) {
+        return section == currentSection;
+    }
+
     enum Section {
         HOME,
         DAY_1,

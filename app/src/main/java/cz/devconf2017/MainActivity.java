@@ -53,9 +53,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static cz.devconf2017.MainNavigationHelper.Section;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final MainNavigationHelper.Section DEFAULT_HOME_SCREEN_SECTION = MainNavigationHelper.Section.HOME;
+    public static final Section DEFAULT_HOME_SCREEN_SECTION = Section.HOME;
+    public static final int RC_SIGN_IN = 16;
 
     @BindView(R.id.toolbar)
     protected Toolbar toolbar;
@@ -85,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         // TODO handle intents from notifications and set initial section
-        MainNavigationHelper.Section selectedSection = DEFAULT_HOME_SCREEN_SECTION;
+        Section selectedSection = DEFAULT_HOME_SCREEN_SECTION;
 
         // todo: refactor ..
         SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy", Locale.US);
@@ -193,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.getMenu().findItem(R.id.nav_day_3).setTitle(navigationView.getMenu().findItem(R.id.nav_day_3).getTitle() + sdf.format(TALKS.dayThree));
     }
 
-    private void configureNavigation(@NonNull MainNavigationHelper.Section selectedSection) {
+    private void configureNavigation(@NonNull Section selectedSection) {
         navigationView.setNavigationItemSelectedListener(this);
         navigationHelper = new MainNavigationHelper(getSupportFragmentManager());
         navigationHelper.navigate(selectedSection);
@@ -203,47 +206,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
-                navigationHelper.navigate(MainNavigationHelper.Section.HOME);
+                navigationHelper.navigate(Section.HOME);
                 break;
 
             case R.id.nav_day_1:
-                navigationHelper.navigate(MainNavigationHelper.Section.DAY_1);
+                navigationHelper.navigate(Section.DAY_1);
                 break;
 
             case R.id.nav_day_2:
-                navigationHelper.navigate(MainNavigationHelper.Section.DAY_2);
+                navigationHelper.navigate(Section.DAY_2);
                 break;
 
             case R.id.nav_day_3:
-                navigationHelper.navigate(MainNavigationHelper.Section.DAY_3);
+                navigationHelper.navigate(Section.DAY_3);
                 break;
 
             case R.id.nav_favorites:
-                navigationHelper.navigate(MainNavigationHelper.Section.FAVORITES);
+                navigationHelper.navigate(Section.FAVORITES);
                 break;
 
             case R.id.nav_voting:
-                navigationHelper.navigate(MainNavigationHelper.Section.VOTING);
+                navigationHelper.navigate(Section.VOTING);
                 break;
 
             case R.id.nav_venue:
-                navigationHelper.navigate(MainNavigationHelper.Section.VENUE);
+                navigationHelper.navigate(Section.VENUE);
                 break;
 
             case R.id.nav_floor_plan:
-                navigationHelper.navigate(MainNavigationHelper.Section.FLOOR_PLAN);
+                navigationHelper.navigate(Section.FLOOR_PLAN);
                 break;
 
             case R.id.nav_speakers:
-                navigationHelper.navigate(MainNavigationHelper.Section.SPEAKERS);
+                navigationHelper.navigate(Section.SPEAKERS);
                 break;
 
             case R.id.nav_social_event:
-                navigationHelper.navigate(MainNavigationHelper.Section.SOCIAL_EVENT);
+                navigationHelper.navigate(Section.SOCIAL_EVENT);
                 break;
 
             case R.id.nav_about:
-                navigationHelper.navigate(MainNavigationHelper.Section.ABOUT);
+                navigationHelper.navigate(Section.ABOUT);
                 break;
 
             case R.id.nav_sign_out:
@@ -329,15 +332,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void hideUserInfo() {
         drawerHeaderViewHolder.mUserAvatar.setVisibility(View.GONE);
         drawerHeaderViewHolder.mUserName.setVisibility(View.GONE);
-
         drawerHeaderViewHolder.mSignInButton.setVisibility(View.VISIBLE);
+
         navigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_favorites).setVisible(false);
-        // TODO refactor
-//        if (lastFragment == LastFragment.VOTING || lastFragment == LastFragment.FAVORITES) {
-//            lastFragment = LastFragment.HOME;
-//            displayHome();
-//        }
+
+        if (navigationHelper.isCurrentSection(Section.VOTING)
+                || navigationHelper.isCurrentSection(Section.FAVORITES)) {
+            navigationHelper.navigate(Section.HOME);
+        }
+
         isAdmin("");
     }
 
