@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected DrawerLayout drawerLayout;
 
     private MainNavigationHelper navigationHelper;
-    private MainNavigationHelper.Section selectedSection;
 
     // Todo refactor props below
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
@@ -85,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar(toolbar);
 
-        // TODO handle intents from notifications
+        // TODO handle intents from notifications and set initial section
+        MainNavigationHelper.Section selectedSection = DEFAULT_HOME_SCREEN_SECTION;
 
         // todo: refactor ..
         SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy", Locale.US);
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // todo: .. until here
 
         configureDrawer();
-        configureNavigation();
+        configureNavigation(selectedSection);
 
         DatabaseReference connectedRef = new FBDB().getDatabase().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
@@ -193,10 +193,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.getMenu().findItem(R.id.nav_day_3).setTitle(navigationView.getMenu().findItem(R.id.nav_day_3).getTitle() + sdf.format(TALKS.dayThree));
     }
 
-    private void configureNavigation() {
+    private void configureNavigation(@NonNull MainNavigationHelper.Section selectedSection) {
         navigationView.setNavigationItemSelectedListener(this);
         navigationHelper = new MainNavigationHelper(getSupportFragmentManager());
-        navigationHelper.navigate(DEFAULT_HOME_SCREEN_SECTION);
+        navigationHelper.navigate(selectedSection);
     }
 
     @Override
