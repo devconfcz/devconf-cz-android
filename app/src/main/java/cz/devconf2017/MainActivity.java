@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Todo refactor props below
     private DrawerHeaderViewHolder drawerHeaderViewHolder;
 
-    static boolean notificationPosted;
-    static boolean doubleBackToExitPressedOnce;
+    private boolean notificationPosted;
+    private boolean doubleBackToExitPressedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
