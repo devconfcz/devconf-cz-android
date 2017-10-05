@@ -3,6 +3,10 @@ package cz.devconf2017;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import cz.devconf2017.offline.AboutFragment;
+import cz.devconf2017.offline.SocialFragment;
+import cz.devconf2017.offline.VenueFragment;
+
 public class MainNavigationHelper {
 
     private final FragmentManager supportFragmentManager;
@@ -54,7 +58,7 @@ public class MainNavigationHelper {
                 break;
 
             case VENUE:
-                fragment = new VenueFragment();
+                fragment = VenueFragment.newInstance();
                 break;
 
             case FLOOR_PLAN:
@@ -66,11 +70,11 @@ public class MainNavigationHelper {
                 break;
 
             case SOCIAL_EVENT:
-                fragment = new SocialFragment();
+                fragment = SocialFragment.newInstance();
                 break;
 
             case ABOUT:
-                fragment = new AboutFragment();
+                fragment = AboutFragment.newInstance();
                 break;
 
             default:
