@@ -33,7 +33,7 @@
         android:visibility="gone">
 
         <TextView
-            android:text="@string/loadingData"
+            android:text="@string/loading_text"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:id="@+id/loading_label"

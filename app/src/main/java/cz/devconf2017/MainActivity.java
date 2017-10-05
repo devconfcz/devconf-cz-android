@@ -365,11 +365,11 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
     }
 
     public void isAdmin(String email) {
-        if (ADMINS.find(email)) {
+//        if (ADMINS.find(email)) {
             navigationView.getMenu().findItem(R.id.nav_voting).setVisible(true);
-        } else {
-            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
-        }
+//        } else {
+//            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
+//        }
     }
 
     // -- Navigation ------------------------------------------------------------------------------

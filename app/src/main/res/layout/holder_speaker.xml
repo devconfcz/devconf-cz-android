@@ -24,7 +24,6 @@
         android:layout_margin="8dp"
         android:textColor="@android:color/black"
         android:textSize="21sp"
-        android:text="dasdasdssa"
         tools:text="John Doe"/>
 
 </LinearLayout>

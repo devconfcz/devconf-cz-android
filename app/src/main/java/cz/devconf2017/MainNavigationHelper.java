@@ -7,7 +7,7 @@ import cz.devconf2017.offline.AboutFragment;
 import cz.devconf2017.offline.SocialFragment;
 import cz.devconf2017.offline.VenueFragment;
 import cz.devconf2017.speaker.SpeakersFragment;
-import cz.devconf2017.vote.VotingFragment;
+import cz.devconf2017.vote.VotingResultFragment;
 
 public class MainNavigationHelper {
 
@@ -61,7 +61,7 @@ public class MainNavigationHelper {
                 break;
 
             case VOTING:
-                fragment = VotingFragment.newInstance();
+                fragment = VotingResultFragment.newInstance(0);
                 break;
 
             case VENUE:
