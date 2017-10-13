@@ -5,6 +5,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cz.devconf2017.R.id.speaker;
+
 /**
  * Created by jridky on 9.12.16.
  */

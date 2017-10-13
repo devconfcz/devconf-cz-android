@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,10 +52,11 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cz.devconf2017.base.BaseActivity;
 
 import static cz.devconf2017.MainNavigationHelper.Section;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final Section DEFAULT_HOME_SCREEN_SECTION = Section.HOME;
     public static final int RC_SIGN_IN = 16;
@@ -263,8 +265,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             hideUserInfo();
         }
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d("TOKEN", "Refreshed Token: " + token);
+//        String token = FirebaseInstanceId.getInstance().getToken();
+//        Log.d("TOKEN", "Refreshed Token: " + token);
     }
 
     @Override
@@ -307,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void showUserInfo(FirebaseUser currentUser) {
         Glide.with(this).load(currentUser.getPhotoUrl())
-                .transform(new GlideCircleTransform(getApplicationContext()))
+                .apply(RequestOptions.circleCropTransform())
                 .into(drawerHeaderViewHolder.mUserAvatar);
         drawerHeaderViewHolder.mUserName.setText(currentUser.getDisplayName());
 

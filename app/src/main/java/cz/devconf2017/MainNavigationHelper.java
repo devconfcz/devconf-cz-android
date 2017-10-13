@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import cz.devconf2017.offline.AboutFragment;
 import cz.devconf2017.offline.SocialFragment;
 import cz.devconf2017.offline.VenueFragment;
+import cz.devconf2017.speaker.SpeakersFragment;
+import cz.devconf2017.vote.VotingFragment;
 
 public class MainNavigationHelper {
 
@@ -34,27 +36,32 @@ public class MainNavigationHelper {
 
         switch (section) {
             case HOME:
-                fragment = new HomeFragment();
+//                fragment = HomeFragment.newInstance();
+                fragment = null;
                 break;
 
             case DAY_1:
-                fragment = new TalkFragment();
+//                fragment = TalkFragment.newInstance();
+                fragment = null;
                 break;
 
             case DAY_2:
-                fragment = new TalkFragment();
+//                fragment = TalkFragment.newInstance();
+                fragment = null;
                 break;
 
             case DAY_3:
-                fragment = new TalkFragment();
+//                fragment = TalkFragment.newInstance();
+                fragment = null;
                 break;
 
             case FAVORITES:
-                fragment = new FavoritesFragment();
+//                fragment = FavoritesFragment.newInstance();
+                fragment = null;
                 break;
 
             case VOTING:
-                fragment = new VotingFragment();
+                fragment = VotingFragment.newInstance();
                 break;
 
             case VENUE:
@@ -62,11 +69,12 @@ public class MainNavigationHelper {
                 break;
 
             case FLOOR_PLAN:
-                fragment = new FloorPlanFragment();
+//                fragment = FloorPlanFragment.newInstance();
+                fragment = null;
                 break;
 
             case SPEAKERS:
-                fragment = new SpeakersFragment();
+                fragment = SpeakersFragment.newInstance();
                 break;
 
             case SOCIAL_EVENT:

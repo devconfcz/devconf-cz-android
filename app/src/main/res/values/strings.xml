@@ -17,9 +17,8 @@
     <string name="syncContext">The internet connection lost!</string>
     <string name="syncSubText">Connect to the internet to have actual information.</string>
 
-
     <!-- Home screen resources -->
-    <string name="loadingData">Loading data ...</string>
+    <string name="loading_text">Loading data …</string>
     <string name="home_title">Running and upcoming talks</string>
     <string name="running">RUNNING NOW</string>
     <string name="lastofday">LAST TALK OF THIS DAY</string>
@@ -38,6 +37,10 @@
     <string name="leaveFeedback">Leave your feedback ...</string>
     <string name="resetFeedback">Remove feedback</string>
     <string name="removed">This talk has been removed from the schedule by organizers.</string>
+
+    <!-- Speakers list -->
+    <string name="content_desc_speaker_avatar">Speaker avatar</string>
+    <string name="speakers_empty_view">There are no speakers</string>
 
     <!-- Venue data source -->
 <string name="venueData" formatted="false">"<![CDATA[

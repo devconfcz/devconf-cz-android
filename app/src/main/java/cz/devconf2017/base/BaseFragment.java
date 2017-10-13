@@ -24,4 +24,16 @@ public abstract class BaseFragment extends Fragment {
         ButterKnife.bind(this, view);
         return view;
     }
+
+    protected void showLoading() {
+        ((BaseActivity) getActivity()).showLoading();
+    }
+
+    protected void hideLoading() {
+        ((BaseActivity) getActivity()).hideLoading();
+    }
+
+    protected void showToast(int stringRes) {
+        ((BaseActivity) getActivity()).showToast(stringRes);
+    }
 }
