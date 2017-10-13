@@ -15,7 +15,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,6 +26,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -37,7 +38,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,11 +52,11 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cz.devconf2017.base.BaseActivity;
+import cz.devconf2017.base.ExpirableActivity;
 
 import static cz.devconf2017.MainNavigationHelper.Section;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends ExpirableActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final Section DEFAULT_HOME_SCREEN_SECTION = Section.HOME;
     public static final int RC_SIGN_IN = 16;
@@ -269,31 +269,56 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //        Log.d("TOKEN", "Refreshed Token: " + token);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            showUserInfo(currentUser);
-            FAVORITES.checkLoad();
-        }
-    }
-
     private void signIn() {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
         );
         startActivityForResult(
-                AuthUI
-                        .getInstance()
+                AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setLogo(R.drawable.ic_launcher)
-                        .setProviders(providers)
+                        .setAvailableProviders(providers)
+                        // TODO setTosUrl terms of service
+                        // TODO setPrivacyPolicyUrl
+//                        .setLogo(R.drawable.ic_launcher)
                         .build(),
                 RC_SIGN_IN);
 
         // TODO refactor
         // displayLastFragment();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+
+            if (resultCode == RESULT_OK) {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                showUserInfo(currentUser);
+                FAVORITES.checkLoad();
+                return;
+
+            } else {
+                IdpResponse response = IdpResponse.fromResultIntent(data);
+
+                if (response == null) {
+                    showToast(R.string.sign_in_cancelled);
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    showToast(R.string.no_internet_connection);
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    showToast(R.string.fui_general_error);
+                    return;
+                }
+            }
+
+            showToast(R.string.fui_general_error);
+        }
     }
 
     private void signOut() {
@@ -346,6 +371,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
         }
     }
+
     // -- Navigation ------------------------------------------------------------------------------
 
     class DrawerHeaderViewHolder {
