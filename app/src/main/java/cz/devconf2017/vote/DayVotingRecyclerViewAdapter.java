@@ -8,10 +8,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 import cz.devconf2017.R;
+import cz.devconf2017.Talk;
 
-class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Votes, VoteHolder> {
+class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, VoteHolder> {
 
-    DayVotingRecyclerViewAdapter(FirebaseRecyclerOptions<Votes> options) {
+    DayVotingRecyclerViewAdapter(FirebaseRecyclerOptions<Talk> options) {
         super(options);
     }
 
@@ -24,12 +25,13 @@ class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Votes, VoteHo
     }
 
     @Override
-    protected void onBindViewHolder(VoteHolder viewHolder, int position, Votes votes) {
-        viewHolder.number.setText(votes.getScore());
-        viewHolder.title.setText(votes.getTitle());
-        viewHolder.speaker.setText(votes.getSpeaker());
-//        viewHolder.talk = votes.getTalk().getId();
-        viewHolder.talk = 123;
-        viewHolder.statistic.setText(votes.getStatistic());
+    protected void onBindViewHolder(VoteHolder viewHolder, int position, Talk talk) {
+        final TalkBusiness tb = new TalkBusiness(talk);
+
+        viewHolder.number.setText(tb.printScore());
+        viewHolder.title.setText(tb.printTitle());
+        viewHolder.speaker.setText(tb.printSpeakers(null));
+        viewHolder.talk = talk.getId();
+        viewHolder.statistic.setText(tb.printStatistics());
     }
 }

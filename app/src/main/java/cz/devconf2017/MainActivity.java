@@ -626,7 +626,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
 
         public static boolean isFavorite(int id) {
             for (Talk t : favorites) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return true;
                 }
             }
@@ -739,7 +739,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                     }
                     for (DataSnapshot t : dataSnapshot.getChildren()) {
                         Talk talk = t.getValue(Talk.class);
-                        if (talk.id == null || talk.day.equalsIgnoreCase("")) {
+                        if (talk.getId() == null || talk.getDay().equalsIgnoreCase("")) {
                             Log.d("SKIPPED", talk.getTitle());
                             continue;
                         } else {
@@ -747,10 +747,10 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                         }
 
                         switch (talk.getDay()) {
-                            case 1:
+                            case "1":
                                 talksD1.add(talk);
                                 break;
-                            case 2:
+                            case "2":
                                 talksD2.add(talk);
                                 break;
                             default:
@@ -1045,21 +1045,21 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
             switch (day) {
                 case 1:
                     for (Talk t : talksD1) {
-                        if (t.getId() == id) {
+                        if (t.getId() == String.valueOf(id)) {
                             return t;
                         }
                     }
                     break;
                 case 2:
                     for (Talk t : talksD2) {
-                        if (t.getId() == id) {
+                        if (t.getId() == String.valueOf(id)) {
                             return t;
                         }
                     }
                     break;
                 default:
                     for (Talk t : talksD3) {
-                        if (t.getId() == id) {
+                        if (t.getId() == String.valueOf(id)) {
                             return t;
                         }
                     }
@@ -1073,19 +1073,19 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
         public static Talk findTalk(int id) {
 
             for (Talk t : talksD1) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return t;
                 }
             }
 
             for (Talk t : talksD2) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return t;
                 }
             }
 
             for (Talk t : talksD3) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return t;
                 }
             }
@@ -1168,7 +1168,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                         return dateComparision;
                     }
                 } else {
-                    return (talk.getDay() - t1.getDay());
+                    return (Integer.valueOf(talk.getDay()) - Integer.valueOf(t1.getDay()));
                 }
 
 

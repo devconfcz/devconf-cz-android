@@ -7,35 +7,92 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by jridky on 29.12.16.
- */
+import static cz.devconf2017.R.id.speaker;
 
 @IgnoreExtraProperties
 public class Talk {
-    public String description, difficulty, room, title, track, type;
-    public String id, day;
-    public String duration, start;
-    public List<String> speakers;
 
-    public int numId, numDay;
-    public Date numDuration;
-    public Date numStart;
-    public ArrayList<Speaker> speaker;
-    public boolean running, last;
+    private String day;
+    private String description;
+    private String difficulty;
+    private String duration;
+    private String id;
+    private String room;
+    private HashMap<Integer, String> speakers;
+    private String startTime;
+    private String title;
+    private String track;
+    private String type;
 
-    public Talk(){
-        // for firebase purposes
+    private float score;
 
+    public Talk() {
+        // For Firebase purposes
     }
 
-    public Talk(String id, String day, String duration, String start, String description, String room, String title, String track, String type, List<String> speakers){
-        this.id = id;//Integer.getInteger(id);
-        this.day = day;//Integer.getInteger(day);
-        this.speakers = speakers;
-        this.start = start;
+    public String getDay() {
+        return day;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public HashMap<Integer, String> getSpeakers() {
+        return speakers;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getTrack() {
+        return track;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    private int numId;
+    private int numDay;
+    private Date numDuration;
+    private Date numStart;
+    private boolean running;
+    boolean last;
+
+    public Talk(String id, String day, String duration, String start, String description, String room, String title, String track, String type, List<String> speakers) {
+        this.id = id;
+        this.day = day;
+//        this.speakers = speakers;
+        this.startTime = start;
         this.duration = duration;
         this.description = description;
         this.room = room;
@@ -44,57 +101,56 @@ public class Talk {
         this.track = track;
         setSufficientDataTypes();
         connectSpeaker();
-
     }
 
     public void setSufficientDataTypes() {
-        this.numId = Integer.parseInt(this.id);
-        this.numDay = Integer.parseInt(this.day);
+        this.numId = Integer.parseInt(this.getId());
+        this.numDay = Integer.parseInt(this.getDay());
         SimpleDateFormat format = new SimpleDateFormat("H:mm:ss");
         try {
             this.numDuration = format.parse(this.duration);
             format = new SimpleDateFormat("HH:mm");
-            this.numStart = format.parse(this.start);
-        }catch (Exception e){
+            this.numStart = format.parse(this.startTime);
+        } catch (Exception e) {
             Log.d("SDF", "Error: " + e.getMessage());
         }
         running = false;
         last = false;
     }
 
-    public void connectSpeaker(){
-        speaker = new ArrayList<Speaker>();
-
-        if(speakers == null){
-            return;
-        }
-
-        for (String n: speakers) {
-            Speaker s = MainActivity.SPEAKERS.findSpeaker(n);
-            if(s != null){
-                speaker.add(s);
-                s.addTalk(this);
-            }
-        }
+    public void connectSpeaker() {
+//        speaker = new ArrayList<Speaker>();
+//
+//        if (speakers == null) {
+//            return;
+//        }
+//
+//        for (String n : speakers) {
+//            Speaker s = MainActivity.SPEAKERS.findSpeaker(n);
+//            if (s != null) {
+//                speaker.add(s);
+//                s.addTalk(this);
+//            }
+//        }
     }
 
-    public void setRunning(){
+    public void setRunning() {
         this.running = true;
     }
 
-    public void unsetRunning(){
+    public void unsetRunning() {
         this.running = false;
     }
 
-    public void setLastOfDay(){
+    public void setLastOfDay() {
         this.last = true;
     }
 
-    public void unsetLastOfDay(){
+    public void unsetLastOfDay() {
         this.last = false;
     }
 
-    public boolean getRunning(){
+    public boolean getRunning() {
         return this.running;
     }
 
@@ -108,91 +164,67 @@ public class Talk {
         return format.format(this.numDuration) + " h";
     }
 
-    public Speaker getSpeaker(){
-        if(this.speaker == null || this.speaker.size() < 1){
-            return null;
-        }else{
-            return this.speaker.get(0);
-        }
+    public Speaker getSpeaker() {
+//        if (this.speakers == null || this.speakers.size() < 1) {
+//            return null;
+//        } else {
+//            return this.speakers.get(0);
+//        }
+        return null;
     }
 
     @Override
     public String toString() {
-        return "Id: " + getId() + " NumId: " + this.numId + " Day: " + getDay() + " NumDay: " ;
+        return "Id: " + getId() + " NumId: " + this.numId + " Day: " + getDay() + " NumDay: ";
     }
 
     public String getSpeakerInfo() {
 
         String result = "";
 
-        if(speaker != null && speaker.size() > 0) {
-            result = speaker.get(0).getName();
+        if (speakers != null && speakers.size() > 0) {
+            result = speakers.get(0);
 
-            for (int i = 1; i < speaker.size(); i++) {
-                result = result + ", " + speaker.get(i).getName();
+            for (int i = 1; i < speakers.size(); i++) {
+                result = result + ", " + speakers.get(i);
             }
-        }else{
+        } else {
             result = "We don't know yet";
         }
 
         return result;
     }
 
-    public String getSpeakerCompleteInfo(){
+    public String getSpeakerCompleteInfo() {
         String result = "";
         Speaker s;
 
-        if(speaker != null && speaker.size() > 0) {
-            s = speaker.get(0);
-            result = s.getName() + " (" + s.getCountry() + ", " + s.getOrganization() + ")";
-
-            for (int i = 1; i < speaker.size(); i++) {
-                s = speaker.get(i);
-                result = result + ", " + s.getName() + " (" + s.getCountry() + ", " + s.getOrganization() + ")";
-            }
-        }else{
+//        if (speakers != null && speakers.size() > 0) {
+//            s = speakers.get(0);
+//            result = s.getName() + " (" + s.getCountry() + ", " + s.getOrganization() + ")";
+//
+//            for (int i = 1; i < speakers.size(); i++) {
+//                s = speakers.get(i);
+//                result = result + ", " + s.getName() + " (" + s.getCountry() + ", " + s.getOrganization() + ")";
+//            }
+//        } else {
             result = "We don't know yet";
-        }
+//        }
 
         return result;
     }
 
-    public boolean isMySpeaker(String s){
-        for(Speaker sp: speaker){
-            if(sp.getId().equalsIgnoreCase(s)){
-                return true;
-            }
-        }
+    public boolean isMySpeaker(String s) {
+//        for (Speaker sp : speakers) {
+//            if (sp.getId().equalsIgnoreCase(s)) {
+//                return true;
+//            }
+//        }
         return false;
     }
 
-    public String getDescription() {
-        return description;
+    public Date getStart() {
+        return numStart;
     }
 
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public Date getStart() { return numStart; }
-
-    public String getRoom() {
-        return room;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getTrack() {
-        return track;
-    }
-
-    public int getId() {
-        return numId;
-    }
-
-    public int getDay() {
-        return numDay;
-    }
 }

@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import cz.devconf2017.R;
+import cz.devconf2017.Talk;
 import cz.devconf2017.base.BaseFragment;
 import cz.devconf2017.util.view.EmptyRecyclerView;
 
@@ -28,7 +29,6 @@ public class DayVotingFragment extends BaseFragment {
     TextView emptyView;
 
     DayVotingRecyclerViewAdapter adapter;
-    //    List<Votes> list;
     int day;
 
     @Override
@@ -58,11 +58,14 @@ public class DayVotingFragment extends BaseFragment {
 
         showLoading();
 
-//        list = new ArrayList<>();
+        DatabaseReference myRef = FirebaseDatabase.getInstance()
+                .getReference("votes")
+                .orderByChild("day")
+                .equalTo(day)
+                .getRef();
 
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("votes");
-        FirebaseRecyclerOptions<Votes> options = new FirebaseRecyclerOptions.Builder<Votes>()
-                .setQuery(myRef, Votes.class)
+        FirebaseRecyclerOptions<Talk> options = new FirebaseRecyclerOptions.Builder<Talk>()
+                .setQuery(myRef, Talk.class)
                 .setLifecycleOwner(this)
                 .build();
 

@@ -2,6 +2,7 @@ package cz.devconf2017.vote;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,7 +25,7 @@ class VoteHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.statistic)
     TextView statistic;
 
-    public int talk;
+    public String talk;
 
     VoteHolder(View itemView) {
         super(itemView);

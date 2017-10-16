@@ -42,7 +42,7 @@ public class TalkViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     }
 
     private void setDay() {
-        this.day.setText("Day " + talk.day);
+        this.day.setText("Day " + talk.getDay());
     }
 
     private void setRoom() { this.room.setText(talk.getRoom().toUpperCase()); }

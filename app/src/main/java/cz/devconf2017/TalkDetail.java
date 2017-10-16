@@ -116,7 +116,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
                     for(DataSnapshot vote: dataSnapshot.getChildren()) {
-                        if(vote.getKey().equals(t.id)){
+                        if(vote.getKey().equals(t.getId())){
                             Feedback f = vote.getValue(Feedback.class);
                             if(Integer.parseInt(f.rating) > 0){
                                 reset.setVisibility(View.VISIBLE);
@@ -148,7 +148,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                     rating.setRating(rtg);
                 }
                 Feedback feedback = new Feedback(rtg, feedbackText.getText().toString());
-                feedback.save(t.getId(), user.getUid());
+                feedback.save(Integer.valueOf(t.getId()), user.getUid());
                 reset.setVisibility(View.VISIBLE);
                 Toast.makeText(getBaseContext(),R.string.feedbackSent,Toast.LENGTH_LONG).show();
             }
@@ -188,7 +188,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                 fromCreate = false;
                 Feedback feedback = new Feedback(rating, feedbackText.getText().toString());
                 reset.setVisibility(View.VISIBLE);
-                feedback.save(t.getId(), user.getUid());
+                feedback.save(Integer.valueOf(t.getId()), user.getUid());
             }
         });
 
