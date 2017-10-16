@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import butterknife.BindView;
 import cz.devconf2017.R;
@@ -58,14 +58,13 @@ public class DayVotingFragment extends BaseFragment {
 
         showLoading();
 
-        DatabaseReference myRef = FirebaseDatabase.getInstance()
-                .getReference("votes")
+        Query query = FirebaseDatabase.getInstance()
+                .getReference("sessions")
                 .orderByChild("day")
-                .equalTo(day)
-                .getRef();
+                .equalTo(String.valueOf(day));
 
         FirebaseRecyclerOptions<Talk> options = new FirebaseRecyclerOptions.Builder<Talk>()
-                .setQuery(myRef, Talk.class)
+                .setQuery(query, Talk.class)
                 .setLifecycleOwner(this)
                 .build();
 

@@ -21,7 +21,7 @@ public class Talk {
     private String duration;
     private String id;
     private String room;
-    private HashMap<Integer, String> speakers;
+    private ArrayList<String> speakers;
     private String startTime;
     private String title;
     private String track;
@@ -57,7 +57,7 @@ public class Talk {
         return room;
     }
 
-    public HashMap<Integer, String> getSpeakers() {
+    public ArrayList<String> getSpeakers() {
         return speakers;
     }
 

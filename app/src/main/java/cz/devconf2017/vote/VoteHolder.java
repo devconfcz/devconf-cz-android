@@ -1,10 +1,9 @@
 package cz.devconf2017.vote;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,8 +33,9 @@ class VoteHolder extends RecyclerView.ViewHolder {
 
     @OnClick(R.id.vote_holder_container)
     public void onVoteClick(View v) {
-        v.getContext().startActivity(new Intent(v.getContext(), VotingDetail.class)
-                .putExtra("talk", talk)
-        );
+        Toast.makeText(v.getContext(), "TODO", Toast.LENGTH_SHORT).show();
+//        v.getContext().startActivity(new Intent(v.getContext(), VotingDetail.class)
+//                .putExtra("talk", talk)
+//        );
     }
 }
