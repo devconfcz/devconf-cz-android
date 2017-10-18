@@ -3,7 +3,9 @@ package cz.devconf2017.vote;
 import android.support.annotation.Nullable;
 
 import java.util.Collection;
+import java.util.HashMap;
 
+import cz.devconf2017.Feedback;
 import cz.devconf2017.Speaker;
 import cz.devconf2017.Talk;
 
@@ -16,7 +18,7 @@ public class TalkBusiness {
     }
 
     public CharSequence printScore() {
-        return String.valueOf(talk.getScore());
+        return String.valueOf(talk.getAverageRating());
     }
 
     public CharSequence printTitle() {
@@ -38,5 +40,20 @@ public class TalkBusiness {
 
     public CharSequence printStatistics() {
         return "todo";
+    }
+
+    public float calculateAverageRatingOfSession() {
+        HashMap<String, Feedback> votes = talk.getVotes();
+
+        if (votes == null) {
+            return 0;
+        }
+
+        float ratingSum = 0;
+        for (Feedback feedback : votes.values()) {
+            ratingSum += feedback.getRating();
+        }
+
+        return ratingSum / votes.size();
     }
 }

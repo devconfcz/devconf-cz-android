@@ -118,7 +118,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                     for(DataSnapshot vote: dataSnapshot.getChildren()) {
                         if(vote.getKey().equals(t.getId())){
                             Feedback f = vote.getValue(Feedback.class);
-                            if(Integer.parseInt(f.rating) > 0){
+                            if(f.getRating() > 0){
                                 reset.setVisibility(View.VISIBLE);
                                 feedbackText.setText(f.feedback);
                                 rating.setRating(Float.valueOf(f.rating));
@@ -147,7 +147,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                     rtg = 1.0f;
                     rating.setRating(rtg);
                 }
-                Feedback feedback = new Feedback(rtg, feedbackText.getText().toString());
+                Feedback feedback = new Feedback(feedbackText.getText().toString(), (int) rtg);
                 feedback.save(Integer.valueOf(t.getId()), user.getUid());
                 reset.setVisibility(View.VISIBLE);
                 Toast.makeText(getBaseContext(),R.string.feedbackSent,Toast.LENGTH_LONG).show();
@@ -186,7 +186,7 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                 }
 
                 fromCreate = false;
-                Feedback feedback = new Feedback(rating, feedbackText.getText().toString());
+                Feedback feedback = new Feedback(feedbackText.getText().toString(), (int) rating);
                 reset.setVisibility(View.VISIBLE);
                 feedback.save(Integer.valueOf(t.getId()), user.getUid());
             }

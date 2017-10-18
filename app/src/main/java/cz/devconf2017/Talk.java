@@ -1,5 +1,6 @@
 package cz.devconf2017;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -9,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import static cz.devconf2017.R.id.speaker;
 
 @IgnoreExtraProperties
 public class Talk {
@@ -26,8 +25,9 @@ public class Talk {
     private String title;
     private String track;
     private String type;
+    private HashMap<String, Feedback> votes;
 
-    private float score;
+    private float averageRating;
 
     public Talk() {
         // For Firebase purposes
@@ -77,8 +77,16 @@ public class Talk {
         return type;
     }
 
-    public float getScore() {
-        return score;
+    public HashMap<String, Feedback> getVotes() {
+        return votes;
+    }
+
+    public float getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(float averageRating) {
+        this.averageRating = averageRating;
     }
 
     private int numId;
@@ -208,7 +216,7 @@ public class Talk {
 //                result = result + ", " + s.getName() + " (" + s.getCountry() + ", " + s.getOrganization() + ")";
 //            }
 //        } else {
-            result = "We don't know yet";
+        result = "We don't know yet";
 //        }
 
         return result;
