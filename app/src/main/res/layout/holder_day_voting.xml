@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/holder_day_voting_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/padding_small"
+    android:layout_marginLeft="@dimen/padding_small"
+    android:layout_marginRight="@dimen/padding_small"
+    android:layout_marginStart="@dimen/padding_small"
+    android:layout_marginTop="@dimen/padding_small"
+    android:background="@android:color/white"
+    android:elevation="2dp"
+    android:orientation="horizontal"
+    android:padding="@dimen/padding_small">
+
+    <TextView
+        android:id="@+id/holder_day_voting_rating"
+        style="@style/Base.DialogWindowTitle.AppCompat"
+        android:layout_width="@dimen/home_button_width"
+        android:layout_height="@dimen/home_button_width"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/padding_small"
+        android:layout_marginRight="@dimen/padding_small"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:textSize="@dimen/text_size_title"
+        tools:text="5.0"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/holder_day_voting_title"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textSize="21sp"
+            tools:text="Building Apps with Digger is much more fun"/>
+
+        <TextView
+            android:id="@+id/holder_day_voting_speakers"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="sans-serif-light"
+            tools:text="John Doe, Jenny Apple"/>
+
+        <TextView
+            android:id="@+id/holder_day_voting_statistic"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            tools:text="Statistic"/>
+    </LinearLayout>
+</LinearLayout>

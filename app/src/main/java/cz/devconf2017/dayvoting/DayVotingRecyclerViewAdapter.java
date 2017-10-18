@@ -8,16 +8,21 @@ import com.firebase.ui.common.ChangeEventType;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import cz.devconf2017.R;
+import cz.devconf2017.Speaker;
 import cz.devconf2017.Talk;
 
-class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, VoteHolder> {
+class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, DayVotingHolder> {
 
     private static final Comparator<Talk> TALK_COMPARATOR_BY_RATING = new Comparator<Talk>() {
         @Override
@@ -34,22 +39,49 @@ class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, VoteHol
     }
 
     @Override
-    public VoteHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DayVotingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.row_voting, parent, false);
-        return new VoteHolder(view);
+                .inflate(R.layout.holder_day_voting, parent, false);
+        return new DayVotingHolder(view);
     }
 
     @Override
-    protected void onBindViewHolder(VoteHolder viewHolder, int position, Talk talk) {
+    protected void onBindViewHolder(final DayVotingHolder viewHolder, int position, final Talk talk) {
         final TalkBusiness tb = new TalkBusiness(talk);
 
-        viewHolder.number.setText(tb.printScore());
+        viewHolder.rating.setText(tb.printScore());
         viewHolder.title.setText(tb.printTitle());
-        viewHolder.speaker.setText(tb.printSpeakers(null));
         viewHolder.talk = talk.getId();
         viewHolder.statistic.setText(tb.printStatistics());
+        viewHolder.speaker.setText("...");
+
+        FirebaseDatabase.getInstance()
+                .getReference("speakers")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    private List<Speaker> speakers = new ArrayList<>();
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Iterable<DataSnapshot> speakerSnapshots = dataSnapshot.getChildren();
+                        final Collection<String> speakerIds = tb.getSpeakerIds();
+
+                        if (speakerIds != null) {
+                            for (DataSnapshot snapshot : speakerSnapshots) {
+                                if (speakerIds.contains(snapshot.getKey())) {
+                                    Speaker speaker = snapshot.getValue(Speaker.class);
+                                    this.speakers.add(speaker);
+                                }
+                            }
+                        }
+                        viewHolder.speaker.setText(tb.printSpeakers(this.speakers));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        viewHolder.speaker.setText(tb.printSpeakers(speakers));
+                    }
+                });
     }
 
     @Override

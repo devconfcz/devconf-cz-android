@@ -249,19 +249,20 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view){
-        Speaker s = t.getSpeaker();
-
-        if(s != null) {
-
-            Intent sInfo = new Intent(view.getContext(), SpeakerDetail.class);
-            sInfo.putExtra("id", s.getId());
-            sInfo.putExtra("name", s.getName());
-            sInfo.putExtra("bio", s.getBio());
-            sInfo.putExtra("avatar", s.getEmail());
-            sInfo.putExtra("country", s.getCountry());
-            sInfo.putExtra("twitter", s.getTwitter());
-            sInfo.putExtra("organization", s.getOrganization());
-            view.getContext().startActivity(sInfo);
-        }
+        Toast.makeText(view.getContext(), "TODO", Toast.LENGTH_SHORT).show();
+//        Speaker s = t.getSpeaker();
+//
+//        if(s != null) {
+//
+//            Intent sInfo = new Intent(view.getContext(), SpeakerDetail.class);
+//            sInfo.putExtra("id", s.getId());
+//            sInfo.putExtra("name", s.getName());
+//            sInfo.putExtra("bio", s.getBio());
+//            sInfo.putExtra("avatar", s.getEmail());
+//            sInfo.putExtra("country", s.getCountry());
+//            sInfo.putExtra("twitter", s.getTwitter());
+//            sInfo.putExtra("organization", s.getOrganization());
+//            view.getContext().startActivity(sInfo);
+//        }
     }
 }

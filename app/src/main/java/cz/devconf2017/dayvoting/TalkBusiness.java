@@ -1,5 +1,6 @@
 package cz.devconf2017.dayvoting;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.Collection;
@@ -26,16 +27,17 @@ public class TalkBusiness {
     }
 
     public CharSequence printSpeakers(@Nullable Collection<Speaker> speakers) {
-        if (speakers == null) {
-            return "Empty";
+        if (speakers == null || speakers.size() == 0) {
+            return "No speaker";
         }
+
         final StringBuilder sb = new StringBuilder();
 
         for (Speaker speaker : speakers) {
             sb.append(speaker.getName())
                     .append(", ");
         }
-        return sb.delete(sb.length() - 1, sb.length());
+        return sb.delete(sb.length() - 2, sb.length()).toString();
     }
 
     public CharSequence printStatistics() {
@@ -55,5 +57,10 @@ public class TalkBusiness {
         }
 
         return ratingSum / votes.size();
+    }
+
+    @Nullable
+    public Collection<String> getSpeakerIds() {
+        return talk.getSpeakers();
     }
 }

@@ -1,6 +1,5 @@
 package cz.devconf2017;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -170,15 +169,6 @@ public class Talk {
     public String getFormatedDuration() {
         SimpleDateFormat format = new SimpleDateFormat("H:mm");
         return format.format(this.numDuration) + " h";
-    }
-
-    public Speaker getSpeaker() {
-//        if (this.speakers == null || this.speakers.size() < 1) {
-//            return null;
-//        } else {
-//            return this.speakers.get(0);
-//        }
-        return null;
     }
 
     @Override

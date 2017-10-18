@@ -10,28 +10,28 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.devconf2017.R;
 
-class VoteHolder extends RecyclerView.ViewHolder {
+class DayVotingHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.vote_holder_number)
-    TextView number;
+    @BindView(R.id.holder_day_voting_rating)
+    TextView rating;
 
-    @BindView(R.id.title)
+    @BindView(R.id.holder_day_voting_title)
     TextView title;
 
-    @BindView(R.id.speaker)
+    @BindView(R.id.holder_day_voting_speakers)
     TextView speaker;
 
-    @BindView(R.id.statistic)
+    @BindView(R.id.holder_day_voting_statistic)
     TextView statistic;
 
     public String talk;
 
-    VoteHolder(View itemView) {
+    DayVotingHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    @OnClick(R.id.vote_holder_container)
+    @OnClick(R.id.holder_day_voting_container)
     public void onVoteClick(View v) {
         Toast.makeText(v.getContext(), "TODO", Toast.LENGTH_SHORT).show();
 //        v.getContext().startActivity(new Intent(v.getContext(), VotingDetail.class)
