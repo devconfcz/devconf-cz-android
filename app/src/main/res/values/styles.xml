@@ -22,4 +22,14 @@
         <item name="android:textColorSecondary">@color/icons</item>
     </style>
 
+    <style name="SectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/padding_small</item>
+        <item name="android:background">@color/primary_light</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/text_size_title</item>
+    </style>
+
 </resources>

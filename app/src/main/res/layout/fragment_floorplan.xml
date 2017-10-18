@@ -5,12 +5,8 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center"
-        android:text="@string/floor_plan"
-        android:textColor="@color/primary_text"
-        android:textSize="35sp"/>
+        style="@style/SectionHeader"
+        android:text="@string/floor_plan"/>
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/floor_plan_image"

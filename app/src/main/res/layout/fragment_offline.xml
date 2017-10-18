@@ -11,13 +11,7 @@
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_small"
-            android:background="@color/primary_light"
-            android:textAlignment="center"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/text_size_title"
+            style="@style/SectionHeader"
             tools:text="About"/>
 
         <TextView
