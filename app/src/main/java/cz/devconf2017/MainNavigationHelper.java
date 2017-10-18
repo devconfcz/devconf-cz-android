@@ -3,6 +3,7 @@ package cz.devconf2017;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import cz.devconf2017.floorplan.FloorPlanFragment;
 import cz.devconf2017.offline.AboutFragment;
 import cz.devconf2017.offline.SocialFragment;
 import cz.devconf2017.offline.VenueFragment;
@@ -69,8 +70,7 @@ public class MainNavigationHelper {
                 break;
 
             case FLOOR_PLAN:
-//                fragment = FloorPlanFragment.newInstance();
-                fragment = null;
+                fragment = FloorPlanFragment.newInstance();
                 break;
 
             case SPEAKERS:
