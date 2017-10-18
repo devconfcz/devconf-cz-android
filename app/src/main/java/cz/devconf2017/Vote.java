@@ -1,4 +1,4 @@
-package cz.devconf2017.dayvoting;
+package cz.devconf2017;
 
 public class Vote {
 

@@ -1,9 +1,10 @@
-package cz.devconf2017.dayvoting;
+package cz.devconf2017;
 
 import java.util.HashMap;
 
 import cz.devconf2017.MainActivity;
 import cz.devconf2017.Talk;
+import cz.devconf2017.Vote;
 
 /**
  * Votes corresponding to 1 user.

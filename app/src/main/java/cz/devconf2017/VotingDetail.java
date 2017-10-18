@@ -1,4 +1,4 @@
-package cz.devconf2017.dayvoting;
+package cz.devconf2017;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,10 +22,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cz.devconf2017.Feedback;
-import cz.devconf2017.MainActivity;
-import cz.devconf2017.R;
-import cz.devconf2017.Talk;
 
 /**
  * Created by jridky on 10.12.16.

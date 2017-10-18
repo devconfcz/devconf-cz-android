@@ -1,4 +1,4 @@
-package cz.devconf2017.dayvoting;
+package cz.devconf2017.voting;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

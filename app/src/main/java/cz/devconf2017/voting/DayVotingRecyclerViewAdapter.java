@@ -1,4 +1,4 @@
-package cz.devconf2017.dayvoting;
+package cz.devconf2017.voting;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +21,7 @@ import java.util.List;
 import cz.devconf2017.R;
 import cz.devconf2017.Speaker;
 import cz.devconf2017.Talk;
+import cz.devconf2017.TalkBusiness;
 
 class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, DayVotingHolder> {
 
