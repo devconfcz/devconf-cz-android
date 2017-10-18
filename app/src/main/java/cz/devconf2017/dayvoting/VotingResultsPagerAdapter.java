@@ -1,4 +1,4 @@
-package cz.devconf2017.vote;
+package cz.devconf2017.dayvoting;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;

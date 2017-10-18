@@ -1,6 +1,5 @@
-package cz.devconf2017.vote;
+package cz.devconf2017.dayvoting;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 
 import cz.devconf2017.MainActivity;

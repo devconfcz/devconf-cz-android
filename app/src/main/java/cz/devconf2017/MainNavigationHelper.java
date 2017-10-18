@@ -7,7 +7,7 @@ import cz.devconf2017.offline.AboutFragment;
 import cz.devconf2017.offline.SocialFragment;
 import cz.devconf2017.offline.VenueFragment;
 import cz.devconf2017.speaker.SpeakersFragment;
-import cz.devconf2017.vote.VotingResultFragment;
+import cz.devconf2017.dayvoting.VotingResultFragment;
 
 public class MainNavigationHelper {
 

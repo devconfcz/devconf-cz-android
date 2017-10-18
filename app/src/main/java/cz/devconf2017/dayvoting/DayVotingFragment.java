@@ -1,4 +1,4 @@
-package cz.devconf2017.vote;
+package cz.devconf2017.dayvoting;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
