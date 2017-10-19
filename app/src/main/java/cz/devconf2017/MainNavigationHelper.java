@@ -7,6 +7,7 @@ import cz.devconf2017.floorplan.FloorPlanFragment;
 import cz.devconf2017.offline.AboutFragment;
 import cz.devconf2017.offline.SocialFragment;
 import cz.devconf2017.offline.VenueFragment;
+import cz.devconf2017.session.SessionsFragment;
 import cz.devconf2017.speaker.SpeakersFragment;
 import cz.devconf2017.voting.VotingResultFragment;
 
@@ -42,18 +43,15 @@ public class MainNavigationHelper {
                 break;
 
             case DAY_1:
-//                fragment = TalkFragment.newInstance();
-                fragment = null;
+                fragment = SessionsFragment.newInstance(1);
                 break;
 
             case DAY_2:
-//                fragment = TalkFragment.newInstance();
-                fragment = null;
+                fragment = SessionsFragment.newInstance(2);
                 break;
 
             case DAY_3:
-//                fragment = TalkFragment.newInstance();
-                fragment = null;
+                fragment = SessionsFragment.newInstance(3);
                 break;
 
             case FAVORITES:
