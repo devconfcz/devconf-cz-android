@@ -159,7 +159,6 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
             dlgAlert.setCancelable(false);
             dlgAlert.create().show();
         }
-
     }
 
     private void configureDrawer() {
@@ -293,9 +292,6 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
         if (requestCode == RC_SIGN_IN) {
 
             if (resultCode == RESULT_OK) {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                showUserInfo(currentUser);
-                FAVORITES.checkLoad();
                 return;
 
             } else {
@@ -321,13 +317,23 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
         }
     }
 
+    @Override
+    protected void onSignedIn(FirebaseUser currentUser) {
+        showUserInfo(currentUser);
+    }
+
+    @Override
+    protected void onSignedOut() {
+        signOut();
+    }
+
     private void signOut() {
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         hideUserInfo();
-                        FAVORITES.favorites.clear();
+                        // FAVORITES.favorites.clear();
                     }
                 });
     }
@@ -367,7 +373,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
     public void isAdmin(String email) {
         // todo uncomment this lines!
 //        if (ADMINS.find(email)) {
-            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(true);
+        navigationView.getMenu().findItem(R.id.nav_voting).setVisible(true);
 //        } else {
 //            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
 //        }
@@ -551,7 +557,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
 
         private static final String TAG = FAVORITES.class.getName();
         private static List<Talk> favorites = new ArrayList<Talk>();
-        public static HomeRecycleViewAdapter adapter;
+        public  HomeRecycleViewAdapter adapter;
 
         public static void checkLoad() {
             if (favorites == null || favorites.size() < 1) {
@@ -583,9 +589,9 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                                 favorites.add(t);
                             }
                         }
-                        if (adapter != null) {
-                            adapter.updateData(getTalks());
-                        }
+//                        if (adapter != null) {
+//                            adapter.updateData(getTalks());
+//                        }
                         Log.d("LOADING", "FAVORITES are done " + favorites.size());
                     }
 

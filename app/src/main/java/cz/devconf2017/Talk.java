@@ -88,6 +88,10 @@ public class Talk {
         this.averageRating = averageRating;
     }
 
+    public Talk(String id) {
+        this.id = id;
+    }
+
     private int numId;
     private int numDay;
     private Date numDuration;
@@ -198,4 +202,19 @@ public class Talk {
         return numStart;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Talk talk = (Talk) o;
+
+        return id != null ? id.equals(talk.id) : talk.id == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

@@ -3,6 +3,7 @@ package cz.devconf2017;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import cz.devconf2017.favorites.FavoritesFragment;
 import cz.devconf2017.floorplan.FloorPlanFragment;
 import cz.devconf2017.offline.AboutFragment;
 import cz.devconf2017.offline.SocialFragment;
@@ -55,8 +56,7 @@ public class MainNavigationHelper {
                 break;
 
             case FAVORITES:
-//                fragment = FavoritesFragment.newInstance();
-                fragment = null;
+                fragment = FavoritesFragment.newInstance();
                 break;
 
             case VOTING:

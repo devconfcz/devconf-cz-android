@@ -8,9 +8,12 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class ExpirableActivity extends BaseActivity implements FirebaseAuth.AuthStateListener {
+public abstract class ExpirableActivity extends BaseActivity implements FirebaseAuth.AuthStateListener {
 
     private FirebaseAuth auth;
+
+    protected abstract void onSignedIn(FirebaseUser currentUser);
+    protected abstract void onSignedOut();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,9 +25,9 @@ public class ExpirableActivity extends BaseActivity implements FirebaseAuth.Auth
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
-            Log.d("MainActivity", "onAuthStateChanged:signed_in:" + user.getUid());
+            onSignedIn(user);
         } else {
-            Log.d("MainActivity", "onAuthStateChanged:signed_out");
+            onSignedOut();
         }
     }
 

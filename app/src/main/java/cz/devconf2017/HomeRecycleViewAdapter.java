@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.devconf2017.favorites.FavoritesFragment;
 import cz.devconf2017.session.TalkViewHolder;
 
 public class HomeRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder> {
@@ -37,9 +38,9 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder>
         itemList.addAll(newlist);
         if(fragment != null){
             if(itemList.size() < 1) {
-                fragment.noFavorites();
+//                fragment.noFavorites();
             }else{
-                fragment.setLoadingBox();
+//                fragment.setLoadingBox();
             }
         }
         this.notifyDataSetChanged();

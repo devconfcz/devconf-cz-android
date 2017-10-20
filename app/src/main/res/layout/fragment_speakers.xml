@@ -14,12 +14,7 @@
 
     <TextView
         android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/speakers_empty_view"
-        android:textSize="@dimen/text_size_small"
-        android:visibility="gone"
-        tools:visibility="visible"/>
+        style="@style/EmptyListLabel"
+        android:text="@string/speakers_empty_view"/>
 
 </FrameLayout>
