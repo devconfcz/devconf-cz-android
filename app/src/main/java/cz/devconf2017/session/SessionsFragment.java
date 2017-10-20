@@ -85,6 +85,7 @@ public class SessionsFragment extends BaseFragment implements ValueEventListener
 
         SessionsPagerAdapter pagerAdapter = new SessionsPagerAdapter(getFragmentManager(), day, rooms);
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(1);
         tabs.setupWithViewPager(viewPager);
 
         hideLoading();
