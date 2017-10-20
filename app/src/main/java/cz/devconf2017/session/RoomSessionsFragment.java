@@ -6,12 +6,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import cz.devconf2017.R;
@@ -62,23 +59,8 @@ public class RoomSessionsFragment extends BaseFragment {
 
         Query query = FirebaseDatabase.getInstance()
                 .getReference("sessions")
-//                .orderByChild("day_room")
-//                .equalTo(day + "_" + roomName);
-//                .orderByChild("day")
-//                .equalTo(day);
-        ;
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                dataSnapshot.getChildren();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+                .orderByChild("day_room")
+                .equalTo(day + "_" + roomName.toLowerCase());
 
         FirebaseRecyclerOptions<Talk> options = new FirebaseRecyclerOptions.Builder<Talk>()
                 .setQuery(query, Talk.class)
