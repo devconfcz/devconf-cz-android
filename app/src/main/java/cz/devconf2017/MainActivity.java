@@ -826,7 +826,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                 for (Talk t : talksD1) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if (t.getStart().compareTo(numNow) <= 0) {
+                    if (t.getNumStart().compareTo(numNow) <= 0) {
                         last = t;
                     } else {
                         if (last == null) {
@@ -851,7 +851,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                     last = null;
                     for (Talk t : talksD1) {
                         if (last != null) {
-                            if (last.getStart().compareTo(t.getStart()) <= 0) {
+                            if (last.getNumStart().compareTo(t.getNumStart()) <= 0) {
                                 last = t;
                             }
                         } else {
@@ -897,7 +897,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                 for (Talk t : talksD2) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if (t.getStart().compareTo(numNow) <= 0) {
+                    if (t.getNumStart().compareTo(numNow) <= 0) {
                         last = t;
                     } else {
                         if (last == null) {
@@ -922,7 +922,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                     last = null;
                     for (Talk t : talksD2) {
                         if (last != null) {
-                            if (last.getStart().compareTo(t.getStart()) <= 0) {
+                            if (last.getNumStart().compareTo(t.getNumStart()) <= 0) {
                                 last = t;
                             }
                         } else {
@@ -965,7 +965,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                 for (Talk t : talksD3) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if (t.getStart().compareTo(numNow) <= 0) {
+                    if (t.getNumStart().compareTo(numNow) <= 0) {
                         last = t;
                     } else {
                         if (last == null) {
@@ -990,7 +990,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                     last = null;
                     for (Talk t : talksD3) {
                         if (last != null) {
-                            if (last.getStart().compareTo(t.getStart()) <= 0) {
+                            if (last.getNumStart().compareTo(t.getNumStart()) <= 0) {
                                 last = t;
                             }
                         } else {
@@ -1136,9 +1136,9 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
             String ret = "";
             for (Talk t : result) {
                 if (ret.equals("")) {
-                    ret = ret.concat("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
+                    ret = ret.concat("Day " + t.getDay() + " at " + new TalkBusiness(t).printStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
                 } else {
-                    ret = ret.concat(", Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
+                    ret = ret.concat(", Day " + t.getDay() + " at " + new TalkBusiness(t).printStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
                 }
             }
 
@@ -1151,15 +1151,15 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                 String room1 = talk.getRoom();
                 String room2 = t1.getRoom();
                 int dateComparision = room1.compareTo(room2);
-                return dateComparision == 0 ? talk.getStart().compareTo(t1.getStart()) : dateComparision;
+                return dateComparision == 0 ? talk.getNumStart().compareTo(t1.getNumStart()) : dateComparision;
             }
         };
 
         public static Comparator<Talk> orderByStart = new Comparator<Talk>() {
             @Override
             public int compare(Talk talk, Talk t1) {
-                Date start1 = talk.getStart();
-                Date start2 = t1.getStart();
+                Date start1 = talk.getNumStart();
+                Date start2 = t1.getNumStart();
                 int dateComparision = start1.compareTo(start2);
 
                 if (talk.getDay() == t1.getDay()) {

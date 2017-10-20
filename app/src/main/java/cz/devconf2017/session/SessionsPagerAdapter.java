@@ -1,6 +1,5 @@
 package cz.devconf2017.session;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -8,7 +7,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import java.util.List;
 
 import cz.devconf2017.Room;
-import cz.devconf2017.RoomTalkFragment;
 
 class SessionsPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -23,15 +21,7 @@ class SessionsPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // todo refactor with newInstance(position, day) method
-        Fragment fragment = new RoomTalkFragment();
-
-        Bundle args = new Bundle();
-        args.putInt("index", position);
-        args.putInt("day", day);
-        fragment.setArguments(args);
-
-        return fragment;
+        return RoomSessionsFragment.newInstance(rooms.get(position).getName(), day);
     }
 
     @Override

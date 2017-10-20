@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.devconf2017.session.TalkViewHolder;
+
 public class HomeRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder> {
 
     private List<Talk> itemList;
@@ -22,12 +24,12 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<TalkViewHolder>
     public TalkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate((R.layout.row_talks), null);
 
-        return new TalkViewHolder(view, itemList.size());
+        return new TalkViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(TalkViewHolder holder, int position) {
-        holder.setTalk(itemList.get(position));
+//        holder.setTalk(itemList.get(position));
     }
 
     public void updateData(List<Talk> newlist) {

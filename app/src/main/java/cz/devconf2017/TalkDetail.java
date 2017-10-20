@@ -95,12 +95,12 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
         title.setText(t.getTitle());
         track.setText(t.getTrack());
-        duration.setText(t.getFormatedDuration());
+        duration.setText(new TalkBusiness(t).printDuration());
         room.setText(t.getRoom().toUpperCase());
         description.setText(t.getDescription());
         background.setBackgroundColor(Color.parseColor(MainActivity.TRACKS.findColor(t.getTrack())));
         speaker.setText(t.getSpeakerCompleteInfo());
-        datetime.setText("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00");
+        datetime.setText("Day " + t.getDay() + " at " + new TalkBusiness(t).printStart() + " GMT +01:00");
         difficulty.setText(t.getDifficulty());
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

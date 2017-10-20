@@ -20,7 +20,7 @@ public class Talk {
     private String id;
     private String room;
     private ArrayList<String> speakers;
-    private String startTime;
+    private String start;
     private String title;
     private String track;
     private String type;
@@ -60,8 +60,8 @@ public class Talk {
         return speakers;
     }
 
-    public String getStartTime() {
-        return startTime;
+    public String getStart() {
+        return start;
     }
 
     public String getTitle() {
@@ -99,7 +99,7 @@ public class Talk {
         this.id = id;
         this.day = day;
 //        this.speakers = speakers;
-        this.startTime = start;
+        this.start = start;
         this.duration = duration;
         this.description = description;
         this.room = room;
@@ -117,7 +117,7 @@ public class Talk {
         try {
             this.numDuration = format.parse(this.duration);
             format = new SimpleDateFormat("HH:mm");
-            this.numStart = format.parse(this.startTime);
+            this.numStart = format.parse(this.start);
         } catch (Exception e) {
             Log.d("SDF", "Error: " + e.getMessage());
         }
@@ -161,36 +161,9 @@ public class Talk {
         return this.running;
     }
 
-    public String getFormatedStart() {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        return format.format(this.numStart);
-    }
-
-    public String getFormatedDuration() {
-        SimpleDateFormat format = new SimpleDateFormat("H:mm");
-        return format.format(this.numDuration) + " h";
-    }
-
     @Override
     public String toString() {
         return "Id: " + getId() + " NumId: " + this.numId + " Day: " + getDay() + " NumDay: ";
-    }
-
-    public String getSpeakerInfo() {
-
-        String result = "";
-
-        if (speakers != null && speakers.size() > 0) {
-            result = speakers.get(0);
-
-            for (int i = 1; i < speakers.size(); i++) {
-                result = result + ", " + speakers.get(i);
-            }
-        } else {
-            result = "We don't know yet";
-        }
-
-        return result;
     }
 
     public String getSpeakerCompleteInfo() {
@@ -221,7 +194,7 @@ public class Talk {
         return false;
     }
 
-    public Date getStart() {
+    public Date getNumStart() {
         return numStart;
     }
 

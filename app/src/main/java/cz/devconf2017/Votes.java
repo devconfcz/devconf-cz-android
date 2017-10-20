@@ -55,7 +55,7 @@ public class Votes {
         if (talk == null) {
             return "null";
         }
-        return talk.getSpeakerInfo();
+        return talk.getSpeakerCompleteInfo();
     }
 
     public String getStatistic() {
