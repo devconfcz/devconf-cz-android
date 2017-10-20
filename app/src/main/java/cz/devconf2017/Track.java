@@ -1,26 +1,19 @@
 package cz.devconf2017;
 
-/**
- * Created by jridky on 2.1.17.
- */
 public class Track {
-    public String name;
-    public String color;
 
-    public Track(){
-        // for firebase purposes
-    }
+    private String color;
+    private String name;
 
-    public Track(String name, String color){
-        this.name = name;
-        this.color = color.replace("#","#AA");
-    }
-
-    public String getName() {
-        return name;
+    public Track() {
+        // For Firebase purposes
     }
 
     public String getColor() {
         return color;
+    }
+
+    public String getName() {
+        return name;
     }
 }

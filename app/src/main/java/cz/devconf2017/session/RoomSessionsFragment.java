@@ -60,7 +60,7 @@ public class RoomSessionsFragment extends BaseFragment {
         Query query = FirebaseDatabase.getInstance()
                 .getReference("sessions")
                 .orderByChild("day_room")
-                .equalTo(day + "_" + roomName.toLowerCase());
+                .equalTo(day + "_" + roomName);
 
         FirebaseRecyclerOptions<Talk> options = new FirebaseRecyclerOptions.Builder<Talk>()
                 .setQuery(query, Talk.class)

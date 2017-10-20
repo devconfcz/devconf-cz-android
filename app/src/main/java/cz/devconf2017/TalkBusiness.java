@@ -1,7 +1,14 @@
 package cz.devconf2017;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -11,6 +18,8 @@ import java.util.HashMap;
 import cz.devconf2017.util.DateFormatUtils;
 
 public class TalkBusiness {
+
+    private static final String TAG = "TalkBusiness";
 
     private final Talk talk;
 
@@ -90,5 +99,36 @@ public class TalkBusiness {
 
     public CharSequence printRoom() {
         return talk.getRoom().toUpperCase();
+    }
+
+
+    public void getTrackColor(final GetTrackColorListener listener) {
+        FirebaseDatabase.getInstance()
+                .getReference("tracks")
+                .orderByChild("name")
+                .equalTo(talk.getTrack())
+                .limitToFirst(1)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Track track = snapshot.getValue(Track.class);
+                            int color = Color.parseColor(track.getColor());
+                            listener.onGetColor(color);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public interface GetTrackColorListener {
+
+        int DEFAULT_COLOR = Color.parseColor("#888888");
+
+        void onGetColor(int trackColor);
     }
 }
