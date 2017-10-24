@@ -19,7 +19,6 @@
 
     <!-- Home screen resources -->
     <string name="loading_text">Loading data …</string>
-    <string name="home_title">Running and upcoming talks</string>
     <string name="running">RUNNING NOW</string>
     <string name="lastofday">LAST TALK OF THIS DAY</string>
     <string name="confend">DevConf is over. See you next year!</string>
@@ -30,6 +29,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="sign_in_cancelled">Sign In cancelled</string>
     <string name="no_internet_connection">No Internet connection</string>
+
+    <!-- Now -->
+    <string name="now_title">Running and upcoming talks</string>
+    <string name="now_empty_view">No more sessions today</string>
 
     <!-- Talk detail -->
     <string name="sendFeedback">Save feedback</string>
@@ -47,6 +50,9 @@
     <!-- Votes -->
     <string name="day_format">Day %1$s</string>
     <string name="voting_day_empty_view">Voting not available</string>
+
+    <!-- Room Sessions -->
+    <string name="room_sessions_empty_view">No sessions are planned here today.</string>
 
     <!-- Venue data source -->
 <string name="venueData" formatted="false">"<![CDATA[
@@ -94,5 +100,4 @@
     <string name="aboutData" formatted="false">"<![CDATA[<p>With this app you have an access to actual information about the conference <strong>schedule, venue, floor plan, social event and speakers</strong>.</p><p>You will even be able to receive <strong>notifications</strong> with actual information from DevConf!</p><p>Register here: <a href="http://bit.ly/devconf-cz-2017-registration">http://bit.ly/devconf-cz-2017-registration</a>.</p><p>Don\'t forget to sign in to be able to votes, to leave feedback for each talk, and to create a list of your favorite talks.</p><p><i>For the proper functionality <strong>the internet connection is required</strong></i>.</p><p>In case of any troubles with this mobile application, contact its author via email (<a href="mailto:jridky@redhat.com">jridky@redhat.com</a>).</p>]]>"</string>
     <string name="socialData" formatted="false">"<![CDATA[<p>Where: club <strong>Fléda</strong> (<a href="http://www.fleda.cz">www.fleda.cz</a>)<br><br>When: <strong>Saturday, January 28</strong> starting at <strong>7:30 p.m.</strong><br><br>Capacity: <strong>700 people (TICKET REQUIRED - see below for more details)</strong><br><br>What: Food, drinks and socializing. Come on time, or you might miss it!<br><br>Map: follow <a href="https://goo.gl/maps/VSUVwKgtPXL2"> map link</a>.
                                                          <h3>How to get tickets</h3>Most tickets will be handed out on a 'first-come, first-served' basis, starting on Friday morning<br><br>Some tickets will be held in reserve and distributed on Saturday morning for those who attend the event starting Saturday morning<br><br>Some tickets will also be held in reserve and distributed by Red Hat HR at the Red Hat HR stand / booth.</p> ]]>"</string>
-    <string name="room_sessions_empty_view">No sessions are planned here today.</string>
 </resources>

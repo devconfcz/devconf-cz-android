@@ -53,12 +53,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.devconf2017.base.ExpirableActivity;
+import cz.devconf2017.now.NowFragment;
 
 import static cz.devconf2017.MainNavigationHelper.Section;
 
 public class MainActivity extends ExpirableActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final Section DEFAULT_HOME_SCREEN_SECTION = Section.HOME;
+    public static final Section INITIAL_DEFAULT_INITIAL_SECTION = Section.NOW;
+    public static final String EXTRA_INITIAL_SECTION_ORDENAL = "EXTRA_INITIAL_SECTION_ORDINAL";
     public static final int RC_SIGN_IN = 16;
 
     @BindView(R.id.toolbar)
@@ -86,23 +88,15 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
 
         setSupportActionBar(toolbar);
 
-        // TODO handle intents from notifications and set initial section
-        Section selectedSection = DEFAULT_HOME_SCREEN_SECTION;
-
-        // todo: refactor ..
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy", Locale.US);
-        try {
-            TALKS.dayOne = sdf.parse("27/1/2017");
-            TALKS.dayTwo = sdf.parse("28/1/2017");
-            TALKS.dayThree = sdf.parse("29/1/2017");
-
-        } catch (ParseException e) {
-            e.printStackTrace();
+        Section initialSection = INITIAL_DEFAULT_INITIAL_SECTION;
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(EXTRA_INITIAL_SECTION_ORDENAL)) {
+            int sectionOrdinal = intent.getIntExtra(EXTRA_INITIAL_SECTION_ORDENAL, 0);
+            initialSection = Section.values()[sectionOrdinal];
         }
-        // todo: .. until here
 
         configureDrawer();
-        configureNavigation(selectedSection);
+        configureNavigation(initialSection);
 
         DatabaseReference connectedRef = new FBDB().getDatabase().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
@@ -197,8 +191,8 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_home:
-                navigationHelper.navigate(Section.HOME);
+            case R.id.nav_now:
+                navigationHelper.navigate(Section.NOW);
                 break;
 
             case R.id.nav_day_1:
@@ -364,7 +358,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
 
         if (navigationHelper.isCurrentSection(Section.VOTING)
                 || navigationHelper.isCurrentSection(Section.FAVORITES)) {
-            navigationHelper.navigate(Section.HOME);
+            navigationHelper.navigate(Section.NOW);
         }
 
         isAdmin("");
@@ -557,7 +551,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
 
         private static final String TAG = FAVORITES.class.getName();
         private static List<Talk> favorites = new ArrayList<Talk>();
-        public  HomeRecycleViewAdapter adapter;
+        public HomeRecycleViewAdapter adapter;
 
         public static void checkLoad() {
             if (favorites == null || favorites.size() < 1) {
@@ -715,10 +709,10 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
         private static List<Talk> talksD3 = new ArrayList<Talk>();
         public static DatabaseReference myRef;
 
+        private static Date dayOne = new Date();
+        private static Date dayTwo = new Date();
+        private static Date dayThree = new Date();
 
-        private static Date dayOne;
-        private static Date dayTwo;
-        private static Date dayThree;
 
         public static void load() {
 
@@ -1254,7 +1248,7 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
      */
     public static class ALLLOADED {
 
-        public static HomeFragment fragment;
+        public static NowFragment fragment;
         public static boolean speakers = false, tracks = false, talks = false, rooms = false;
 
         public static void loaded() {
@@ -1268,8 +1262,6 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
                 for (Talk t : TALKS.talksD3) {
                     t.connectSpeaker();
                 }
-                fragment.mAdapter.updateData(TALKS.getActualTalks());
-                fragment.setLoadingBox();
             }
         }
     }

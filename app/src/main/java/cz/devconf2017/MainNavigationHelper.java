@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 
 import cz.devconf2017.favorites.FavoritesFragment;
 import cz.devconf2017.floorplan.FloorPlanFragment;
+import cz.devconf2017.now.NowFragment;
 import cz.devconf2017.offline.AboutFragment;
 import cz.devconf2017.offline.SocialFragment;
 import cz.devconf2017.offline.VenueFragment;
@@ -16,7 +17,7 @@ public class MainNavigationHelper {
 
     private final FragmentManager supportFragmentManager;
 
-    private Section currentSection = Section.HOME;
+    private Section currentSection;
 
     public MainNavigationHelper(FragmentManager supportFragmentManager) {
         this.supportFragmentManager = supportFragmentManager;
@@ -38,9 +39,8 @@ public class MainNavigationHelper {
         Fragment fragment;
 
         switch (section) {
-            case HOME:
-//                fragment = HomeFragment.newInstance();
-                fragment = null;
+            case NOW:
+                fragment = NowFragment.newInstance();
                 break;
 
             case DAY_1:
@@ -102,7 +102,7 @@ public class MainNavigationHelper {
     }
 
     enum Section {
-        HOME,
+        NOW,
         DAY_1,
         DAY_2,
         DAY_3,
