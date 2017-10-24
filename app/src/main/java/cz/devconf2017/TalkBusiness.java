@@ -10,9 +10,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import cz.devconf2017.util.DateFormatUtils;
 
@@ -34,7 +36,7 @@ public class TalkBusiness {
         return talk.getTitle();
     }
 
-    public CharSequence printSpeakers(@Nullable Collection<Speaker> speakers) {
+    private CharSequence getPrintedSpeakers(@Nullable Collection<Speaker> speakers) {
         if (speakers == null || speakers.size() == 0) {
             return "No speaker";
         }
@@ -132,10 +134,46 @@ public class TalkBusiness {
         return talk.getTrack();
     }
 
+    public void getPrintedSpeakers(final GetPrintedSpeakersListener listener) {
+        FirebaseDatabase.getInstance()
+                .getReference("speakers")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    private List<Speaker> speakers = new ArrayList<>();
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Iterable<DataSnapshot> speakerSnapshots = dataSnapshot.getChildren();
+                        final Collection<String> speakerIds = getSpeakerIds();
+
+                        if (speakerIds != null) {
+                            for (DataSnapshot snapshot : speakerSnapshots) {
+                                if (speakerIds.contains(snapshot.getKey())) {
+                                    Speaker speaker = snapshot.getValue(Speaker.class);
+                                    this.speakers.add(speaker);
+                                }
+                            }
+                        }
+                        listener.onGetPrintedSpeakers(getPrintedSpeakers(this.speakers));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     public interface GetTrackColorListener {
 
         int DEFAULT_COLOR = Color.parseColor("#888888");
 
         void onGetColor(int trackColor);
+    }
+
+    public interface GetPrintedSpeakersListener {
+
+        CharSequence DEFAULT_SPEAKERS = "...";
+
+        void onGetPrintedSpeakers(CharSequence speakers);
     }
 }

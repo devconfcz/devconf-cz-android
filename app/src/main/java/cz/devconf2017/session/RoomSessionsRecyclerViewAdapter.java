@@ -36,7 +36,6 @@ class RoomSessionsRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, Talk
         TalkBusiness tb = new TalkBusiness(talk);
         holder.track.setText(talk.getTrack());
         holder.duration.setText(tb.printDuration());
-        holder.speaker.setText(tb.printSpeakers(null));
         holder.day.setText(tb.printDay(holder.itemView.getContext()));
         holder.room.setText(tb.printRoom());
         holder.title.setText(talk.getTitle());
@@ -44,6 +43,13 @@ class RoomSessionsRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, Talk
         holder.start.setText(tb.printStart());
         holder.start2.setText(tb.printStart());
 
+        holder.speaker.setText(TalkBusiness.GetPrintedSpeakersListener.DEFAULT_SPEAKERS);
+        tb.getPrintedSpeakers(new TalkBusiness.GetPrintedSpeakersListener() {
+            @Override
+            public void onGetPrintedSpeakers(CharSequence speakers) {
+                holder.speaker.setText(speakers);
+            }
+        });
 //        if (talk.last) {
 //            holder.running.setText(R.string.lastofday);
 //            talk.setRunning();

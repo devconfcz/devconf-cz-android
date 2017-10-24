@@ -38,7 +38,6 @@ class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<FavoritesHolder>
         holder.start.setText(tb.printStart());
         holder.running.setVisibility(tb.isRunning() ? View.VISIBLE : View.INVISIBLE);
         holder.title.setText(tb.printTitle());
-        holder.speakers.setText(tb.printSpeakers(null));
         holder.track.setText(tb.printTrack());
         holder.duration.setText(tb.printDuration());
         holder.day.setText(tb.printDay(holder.itemView.getContext()));
@@ -49,6 +48,14 @@ class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<FavoritesHolder>
             @Override
             public void onGetColor(int trackColor) {
                 holder.container.setBackgroundColor(trackColor);
+            }
+        });
+
+        holder.speakers.setText(TalkBusiness.GetPrintedSpeakersListener.DEFAULT_SPEAKERS);
+        tb.getPrintedSpeakers(new TalkBusiness.GetPrintedSpeakersListener() {
+            @Override
+            public void onGetPrintedSpeakers(CharSequence speakers) {
+                holder.speakers.setText(speakers);
             }
         });
     }

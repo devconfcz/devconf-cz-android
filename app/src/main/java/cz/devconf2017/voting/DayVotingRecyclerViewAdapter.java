@@ -55,34 +55,14 @@ class DayVotingRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, DayVoti
         viewHolder.title.setText(tb.printTitle());
         viewHolder.talk = talk.getId();
         viewHolder.statistic.setText(tb.printStatistics());
+
         viewHolder.speaker.setText("...");
-
-        FirebaseDatabase.getInstance()
-                .getReference("speakers")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    private List<Speaker> speakers = new ArrayList<>();
-
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        final Iterable<DataSnapshot> speakerSnapshots = dataSnapshot.getChildren();
-                        final Collection<String> speakerIds = tb.getSpeakerIds();
-
-                        if (speakerIds != null) {
-                            for (DataSnapshot snapshot : speakerSnapshots) {
-                                if (speakerIds.contains(snapshot.getKey())) {
-                                    Speaker speaker = snapshot.getValue(Speaker.class);
-                                    this.speakers.add(speaker);
-                                }
-                            }
-                        }
-                        viewHolder.speaker.setText(tb.printSpeakers(this.speakers));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        viewHolder.speaker.setText(tb.printSpeakers(speakers));
-                    }
-                });
+        tb.getPrintedSpeakers(new TalkBusiness.GetPrintedSpeakersListener() {
+            @Override
+            public void onGetPrintedSpeakers(CharSequence speakers) {
+                viewHolder.speaker.setText(speakers);
+            }
+        });
     }
 
     @Override
