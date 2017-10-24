@@ -3,7 +3,6 @@ package cz.devconf2017;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -101,7 +100,6 @@ public class TalkBusiness {
         return talk.getRoom().toUpperCase();
     }
 
-
     public void getTrackColor(final GetTrackColorListener listener) {
         FirebaseDatabase.getInstance()
                 .getReference("tracks")
@@ -123,6 +121,15 @@ public class TalkBusiness {
 
                     }
                 });
+    }
+
+    public boolean isRunning() {
+        // TODO
+        return false;
+    }
+
+    public CharSequence printTrack() {
+        return talk.getTrack();
     }
 
     public interface GetTrackColorListener {

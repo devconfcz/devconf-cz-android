@@ -39,7 +39,6 @@ public class FavoritesFragment extends BaseFragment {
 
     private final List<Talk> favoriteSessions = new ArrayList<>();
     private FavoritesRecyclerViewAdapter adapter;
-    ;
 
     @Override
     protected int getLayoutId() {

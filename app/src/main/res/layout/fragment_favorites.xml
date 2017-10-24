@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/favorites_title"
+        android:scrollbars="vertical"
         tools:listitem="@layout/holder_session"/>
 
     <TextView

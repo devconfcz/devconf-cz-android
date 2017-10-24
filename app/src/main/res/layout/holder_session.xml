@@ -2,172 +2,142 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/session_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="2dp"
+    android:layout_marginEnd="@dimen/padding_small"
+    android:layout_marginLeft="@dimen/padding_small"
+    android:layout_marginRight="@dimen/padding_small"
+    android:layout_marginStart="@dimen/padding_small"
+    android:layout_marginTop="@dimen/padding_small"
+    android:minHeight="@dimen/session_holder_minHeight"
     android:orientation="horizontal"
-    tools:background="@color/accent">
+    android:padding="@dimen/padding_small"
+    tools:background="@android:color/black">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:layout_marginEnd="@dimen/padding_standard"
+        android:layout_marginRight="@dimen/padding_standard"
+        android:gravity="center"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/start"
+            android:id="@+id/session_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:fontFamily="sans-serif"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingLeft="5dp"
-            android:text="asdsdadsd"
-            android:textSize="30sp"/>
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="@dimen/text_size_title"
+            tools:text="12:00"/>
 
         <TextView
-            android:id="@+id/start2"
+            android:id="@+id/session_gmt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:fontFamily="sans-serif"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingLeft="5dp"
-            android:text="asdsdasd"
-            android:textSize="30sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:fontFamily="sans-serif"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingLeft="7dp"
             android:text="@string/GMT"
-            android:textSize="10sp"/>
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="13sp"/>
 
         <TextView
-            android:id="@+id/running"
-            android:layout_width="80dp"
+            android:id="@+id/session_running"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingLeft="5dp"
+            android:layout_marginTop="@dimen/padding_standard"
+            android:padding="@dimen/padding_small"
             android:text="@string/running"
-            android:textSize="12sp"/>
+            android:textAlignment="center"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="14sp"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:id="@+id/session_title"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="26dp"
-            android:layout_marginStart="26dp"
-            android:text="asdsad"
-            android:textSize="21sp"/>
+            android:layout_marginBottom="@dimen/padding_small_half"
+            android:textColor="@android:color/primary_text_dark"
+            tools:text="CI With Openshift and Xamarin"/>
+
+        <TextView
+            android:id="@+id/session_speakers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_small_half"
+            android:drawableLeft="@drawable/ic_person_white_18dp"
+            android:drawablePadding="@dimen/padding_small"
+            android:drawableStart="@drawable/ic_person_white_18dp"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="15sp"
+            tools:text="Jose Miguel Gallas Olmedo, Peter García"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="26dp"
-            android:layout_marginStart="26dp"
+            android:layout_marginBottom="@dimen/padding_small_half"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_person"/>
+            <TextView
+                android:id="@+id/session_track"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_label_white_18dp"
+                android:drawablePadding="@dimen/padding_small"
+                android:drawableStart="@drawable/ic_label_white_18dp"
+                android:textColor="@android:color/primary_text_dark"
+                android:textSize="13sp"
+                tools:text="Xamarin"/>
 
             <TextView
-                android:id="@+id/speaker"
-                android:layout_width="wrap_content"
+                android:id="@+id/session_duration"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:layout_marginStart="2dp"
-                android:text="asdsdadsd"/>
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_watch_later_white_18dp"
+                android:drawablePadding="@dimen/padding_small"
+                android:drawableStart="@drawable/ic_watch_later_white_18dp"
+                android:textColor="@android:color/primary_text_dark"
+                android:textSize="13sp"
+                tools:text="1:00 h"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="26dp"
-            android:layout_marginStart="26dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="3dp"
-                android:src="@drawable/tracker"/>
+            <TextView
+                android:id="@+id/session_day"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_today_white_18dp"
+                android:drawablePadding="@dimen/padding_small"
+                android:drawableStart="@drawable/ic_today_white_18dp"
+                android:textColor="@android:color/primary_text_dark"
+                android:textSize="13sp"
+                tools:text="Day 1"/>
 
             <TextView
-                android:id="@+id/track"
-                android:layout_width="wrap_content"
+                android:id="@+id/session_room"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="2dp"
-                android:layout_marginStart="2dp"
-                android:layout_toEndOf="@+id/thumbnail_image"
-                android:layout_toRightOf="@+id/thumbnail_image"
-                android:text="asdsdadsd"/>
-
-            <ImageView
-                android:layout_width="13dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:src="@drawable/duration"/>
-
-            <TextView
-                android:id="@+id/duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:layout_marginStart="2dp"
-                android:text="asdsdadsd"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="26dp"
-            android:layout_marginStart="26dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="13dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="1dp"
-                android:src="@drawable/ic_event"/>
-
-            <TextView
-                android:id="@+id/day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:layout_marginStart="2dp"
-                android:text="asdsdadsd"/>
-
-            <ImageView
-                android:layout_width="13dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:src="@drawable/ic_place"/>
-
-            <TextView
-                android:id="@+id/room"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:layout_marginStart="2dp"
-                android:text="asdsdadsd"/>
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_place_white_18dp"
+                android:drawablePadding="@dimen/padding_small"
+                android:drawableStart="@drawable/ic_place_white_18dp"
+                android:textColor="@android:color/primary_text_dark"
+                android:textSize="13sp"
+                tools:text="A109"/>
         </LinearLayout>
 
     </LinearLayout>
