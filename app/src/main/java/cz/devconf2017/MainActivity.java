@@ -551,7 +551,6 @@ public class MainActivity extends ExpirableActivity implements NavigationView.On
 
         private static final String TAG = FAVORITES.class.getName();
         private static List<Talk> favorites = new ArrayList<Talk>();
-        public HomeRecycleViewAdapter adapter;
 
         public static void checkLoad() {
             if (favorites == null || favorites.size() < 1) {

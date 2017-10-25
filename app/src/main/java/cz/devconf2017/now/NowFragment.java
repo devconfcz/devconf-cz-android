@@ -6,12 +6,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
+import com.firebase.ui.database.BuildConfig;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+
 import java.text.ParseException;
 import java.util.Date;
 
 import butterknife.BindView;
-import cz.devconf2017.HomeRecycleViewAdapter;
 import cz.devconf2017.R;
+import cz.devconf2017.Talk;
 import cz.devconf2017.base.BaseFragment;
 import cz.devconf2017.util.Constants;
 import cz.devconf2017.util.DateFormatUtils;
@@ -41,19 +47,48 @@ public class NowFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (isDevConfFinished()) {
-            conferenceEndedLabel.setVisibility(View.VISIBLE);
-            recycler.setVisibility(View.GONE);
-            emptyView.setVisibility(View.GONE);
-        } else {
+//        if ( && isDevConfFinished()) {
+//            conferenceEndedLabel.setVisibility(View.VISIBLE);
+//            recycler.setVisibility(View.GONE);
+//            emptyView.setVisibility(View.GONE);
+//        } else {
             conferenceEndedLabel.setVisibility(View.GONE);
+            showLoading();
 
-            HomeRecycleViewAdapter adapter = new HomeRecycleViewAdapter();
+            Query query = FirebaseDatabase.getInstance()
+                    .getReference("sessions")
+                    .orderByChild("day")
+                    .equalTo(String.valueOf(getCurrentDay()));
+
+            FirebaseRecyclerOptions<Talk> options = new FirebaseRecyclerOptions.Builder<Talk>()
+                    .setQuery(query, Talk.class)
+                    .setLifecycleOwner(this)
+                    .build();
+
+            NowSessionsRecyclerViewAdapter adapter = new NowSessionsRecyclerViewAdapter(options) {
+                @Override
+                public void onDataChanged() {
+                    super.onDataChanged();
+                    hideLoading();
+                }
+
+                @Override
+                public void onError(DatabaseError error) {
+                    super.onError(error);
+                    hideLoading();
+                    showToast(R.string.fui_general_error);
+                }
+            };
 
             recycler.setAdapter(adapter);
             recycler.setEmptyView(emptyView);
             recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        }
+//        }
+    }
+
+    private int getCurrentDay() {
+        // TODO extact and implement
+        return 1;
     }
 
     private boolean isDevConfFinished() {

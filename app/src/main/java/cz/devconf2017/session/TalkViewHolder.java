@@ -14,45 +14,42 @@ import cz.devconf2017.TalkDetail;
 
 public class TalkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    @BindView(R.id.start)
-    TextView start;
+    @BindView(R.id.session_start)
+    public TextView start;
 
-    @BindView(R.id.start2)
-    TextView start2;
+    @BindView(R.id.session_title)
+    public TextView title;
 
-    @BindView(R.id.title)
-    TextView title;
+    @BindView(R.id.session_speakers)
+    public TextView speaker;
 
-    @BindView(R.id.speaker)
-    TextView speaker;
+    @BindView(R.id.session_track)
+    public TextView track;
 
-    @BindView(R.id.track)
-    TextView track;
+    @BindView(R.id.session_duration)
+    public TextView duration;
 
-    @BindView(R.id.duration)
-    TextView duration;
+    @BindView(R.id.session_container)
+    public LinearLayout background;
 
-    @BindView(R.id.background)
-    LinearLayout background;
+    @BindView(R.id.session_running)
+    public TextView running;
 
-    @BindView(R.id.running)
-    TextView running;
+    @BindView(R.id.session_day)
+    public TextView day;
 
-    @BindView(R.id.day)
-    TextView day;
+    @BindView(R.id.session_room)
+    public TextView room;
 
-    @BindView(R.id.room)
-    TextView room;
-
-    String sessionDay;
-    String sessionId;
+    public String sessionDay;
+    public String sessionId;
 
     public TalkViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    @OnClick(R.id.background)
+    @OnClick(R.id.session_container)
     public void onClick(View view) {
         Intent sInfo = new Intent(view.getContext(), TalkDetail.class);
         sInfo.putExtra("day", sessionDay);

@@ -11,12 +11,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import cz.devconf2017.util.DateFormatUtils;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 public class TalkBusiness {
 
@@ -125,11 +128,6 @@ public class TalkBusiness {
                 });
     }
 
-    public boolean isRunning() {
-        // TODO
-        return false;
-    }
-
     public CharSequence printTrack() {
         return talk.getTrack();
     }
@@ -161,6 +159,59 @@ public class TalkBusiness {
 
                     }
                 });
+    }
+
+    public Date getStartDate() {
+        try {
+            return DateFormatUtils.DATE_FORMAT_TIME_INPUT.parse(talk.getStart());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return new Date();
+        }
+    }
+
+    public boolean isRunningOrUpcoming() {
+        return isRunning() || isUpcoming();
+    }
+
+    public boolean isRunning() {
+        try {
+            Date duration = DateFormatUtils.DATE_FORMAT_DURATION_INPUT.parse(talk.getDuration());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(duration);
+            int durationInHours = cal.get(Calendar.HOUR);
+            int durationInMinutes = cal.get(Calendar.MINUTE);
+
+            Date startTime = DateFormatUtils.DATE_FORMAT_TIME_INPUT.parse(talk.getStart());
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(startTime);
+            cal2.add(Calendar.HOUR_OF_DAY, durationInHours);
+            cal2.add(Calendar.MINUTE, durationInMinutes);
+            // TODO set real date depending on "day" field
+            cal2.set(Calendar.DAY_OF_MONTH, 1);
+            cal2.set(Calendar.MONTH, 1);
+            cal2.set(Calendar.YEAR, 2017);
+            Date endTime = cal2.getTime();
+
+//            Date now = new Date();
+            Calendar cal3 = Calendar.getInstance();
+            cal3.setTime(new Date());
+            // TODO set real date depending on "day" field
+            cal3.set(Calendar.DAY_OF_MONTH, 1);
+            cal3.set(Calendar.MONTH, 1);
+            cal3.set(Calendar.YEAR, 2017);
+            Date now = cal3.getTime();
+
+            return now.after(startTime) && now.before(endTime);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isUpcoming() {
+        return new Date().before(getStartDate());
     }
 
     public interface GetTrackColorListener {

@@ -20,52 +20,16 @@ class RoomSessionsRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, Talk
     }
 
     @Override
-    public TalkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater
-                .from(parent.getContext())
-                .inflate(LAYOUT_ID, parent, false);
+    protected void onBindViewHolder(final TalkViewHolder holder, int position, Talk session) {
+        TalkBusiness tb = new TalkBusiness(session);
 
-        return new TalkViewHolder(view);
-    }
-
-    @Override
-    protected void onBindViewHolder(final TalkViewHolder holder, int position, Talk talk) {
-        holder.sessionDay = talk.getDay();
-        holder.sessionId = talk.getId();
-
-        TalkBusiness tb = new TalkBusiness(talk);
-        holder.track.setText(talk.getTrack());
+        holder.start.setText(tb.printStart());
+        holder.running.setVisibility(tb.isRunning() ? View.VISIBLE : View.INVISIBLE);
+        holder.title.setText(tb.printTitle());
+        holder.track.setText(tb.printTrack());
         holder.duration.setText(tb.printDuration());
         holder.day.setText(tb.printDay(holder.itemView.getContext()));
         holder.room.setText(tb.printRoom());
-        holder.title.setText(talk.getTitle());
-
-        holder.start.setText(tb.printStart());
-        holder.start2.setText(tb.printStart());
-
-        holder.speaker.setText(TalkBusiness.GetPrintedSpeakersListener.DEFAULT_SPEAKERS);
-        tb.getPrintedSpeakers(new TalkBusiness.GetPrintedSpeakersListener() {
-            @Override
-            public void onGetPrintedSpeakers(CharSequence speakers) {
-                holder.speaker.setText(speakers);
-            }
-        });
-//        if (talk.last) {
-//            holder.running.setText(R.string.lastofday);
-//            talk.setRunning();
-//        } else {
-//            holder.running.setText(R.string.running);
-//        }
-//
-//        if (talk.getRunning()) {
-//            holder.start.setVisibility(View.GONE);
-//            holder.start2.setVisibility(View.VISIBLE);
-//            holder.running.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.start.setVisibility(View.VISIBLE);
-//            holder.start2.setVisibility(View.GONE);
-//            holder.running.setVisibility(View.GONE);
-//        }
 
         holder.background.setBackgroundColor(TalkBusiness.GetTrackColorListener.DEFAULT_COLOR);
         tb.getTrackColor(new TalkBusiness.GetTrackColorListener() {
@@ -74,5 +38,22 @@ class RoomSessionsRecyclerViewAdapter extends FirebaseRecyclerAdapter<Talk, Talk
                 holder.background.setBackgroundColor(trackColor);
             }
         });
+
+        holder.speaker.setText(TalkBusiness.GetPrintedSpeakersListener.DEFAULT_SPEAKERS);
+        tb.getPrintedSpeakers(new TalkBusiness.GetPrintedSpeakersListener() {
+            @Override
+            public void onGetPrintedSpeakers(CharSequence speakers) {
+                holder.speaker.setText(speakers);
+            }
+        });
+    }
+
+    @Override
+    public TalkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater
+                .from(parent.getContext())
+                .inflate(LAYOUT_ID, parent, false);
+
+        return new TalkViewHolder(view);
     }
 }
