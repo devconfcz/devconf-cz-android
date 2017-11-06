@@ -20,7 +20,7 @@
 
         <!--profile image -->
         <ImageView
-            android:id="@+id/number"
+            android:id="@+id/vote_holder_number"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:gravity="center_vertical|center_horizontal"

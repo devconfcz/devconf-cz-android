@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.storage.FirebaseStorage;
@@ -61,8 +62,10 @@ public class SpeakerDetail extends AppCompatActivity {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference sr = storage.getReferenceFromUrl("gs://" + FirebaseApp.getInstance().getOptions().getStorageBucket());
-        Glide.with(this).using(new FirebaseImageLoader()).load(sr.child("speakers/" + avatar.toLowerCase() + ".jpg"))
-                .fitCenter().placeholder(R.drawable.default_avatar)
+        Glide.with(this)
+                .load(sr.child("speakers/" + avatar.toLowerCase() + ".jpg"))
+                .apply(RequestOptions.fitCenterTransform())
+                .apply(RequestOptions.placeholderOf(R.drawable.default_avatar))
                 .into(vAvatar);
 
         vName.setText(name + " " + " (" + country + ", " + org + ")");

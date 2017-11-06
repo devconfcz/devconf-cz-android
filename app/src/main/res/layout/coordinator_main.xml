@@ -22,6 +22,8 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
+                android:layout_marginEnd="@dimen/home_button_width"
+                android:layout_marginRight="@dimen/home_button_width"
                 android:src="@drawable/devconf_cz"/>
 
         </android.support.v7.widget.Toolbar>

@@ -1,17 +1,14 @@
 package cz.devconf2017;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -72,24 +69,24 @@ public class VotingDetail extends AppCompatActivity{
 
         DatabaseReference myRef = MainActivity.FBDB.getDatabase().getReference("votes");
 
-        mAdapter = new FirebaseRecyclerAdapter<Feedback, VotingDetailViewHolder>(Feedback.class, R.layout.row_feedback, VotingDetailViewHolder.class, myRef) {
-            @Override
-            public void populateViewHolder(VotingDetailViewHolder votingHolder, Feedback item, int position) {
-                if(list.size() > 0 ) {
-                    votingHolder.setFeedback(list.get(position));
-                }
-            }
-
-            @Override
-            public int getItemCount() {
-                return list.size();
-            }
-
-            @Override
-            public Feedback getItem(int position){
-                return list.get(position);
-            }
-        };
+//        mAdapter = new FirebaseRecyclerAdapter<Feedback, VotingDetailHolder>(Feedback.class, R.layout.row_feedback, VotingDetailHolder.class, myRef) {
+//            @Override
+//            public void populateViewHolder(VotingDetailHolder votingHolder, Feedback item, int position) {
+//                if(list.size() > 0 ) {
+//                    votingHolder.setFeedback(list.get(position));
+//                }
+//            }
+//
+//            @Override
+//            public int getItemCount() {
+//                return list.size();
+//            }
+//
+//            @Override
+//            public Feedback getItem(int position){
+//                return list.get(position);
+//            }
+//        };
 
         recycler.setAdapter(mAdapter);
 

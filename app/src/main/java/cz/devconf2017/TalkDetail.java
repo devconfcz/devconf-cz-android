@@ -95,12 +95,12 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
         title.setText(t.getTitle());
         track.setText(t.getTrack());
-        duration.setText(t.getFormatedDuration());
+        duration.setText(new TalkBusiness(t).printDuration());
         room.setText(t.getRoom().toUpperCase());
         description.setText(t.getDescription());
         background.setBackgroundColor(Color.parseColor(MainActivity.TRACKS.findColor(t.getTrack())));
         speaker.setText(t.getSpeakerCompleteInfo());
-        datetime.setText("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00");
+        datetime.setText("Day " + t.getDay() + " at " + new TalkBusiness(t).printStart() + " GMT +01:00");
         difficulty.setText(t.getDifficulty());
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -116,9 +116,9 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
                     for(DataSnapshot vote: dataSnapshot.getChildren()) {
-                        if(vote.getKey().equals(t.id)){
+                        if(vote.getKey().equals(t.getId())){
                             Feedback f = vote.getValue(Feedback.class);
-                            if(Integer.parseInt(f.rating) > 0){
+                            if(f.getRating() > 0){
                                 reset.setVisibility(View.VISIBLE);
                                 feedbackText.setText(f.feedback);
                                 rating.setRating(Float.valueOf(f.rating));
@@ -147,8 +147,8 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                     rtg = 1.0f;
                     rating.setRating(rtg);
                 }
-                Feedback feedback = new Feedback(rtg, feedbackText.getText().toString());
-                feedback.save(t.getId(), user.getUid());
+                Feedback feedback = new Feedback(feedbackText.getText().toString(), (int) rtg);
+                feedback.save(Integer.valueOf(t.getId()), user.getUid());
                 reset.setVisibility(View.VISIBLE);
                 Toast.makeText(getBaseContext(),R.string.feedbackSent,Toast.LENGTH_LONG).show();
             }
@@ -186,9 +186,9 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
                 }
 
                 fromCreate = false;
-                Feedback feedback = new Feedback(rating, feedbackText.getText().toString());
+                Feedback feedback = new Feedback(feedbackText.getText().toString(), (int) rating);
                 reset.setVisibility(View.VISIBLE);
-                feedback.save(t.getId(), user.getUid());
+                feedback.save(Integer.valueOf(t.getId()), user.getUid());
             }
         });
 
@@ -249,19 +249,20 @@ public class TalkDetail extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view){
-        Speaker s = t.getSpeaker();
-
-        if(s != null) {
-
-            Intent sInfo = new Intent(view.getContext(), SpeakerDetail.class);
-            sInfo.putExtra("id", s.getId());
-            sInfo.putExtra("name", s.getName());
-            sInfo.putExtra("bio", s.getBio());
-            sInfo.putExtra("avatar", s.getEmail());
-            sInfo.putExtra("country", s.getCountry());
-            sInfo.putExtra("twitter", s.getTwitter());
-            sInfo.putExtra("organization", s.getOrganization());
-            view.getContext().startActivity(sInfo);
-        }
+        Toast.makeText(view.getContext(), "TODO", Toast.LENGTH_SHORT).show();
+//        Speaker s = t.getSpeaker();
+//
+//        if(s != null) {
+//
+//            Intent sInfo = new Intent(view.getContext(), SpeakerDetail.class);
+//            sInfo.putExtra("id", s.getId());
+//            sInfo.putExtra("name", s.getName());
+//            sInfo.putExtra("bio", s.getBio());
+//            sInfo.putExtra("avatar", s.getEmail());
+//            sInfo.putExtra("country", s.getCountry());
+//            sInfo.putExtra("twitter", s.getTwitter());
+//            sInfo.putExtra("organization", s.getOrganization());
+//            view.getContext().startActivity(sInfo);
+//        }
     }
 }

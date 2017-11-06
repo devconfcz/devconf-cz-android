@@ -1,16 +1,19 @@
 package cz.devconf2017;
 
-/**
- * Created by jridky on 2.1.17.
- */
 public class Room {
-    public String name;
 
-    public Room () {
-        //for FireBase purposes
+    private String name;
+    private String type;
+
+    public Room() {
+        // For Firebase purposes
     }
 
     public String getName() {
-        return this.name;
+        return name;
+    }
+
+    public String getType() {
+        return type;
     }
 }

@@ -15,7 +15,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,7 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,7 +38,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,12 +52,15 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cz.devconf2017.base.ExpirableActivity;
+import cz.devconf2017.now.NowFragment;
 
 import static cz.devconf2017.MainNavigationHelper.Section;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends ExpirableActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final Section DEFAULT_HOME_SCREEN_SECTION = Section.HOME;
+    public static final Section INITIAL_DEFAULT_INITIAL_SECTION = Section.NOW;
+    public static final String EXTRA_INITIAL_SECTION_ORDENAL = "EXTRA_INITIAL_SECTION_ORDINAL";
     public static final int RC_SIGN_IN = 16;
 
     @BindView(R.id.toolbar)
@@ -84,23 +88,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar(toolbar);
 
-        // TODO handle intents from notifications and set initial section
-        Section selectedSection = DEFAULT_HOME_SCREEN_SECTION;
-
-        // todo: refactor ..
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy", Locale.US);
-        try {
-            TALKS.dayOne = sdf.parse("27/1/2017");
-            TALKS.dayTwo = sdf.parse("28/1/2017");
-            TALKS.dayThree = sdf.parse("29/1/2017");
-
-        } catch (ParseException e) {
-            e.printStackTrace();
+        Section initialSection = INITIAL_DEFAULT_INITIAL_SECTION;
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(EXTRA_INITIAL_SECTION_ORDENAL)) {
+            int sectionOrdinal = intent.getIntExtra(EXTRA_INITIAL_SECTION_ORDENAL, 0);
+            initialSection = Section.values()[sectionOrdinal];
         }
-        // todo: .. until here
 
         configureDrawer();
-        configureNavigation(selectedSection);
+        configureNavigation(initialSection);
 
         DatabaseReference connectedRef = new FBDB().getDatabase().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
@@ -157,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             dlgAlert.setCancelable(false);
             dlgAlert.create().show();
         }
-
     }
 
     private void configureDrawer() {
@@ -196,8 +191,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_home:
-                navigationHelper.navigate(Section.HOME);
+            case R.id.nav_now:
+                navigationHelper.navigate(Section.NOW);
                 break;
 
             case R.id.nav_day_1:
@@ -263,18 +258,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             hideUserInfo();
         }
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d("TOKEN", "Refreshed Token: " + token);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            showUserInfo(currentUser);
-            FAVORITES.checkLoad();
-        }
+//        String token = FirebaseInstanceId.getInstance().getToken();
+//        Log.d("TOKEN", "Refreshed Token: " + token);
     }
 
     private void signIn() {
@@ -282,16 +267,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
         );
         startActivityForResult(
-                AuthUI
-                        .getInstance()
+                AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setLogo(R.drawable.ic_launcher)
-                        .setProviders(providers)
+                        .setAvailableProviders(providers)
+                        // TODO setTosUrl terms of service
+                        // TODO setPrivacyPolicyUrl
+//                        .setLogo(R.drawable.ic_launcher)
                         .build(),
                 RC_SIGN_IN);
 
         // TODO refactor
         // displayLastFragment();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+
+            if (resultCode == RESULT_OK) {
+                return;
+
+            } else {
+                IdpResponse response = IdpResponse.fromResultIntent(data);
+
+                if (response == null) {
+                    showToast(R.string.sign_in_cancelled);
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    showToast(R.string.no_internet_connection);
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    showToast(R.string.fui_general_error);
+                    return;
+                }
+            }
+
+            showToast(R.string.fui_general_error);
+        }
+    }
+
+    @Override
+    protected void onSignedIn(FirebaseUser currentUser) {
+        showUserInfo(currentUser);
+    }
+
+    @Override
+    protected void onSignedOut() {
+        signOut();
     }
 
     private void signOut() {
@@ -300,14 +327,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         hideUserInfo();
-                        FAVORITES.favorites.clear();
+                        // FAVORITES.favorites.clear();
                     }
                 });
     }
 
     public void showUserInfo(FirebaseUser currentUser) {
         Glide.with(this).load(currentUser.getPhotoUrl())
-                .transform(new GlideCircleTransform(getApplicationContext()))
+                .apply(RequestOptions.circleCropTransform())
                 .into(drawerHeaderViewHolder.mUserAvatar);
         drawerHeaderViewHolder.mUserName.setText(currentUser.getDisplayName());
 
@@ -331,19 +358,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (navigationHelper.isCurrentSection(Section.VOTING)
                 || navigationHelper.isCurrentSection(Section.FAVORITES)) {
-            navigationHelper.navigate(Section.HOME);
+            navigationHelper.navigate(Section.NOW);
         }
 
         isAdmin("");
     }
 
     public void isAdmin(String email) {
-        if (ADMINS.find(email)) {
-            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(true);
-        } else {
-            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
-        }
+        // todo uncomment this lines!
+//        if (ADMINS.find(email)) {
+        navigationView.getMenu().findItem(R.id.nav_voting).setVisible(true);
+//        } else {
+//            navigationView.getMenu().findItem(R.id.nav_voting).setVisible(false);
+//        }
     }
+
     // -- Navigation ------------------------------------------------------------------------------
 
     class DrawerHeaderViewHolder {
@@ -522,7 +551,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         private static final String TAG = FAVORITES.class.getName();
         private static List<Talk> favorites = new ArrayList<Talk>();
-        public static HomeRecycleViewAdapter adapter;
 
         public static void checkLoad() {
             if (favorites == null || favorites.size() < 1) {
@@ -554,9 +582,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 favorites.add(t);
                             }
                         }
-                        if (adapter != null) {
-                            adapter.updateData(getTalks());
-                        }
+//                        if (adapter != null) {
+//                            adapter.updateData(getTalks());
+//                        }
                         Log.d("LOADING", "FAVORITES are done " + favorites.size());
                     }
 
@@ -598,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         public static boolean isFavorite(int id) {
             for (Talk t : favorites) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return true;
                 }
             }
@@ -680,10 +708,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         private static List<Talk> talksD3 = new ArrayList<Talk>();
         public static DatabaseReference myRef;
 
+        private static Date dayOne = new Date();
+        private static Date dayTwo = new Date();
+        private static Date dayThree = new Date();
 
-        private static Date dayOne;
-        private static Date dayTwo;
-        private static Date dayThree;
 
         public static void load() {
 
@@ -711,7 +739,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     for (DataSnapshot t : dataSnapshot.getChildren()) {
                         Talk talk = t.getValue(Talk.class);
-                        if (talk.id == null || talk.day.equalsIgnoreCase("")) {
+                        if (talk.getId() == null || talk.getDay().equalsIgnoreCase("")) {
                             Log.d("SKIPPED", talk.getTitle());
                             continue;
                         } else {
@@ -719,10 +747,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
 
                         switch (talk.getDay()) {
-                            case 1:
+                            case "1":
                                 talksD1.add(talk);
                                 break;
-                            case 2:
+                            case "2":
                                 talksD2.add(talk);
                                 break;
                             default:
@@ -797,7 +825,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 for (Talk t : talksD1) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if (t.getStart().compareTo(numNow) <= 0) {
+                    if (t.getNumStart().compareTo(numNow) <= 0) {
                         last = t;
                     } else {
                         if (last == null) {
@@ -822,7 +850,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     last = null;
                     for (Talk t : talksD1) {
                         if (last != null) {
-                            if (last.getStart().compareTo(t.getStart()) <= 0) {
+                            if (last.getNumStart().compareTo(t.getNumStart()) <= 0) {
                                 last = t;
                             }
                         } else {
@@ -868,7 +896,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 for (Talk t : talksD2) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if (t.getStart().compareTo(numNow) <= 0) {
+                    if (t.getNumStart().compareTo(numNow) <= 0) {
                         last = t;
                     } else {
                         if (last == null) {
@@ -893,7 +921,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     last = null;
                     for (Talk t : talksD2) {
                         if (last != null) {
-                            if (last.getStart().compareTo(t.getStart()) <= 0) {
+                            if (last.getNumStart().compareTo(t.getNumStart()) <= 0) {
                                 last = t;
                             }
                         } else {
@@ -936,7 +964,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 for (Talk t : talksD3) {
                     t.unsetRunning();
                     t.unsetLastOfDay();
-                    if (t.getStart().compareTo(numNow) <= 0) {
+                    if (t.getNumStart().compareTo(numNow) <= 0) {
                         last = t;
                     } else {
                         if (last == null) {
@@ -961,7 +989,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     last = null;
                     for (Talk t : talksD3) {
                         if (last != null) {
-                            if (last.getStart().compareTo(t.getStart()) <= 0) {
+                            if (last.getNumStart().compareTo(t.getNumStart()) <= 0) {
                                 last = t;
                             }
                         } else {
@@ -1017,21 +1045,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             switch (day) {
                 case 1:
                     for (Talk t : talksD1) {
-                        if (t.getId() == id) {
+                        if (t.getId() == String.valueOf(id)) {
                             return t;
                         }
                     }
                     break;
                 case 2:
                     for (Talk t : talksD2) {
-                        if (t.getId() == id) {
+                        if (t.getId() == String.valueOf(id)) {
                             return t;
                         }
                     }
                     break;
                 default:
                     for (Talk t : talksD3) {
-                        if (t.getId() == id) {
+                        if (t.getId() == String.valueOf(id)) {
                             return t;
                         }
                     }
@@ -1045,19 +1073,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public static Talk findTalk(int id) {
 
             for (Talk t : talksD1) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return t;
                 }
             }
 
             for (Talk t : talksD2) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return t;
                 }
             }
 
             for (Talk t : talksD3) {
-                if (t.getId() == id) {
+                if (t.getId() == String.valueOf(id)) {
                     return t;
                 }
             }
@@ -1107,9 +1135,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String ret = "";
             for (Talk t : result) {
                 if (ret.equals("")) {
-                    ret = ret.concat("Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
+                    ret = ret.concat("Day " + t.getDay() + " at " + new TalkBusiness(t).printStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
                 } else {
-                    ret = ret.concat(", Day " + t.getDay() + " at " + t.getFormatedStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
+                    ret = ret.concat(", Day " + t.getDay() + " at " + new TalkBusiness(t).printStart() + " GMT +01:00 in " + t.getRoom().toUpperCase());
                 }
             }
 
@@ -1122,15 +1150,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String room1 = talk.getRoom();
                 String room2 = t1.getRoom();
                 int dateComparision = room1.compareTo(room2);
-                return dateComparision == 0 ? talk.getStart().compareTo(t1.getStart()) : dateComparision;
+                return dateComparision == 0 ? talk.getNumStart().compareTo(t1.getNumStart()) : dateComparision;
             }
         };
 
         public static Comparator<Talk> orderByStart = new Comparator<Talk>() {
             @Override
             public int compare(Talk talk, Talk t1) {
-                Date start1 = talk.getStart();
-                Date start2 = t1.getStart();
+                Date start1 = talk.getNumStart();
+                Date start2 = t1.getNumStart();
                 int dateComparision = start1.compareTo(start2);
 
                 if (talk.getDay() == t1.getDay()) {
@@ -1140,7 +1168,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         return dateComparision;
                     }
                 } else {
-                    return (talk.getDay() - t1.getDay());
+                    return (Integer.valueOf(talk.getDay()) - Integer.valueOf(t1.getDay()));
                 }
 
 
@@ -1219,7 +1247,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public static class ALLLOADED {
 
-        public static HomeFragment fragment;
+        public static NowFragment fragment;
         public static boolean speakers = false, tracks = false, talks = false, rooms = false;
 
         public static void loaded() {
@@ -1233,8 +1261,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 for (Talk t : TALKS.talksD3) {
                     t.connectSpeaker();
                 }
-                fragment.mAdapter.updateData(TALKS.getActualTalks());
-                fragment.setLoadingBox();
             }
         }
     }

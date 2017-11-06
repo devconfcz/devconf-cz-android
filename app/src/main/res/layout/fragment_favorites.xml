@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/favorites_title"
+        style="@style/SectionHeader"
+        android:text="@string/favorites"/>
+
+    <cz.devconf2017.util.view.EmptyRecyclerView
+        android:id="@+id/favorites_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/favorites_title"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/holder_session"/>
+
+    <TextView
+        android:id="@+id/favorites_empty_view"
+        style="@style/EmptyListLabel"
+        android:text="@string/empty_favorites"/>
+
+</RelativeLayout>

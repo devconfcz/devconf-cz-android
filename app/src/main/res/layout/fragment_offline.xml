@@ -1,31 +1,29 @@
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/primary_light"
-                    android:textColor="@color/primary_text"
-                    android:textSize="35sp"
-                    android:textAlignment="center" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/data"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="10dp"
-                    android:textColor="@color/primary_text"
-                    android:textSize="16sp"
-                    android:background="@android:color/white" />
+    android:layout_height="match_parent">
 
-            </LinearLayout>
-        </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/SectionHeader"
+            tools:text="About"/>
+
+        <TextView
+            android:id="@+id/data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:padding="@dimen/padding_standard"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/text_size_small"
+            tools:text="@string/aboutData"/>
+
+    </LinearLayout>
+</ScrollView>
 

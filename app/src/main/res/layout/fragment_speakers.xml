@@ -1,41 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:id="@+id/loading_box"
-        android:orientation="vertical">
-
-        <TextView
-            android:text="@string/loadingData"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:id="@+id/loading_label"
-            android:layout_margin="10dp"
-            android:textAlignment="center"
-            style="@style/Widget.AppCompat.TextView.SpinnerItem" />
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/loading_bar"
-            android:layout_weight="0.09" />
-
-    </LinearLayout>
-    <!--including the recycleView-->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <cz.devconf2017.util.view.EmptyRecyclerView
+        android:id="@+id/speakers_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:visibility="gone"/>
-</LinearLayout>
+        tools:listitem="@layout/holder_speaker"/>
+
+    <TextView
+        android:id="@+id/empty_view"
+        style="@style/EmptyListLabel"
+        android:text="@string/speakers_empty_view"/>
+
+</FrameLayout>

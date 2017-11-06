@@ -1,3 +1,13 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- Padding and margins -->
+    <dimen name="padding_standard">16dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_small_half">4dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_size_small">16sp</dimen>
+    <dimen name="text_size_title">35sp</dimen>
+
+    <!-- UI Components -->
+    <dimen name="home_button_width">72dp</dimen>
 </resources>

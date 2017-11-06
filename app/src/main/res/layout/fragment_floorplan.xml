@@ -1,21 +1,17 @@
 <LinearLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/primary_light"
-                    android:textColor="@color/primary_text"
-                    android:textSize="35sp"
-                    android:text="@string/floor_plan"
-                    android:textAlignment="center" />
-                <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/image"/>
+
+    <TextView
+        style="@style/SectionHeader"
+        android:text="@string/floor_plan"/>
+
+    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        android:id="@+id/floor_plan_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
 
